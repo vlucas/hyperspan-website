@@ -1,0 +1,26 @@
+{
+  "name": "hypermill",
+  "version": "0.0.1",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build:styles": "bunx tailwindcss -i ./app/styles/globals.css -o ./public/styles.css --minify",
+    "build:styles:dev": "bunx tailwindcss -i ./app/styles/globals.css -o ./public/styles.css --watch",
+    "dev": "bun run build:styles && PORT=3005 bun run --hot app/server.ts",
+    "start": "bun run build:styles && bun run app/server.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/escape-html": "^1.0.4",
+    "bun-types": "latest",
+    "prettier": "^3.2.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "escape-html": "^1.0.3",
+    "tailshake": "^0.0.3",
+    "tailwindcss": "^3.4.1"
+  }
+}
