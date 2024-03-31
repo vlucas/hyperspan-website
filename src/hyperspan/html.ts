@@ -58,6 +58,8 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
 
   if (value instanceof HSTemplate) {
     yield* renderToStream(value);
+  } else if (value instanceof HSClientTemplate) {
+    yield await value.render();
   } else if (value === undefined || value === null) {
     yield '';
   } else {
@@ -81,7 +83,7 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
         break;
       case 'function':
         // @TODO: Render inline function in a way that will work...
-        yield String(value);
+        yield `javascript:${String(value)}`;
         break;
       case 'json':
         yield ''; //JSON.stringify(value);
@@ -107,6 +109,9 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
   }
 }
 
+/**
+ * Render HSTemplate to async generator that streams output to a string
+ */
 export async function* renderToStream(template: HSTemplate): AsyncGenerator<string> {
   let promises: Array<TRenderPromise> = [];
 
@@ -130,7 +135,10 @@ export async function* renderToStream(template: HSTemplate): AsyncGenerator<stri
   }
 }
 
-export async function renderToString(template: HSTemplate) {
+/**
+ * Render HSTemplate to string (awaits/buffers entire response)
+ */
+export async function renderToString(template: HSTemplate): Promise<string> {
   let result = '';
 
   for await (const chunk of renderToStream(template)) {
@@ -161,9 +169,12 @@ class HSClientTemplate {
     this.args = args;
   }
 
-  async render(): Promise<string> {
-    //const content = await renderToString(this.content);
-    return [this.content, '<script>' + this.fn + '</script>'].join('\n');
+  async render() {
+    console.log('fn content =', this.content);
+    const content = await (typeof this.content === 'string'
+      ? this.content
+      : renderToString(this.content));
+    return [content, '<script>' + this.fn + '</script>'].join('\n');
   }
 }
 
