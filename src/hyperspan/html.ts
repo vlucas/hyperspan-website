@@ -91,7 +91,9 @@ async function* _render(
         });
         const pid = 'async_' + id;
         promises.push({ id: pid, pending: true, promise });
-        yield* renderToStream(html`<div id="${pid}">Loading...</div>`);
+        yield* renderToStream(
+          html`<div id="${pid}" class="loading loading-spinner loading-sm">Loading...</div>`
+        );
         break;
       case 'function':
         js.push(`window.__hs.fn('${id}', ${value.toString()})`);

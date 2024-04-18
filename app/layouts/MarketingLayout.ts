@@ -32,7 +32,7 @@ export default async function MarketingLayout({
         ${HyperspanScripts()}
         <div class="navbar bg-base-100">
           <div class="flex-1">
-            <a class="btn btn-ghost text-xl" href="/">Hyperspan</a>
+            <a class="btn btn-ghost text-xl" href="/">Hyperspan Demo</a>
           </div>
           <div class="flex-none">
             <ul class="menu menu-horizontal px-1">
@@ -50,7 +50,7 @@ export default async function MarketingLayout({
             </ul>
           </div>
         </div>
-        <div class="w-screen-lg m-auto p-10" id="root">${children}</div>
+        <div class="h-full w-screen-lg m-auto p-10" id="root">${children}</div>
       </body>
     </html>
   `;

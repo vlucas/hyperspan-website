@@ -26,8 +26,10 @@ if (typeof MutationObserver != 'undefined') {
         if (slotEl) {
           // Wait until next paint for streaming content to finish writing to DOM
           requestAnimationFrame(() => {
-            Idiomorph.morph(slotEl, el.content.cloneNode(true));
-            el.parentNode.removeChild(el);
+            setTimeout(() => {
+              Idiomorph.morph(slotEl, el.content.cloneNode(true));
+              el.parentNode.removeChild(el);
+            }, 100);
           });
         }
       } catch (e) {
