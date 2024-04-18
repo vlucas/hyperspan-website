@@ -1,37 +1,49 @@
-import { html, HSTemplate } from '@hyperspan/html';
+import { clientComponent, html, HSTemplate, HSClientTemplate } from '@hyperspan/html';
+import MarketingLayout from '@app/layouts/MarketingLayout';
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const ClientButton = clientComponent({
+  initialState({ args }) {
+    return { count: args[0] || 0 };
+  },
+  mount() {
+    console.log('Client component mounted!');
+    setTimeout(() => {
+      this.mergeState({ count: this.state.count + 1 });
+    }, 1000);
+  },
+  render() {
+    return html`<div>
+      Count is: ${this.state.count || 42}
+      <button
+        class="btn btn-primary"
+        onClick=${(comp: HSClientTemplate) => {
+          comp.setState({ count: comp.state.count + 1 });
+        }}
+      >
+        Increment
+      </button>
+      <button
+        class="btn btn-primary"
+        onClick=${(comp: HSClientTemplate) => {
+          comp.setState({ count: comp.state.count - 1 });
+        }}
+      >
+        Decrement
+      </button>
+    </div>`;
+  },
+});
 
-async function SlowLoadingThing1() {
-  await sleep(2000);
-
-  return html`<div class="bg-sky-100 my-2 p-4 border border-gray-700">Slow loading content 1</div>`;
-}
-
-async function SlowLoadingThing2() {
-  await sleep(350);
-
-  return html`<div class="bg-sky-100 my-2 p-4 border border-gray-700">Slow loading content 2</div>`;
-}
-
-async function SlowLoadingThing3() {
-  await sleep(600);
-
-  return html`<div class="bg-sky-100 my-2 p-4 border border-gray-700">Slow loading content 3</div>`;
-}
-
-export default async function IndexPage(req: Request): Promise<HSTemplate> {
-  await sleep(150);
-
-  return html`
-    <main>
-      <p>Hello world!</p>
-      <div>${SlowLoadingThing1()}</div>
-      <div>${SlowLoadingThing2()}</div>
-      <div>${SlowLoadingThing3()}</div>
-      <p>Goodbye world!</p>
-    </main>
-  `;
+export default function IndexPage(req: Request): Promise<HSTemplate> {
+  return MarketingLayout({
+    title: 'Hyperspan Demo',
+    children: html`
+      <main>
+        <h1>Hyperspan</h1>
+        <h2>Simple. Server. Streaming.</h2>
+        <hr />
+        ${ClientButton(1)}
+      </main>
+    `,
+  });
 }

@@ -1,4 +1,6 @@
 import escapeHTML from 'escape-html';
+// @ts-ignore
+import mixin from 'mixin-deep';
 
 /**
  * Template object - used so it will be possible to (eventually) pass down context
@@ -48,8 +50,17 @@ type TRenderPromise = {
   value?: any;
   promise: Promise<any>;
 };
-async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGenerator<string> {
+async function* _render(
+  obj: any,
+  promises: Array<TRenderPromise> = [],
+  { js }: { js: string[] }
+): AsyncGenerator<string> {
+  if (!obj) {
+    return '';
+  }
+
   let { kind, value } = obj;
+  let id = randomId();
 
   if (!kind || !value) {
     kind = _typeOf(obj);
@@ -59,6 +70,7 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
   if (value instanceof HSTemplate) {
     yield* renderToStream(value);
   } else if (value instanceof HSClientTemplate) {
+    value.id = id;
     yield await value.render();
   } else if (value === undefined || value === null) {
     yield '';
@@ -75,15 +87,15 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
         break;
       case 'promise':
         const promise = value.then((v: unknown) => {
-          return _render(v, promises);
+          return _render(v, promises, { js });
         });
-        const id = 'async_' + randomId();
-        promises.push({ id, pending: true, promise });
-        yield* renderToStream(html`<div id="${id}">Loading...</div>`);
+        const pid = 'async_' + id;
+        promises.push({ id: pid, pending: true, promise });
+        yield* renderToStream(html`<div id="${pid}">Loading...</div>`);
         break;
       case 'function':
-        // @TODO: Render inline function in a way that will work...
-        yield `javascript:${String(value)}`;
+        js.push(`window.__hs.fn('${id}', ${value.toString()})`);
+        yield `"javascript:window.__hs.fnc('${id}')"`;
         break;
       case 'json':
         yield ''; //JSON.stringify(value);
@@ -112,11 +124,16 @@ async function* _render(obj: any, promises: Array<TRenderPromise> = []): AsyncGe
 /**
  * Render HSTemplate to async generator that streams output to a string
  */
-export async function* renderToStream(template: HSTemplate): AsyncGenerator<string> {
+export async function* renderToStream(template: HSTemplate | string): AsyncGenerator<string> {
   let promises: Array<TRenderPromise> = [];
+  let js: string[] = [];
+
+  if (typeof template === 'string') {
+    return template;
+  }
 
   for (let i = 0; i < template.content.length; i++) {
-    yield* _render(template.content[i], promises);
+    yield* _render(template.content[i], promises, { js });
   }
 
   while (promises.length > 0) {
@@ -133,12 +150,16 @@ export async function* renderToStream(template: HSTemplate): AsyncGenerator<stri
       return p.id !== result.id;
     });
   }
+
+  if (js.length !== 0) {
+    yield '<script>' + js.join('\n') + '</script>';
+  }
 }
 
 /**
  * Render HSTemplate to string (awaits/buffers entire response)
  */
-export async function renderToString(template: HSTemplate): Promise<string> {
+export async function renderToString(template: HSTemplate | string): Promise<string> {
   let result = '';
 
   for await (const chunk of renderToStream(template)) {
@@ -148,33 +169,76 @@ export async function renderToString(template: HSTemplate): Promise<string> {
   return result;
 }
 
+export type THSUserState = {
+  [key: string]: any;
+};
+export type THSClientComponent = {
+  id?: string;
+  args?: any;
+  state?: any;
+  initialState?: ({ args }: { args: any[] }) => THSUserState;
+  mount?: () => void;
+  render: () => HSTemplate;
+};
+
 /**
  * Client component - Runs BOTH on ther sever (initial render), AND on the client. Results in JavaScript being sent to
  * the client and extra work done in the browser
  */
-export function clientComponent(fn: (...args: any[]) => any) {
-  return async function (...args: Parameters<typeof fn>) {
-    return new HSClientTemplate(fn, await fn(...args), args);
+export function clientComponent<T>(clientTmpl: THSClientComponent) {
+  return (...args: any[]) => {
+    const c = new HSClientTemplate(clientTmpl, args);
+
+    return c;
   };
 }
 
-class HSClientTemplate {
+export class HSClientTemplate {
   __hsTemplate = true;
-  fn;
-  content;
+  id: string;
+  comp;
   args;
-  constructor(fn: any, content: string | AsyncGenerator, args: any[]) {
-    this.fn = fn;
-    this.content = content;
+  state: any = {};
+  __updateFn: any;
+  constructor(comp: THSClientComponent, args: any[]) {
+    this.id = comp.id || randomId();
+    this.comp = comp;
     this.args = args;
+    this.state = comp.state || {};
   }
-
-  async render() {
-    console.log('fn content =', this.content);
-    const content = await (typeof this.content === 'string'
-      ? this.content
-      : renderToString(this.content));
-    return [content, '<script>' + this.fn + '</script>'].join('\n');
+  mount() {
+    return this.comp.mount && this.comp.mount.call(this);
+  }
+  setState<T>(newState: THSUserState): T {
+    this.state = newState;
+    this.__updateFn && this.__updateFn(this);
+    return this.state;
+  }
+  mergeState<T>(newState: Partial<THSUserState>): T {
+    this.state = mixin(this.state, newState);
+    this.__updateFn && this.__updateFn(this);
+    return this.state;
+  }
+  _onUpdate(fn: any) {
+    this.__updateFn = fn;
+  }
+  componentToString() {
+    return `{
+      id: '${this.id}',
+      args: ${JSON.stringify(this.args)},
+      state: ${JSON.stringify(this.comp.initialState ? this.comp.initialState({ args: this.args }) : {})},
+      ${this.comp.mount ? this.comp.mount : ''},
+      ${this.comp.render},
+    }`;
+  }
+  async render(): Promise<string | HSTemplate> {
+    const content = await renderToString(this.comp.render.call(this));
+    return [
+      `<script data-hscs-id="${this.id}">window.__hsc = window.__hsc || []; window.__hsc.push(${this.componentToString()})</script>`,
+      `<div data-hsc-id="${this.id}">`,
+      content,
+      '</div>',
+    ].join('\n');
   }
 }
 

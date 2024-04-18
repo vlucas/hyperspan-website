@@ -1,8 +1,7 @@
 import { renderToStream, renderToString } from './html';
-import App from '../../app/routes/__app';
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
-const STATIC_FILE_MATCHER = /[^/\\&\?]+\.\w{3,6}(?=([\?&].*$|$))/;
+const STATIC_FILE_MATCHER = /[^/\\&\?]+\.([a-zA-Z]+)$/;
 
 // Cached route components
 const _routeCache: { [key: string]: any } = {};
@@ -56,6 +55,10 @@ export async function useFilesystemRouter(req: Request) {
   const RouteComponent = RouteModule.default;
   const reqMethod = req.method.toUpperCase();
 
+  // Middleware?
+  // @TODO: Add middleware support...
+  const middleware = RouteModule.middleware || {}; // Example: { auth: apiAuth, logger: logMiddleware, }
+
   // API Route?
   if (RouteComponent === undefined && RouteModule[reqMethod] !== undefined) {
     return await RouteModule[reqMethod](req);
@@ -69,11 +72,11 @@ export async function useFilesystemRouter(req: Request) {
   }
 
   if (streamingEnabled && !requestIsBot(req)) {
-    return new StreamResponse(renderToStream(await App(req, routeContent))) as Response;
+    return new StreamResponse(renderToStream(routeContent)) as Response;
   } else {
     // Render content and template
     // TODO: Use any context variables from RouteComponent rendering to set values in layout (dynamic title, etc.)...
-    const html = await renderToString(await App(req, routeContent));
+    const html = await renderToString(routeContent);
 
     // Render it...
     return new Response(html, {
@@ -88,7 +91,15 @@ export type THSServerConfig = {
   // Can intercept the current request and return a custom Response
   onRequest: (req: Request) => void | Response | StreamResponse;
 };
-export function createServer(config: THSServerConfig) {
+
+/**
+ * Create and start Bun HTTP server
+ */
+export async function createServer(config: THSServerConfig) {
+  // Build client JS bundle so it is available for templates when streaming starts
+  await buildClientJS();
+
+  // Start server
   return Bun.serve({
     port: process.env.PORT || 3005,
     async fetch(req) {
@@ -112,6 +123,22 @@ export function createServer(config: THSServerConfig) {
       return new Response(null, { status: 404 });
     },
   });
+}
+
+/**
+ * Build client JS for end users (minimal JS for Hyperspan to work)
+ */
+export let clientJSFile: string;
+export async function buildClientJS() {
+  const output = await Bun.build({
+    entrypoints: ['./src/hyperspan/clientjs/hyperspan-client.ts'],
+    outdir: `./public/_hs/js`,
+    naming: IS_PROD ? '[dir]/[name]-[hash].[ext]' : undefined,
+    minify: IS_PROD,
+  });
+
+  clientJSFile = output.outputs[0].path.split('/').reverse()[0];
+  return clientJSFile;
 }
 
 /**
