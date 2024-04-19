@@ -1,38 +1,6 @@
-import { clientComponent, html, HSTemplate, HSClientTemplate } from '@hyperspan/html';
+import { html, HSTemplate } from '@hyperspan/html';
 import MarketingLayout from '@app/layouts/MarketingLayout';
-
-const ClientButton = clientComponent({
-  initialState({ args }) {
-    return { count: args[0] ?? 0 };
-  },
-  mount() {
-    console.log('Client component mounted!');
-    setTimeout(() => {
-      this.mergeState({ count: this.state.count + 1 });
-    }, 1000);
-  },
-  render() {
-    return html`<div>
-      Count is: ${this.state.count ?? 0}
-      <button
-        class="btn btn-primary"
-        onClick=${(comp: HSClientTemplate) => {
-          comp.setState({ count: comp.state.count + 1 });
-        }}
-      >
-        Increment
-      </button>
-      <button
-        class="btn btn-primary"
-        onClick=${(comp: HSClientTemplate) => {
-          comp.setState({ count: comp.state.count - 1 });
-        }}
-      >
-        Decrement
-      </button>
-    </div>`;
-  },
-});
+import ClientButton from '@app/components/Counter';
 
 export default function IndexPage(req: Request): Promise<HSTemplate> {
   return MarketingLayout({
@@ -51,10 +19,14 @@ export default function IndexPage(req: Request): Promise<HSTemplate> {
             </div>
           </div>
         </div>
-        <h1>Hyperspan</h1>
-        <h2>Simple. Server. Streaming.</h2>
-        <hr />
-        ${ClientButton(1)}
+
+        <div class="mt-12 card lg:card-side bg-base-300 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title">Client Components</h2>
+            <p>Just use a special syntax for client components...</p>
+          </div>
+          <figure class="p-10">${ClientButton({ count: 1 })}</figure>
+        </div>
       </main>
     `,
   });

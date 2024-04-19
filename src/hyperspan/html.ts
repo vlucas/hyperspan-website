@@ -55,14 +55,14 @@ async function* _render(
   promises: Array<TRenderPromise> = [],
   { js }: { js: string[] }
 ): AsyncGenerator<string> {
-  if (!obj) {
+  if (obj === undefined || obj === null) {
     return '';
   }
 
   let { kind, value } = obj;
   let id = randomId();
 
-  if (!kind || !value) {
+  if (!kind || value === undefined) {
     kind = _typeOf(obj);
     value = obj;
   }
@@ -176,9 +176,9 @@ export type THSUserState = {
 };
 export type THSClientComponent = {
   id?: string;
-  args?: any;
+  props?: any;
   state?: any;
-  initialState?: ({ args }: { args: any[] }) => THSUserState;
+  initialState?: ({ props }: { props: THSClientComponentProps }) => THSUserState;
   mount?: () => void;
   render: () => HSTemplate;
 };
@@ -187,9 +187,10 @@ export type THSClientComponent = {
  * Client component - Runs BOTH on ther sever (initial render), AND on the client. Results in JavaScript being sent to
  * the client and extra work done in the browser
  */
+export type THSClientComponentProps = Record<string, any>;
 export function clientComponent<T>(clientTmpl: THSClientComponent) {
-  return (...args: any[]) => {
-    const c = new HSClientTemplate(clientTmpl, args);
+  return (props: THSClientComponentProps) => {
+    const c = new HSClientTemplate(clientTmpl, props);
 
     return c;
   };
@@ -199,14 +200,18 @@ export class HSClientTemplate {
   __hsTemplate = true;
   id: string;
   comp;
-  args;
+  props;
   state: any = {};
   __updateFn: any;
-  constructor(comp: THSClientComponent, args: any[]) {
+  constructor(comp: THSClientComponent, props: THSClientComponentProps) {
     this.id = comp.id || randomId();
     this.comp = comp;
-    this.args = args;
-    this.state = comp.state || {};
+    this.props = props;
+    this.state = this.comp.state
+      ? this.comp.state
+      : this.comp.initialState
+        ? this.comp.initialState({ props })
+        : {};
   }
   mount() {
     return this.comp.mount && this.comp.mount.call(this);
@@ -227,8 +232,8 @@ export class HSClientTemplate {
   componentToString() {
     return `{
       id: '${this.id}',
-      args: ${JSON.stringify(this.args)},
-      state: ${JSON.stringify(this.comp.initialState ? this.comp.initialState({ args: this.args }) : {})},
+      props: ${JSON.stringify(this.props)},
+      state: ${JSON.stringify(this.state)},
       ${this.comp.mount ? this.comp.mount : ''},
       ${this.comp.render},
     }`;
