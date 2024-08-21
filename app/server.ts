@@ -1,9 +1,12 @@
-import { createServer, useFilesystemRouter } from '@hyperspan/server';
+import { createServer } from '@hyperspan/server';
 
-createServer({
+const app = await createServer({
   appDir: './app',
   staticFileRoot: './public',
-  onRequest(req: Request) {
-    return useFilesystemRouter(req);
+});
+
+Bun.serve({
+  fetch(req: Request): Promise<Response> {
+    return app.run(req);
   },
 });

@@ -1,8 +1,8 @@
 import { html } from '@hyperspan/html';
-import { clientJSFile } from './server';
+import { clientCSSFile, clientJSFile } from './server';
 
 export function HyperspanStyles() {
-  return html`<link rel="stylesheet" href="/styles.css" />`;
+  return html`<link rel="stylesheet" href="/_hs/css/${clientCSSFile}" />`;
 }
 
 export function HyperspanScripts() {

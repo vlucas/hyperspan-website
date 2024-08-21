@@ -1,7 +1,7 @@
-import { html, HSTemplate } from '@hyperspan/html';
+import { html } from '@hyperspan/html';
 import MarketingLayout from '@app/layouts/MarketingLayout';
 
-export default function IndexPage(req: Request): Promise<HSTemplate> {
+export default function IndexPage(req: Request) {
   return MarketingLayout({
     title: 'Components from DaisyUI',
     children: html`

@@ -1,4 +1,9 @@
-import { renderToStream, renderToString } from './html';
+import { readdir } from 'node:fs/promises';
+import { basename, extname, join } from 'node:path';
+import { html, renderToStream, renderToString } from './html';
+import { isbot } from 'isbot';
+import { HSTemplate } from './html';
+import { HSApp, HSRequestContext, normalizePath } from './app';
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
 const STATIC_FILE_MATCHER = /[^/\\&\?]+\.([a-zA-Z]+)$/;
@@ -12,43 +17,27 @@ const _routeCache: { [key: string]: any } = {};
 function requestIsBot(req: Request) {
   const ua = req.headers.get('User-Agent');
 
-  return ua && typeof ua === 'string' ? ua.includes('bot') : false;
+  return ua ? isbot(ua) : false;
 }
 
-export async function useFilesystemRouter(req: Request) {
-  const router = new Bun.FileSystemRouter({
-    style: 'nextjs',
-    dir: './app/routes',
-    // origin: "https://mydomain.com",
-    assetPrefix: '_hs/static/',
-  });
-
+/**
+ * Run route from file
+ */
+export async function runFileRoute(routeFile: string, context: HSRequestContext) {
+  const req = context.req;
   const url = new URL(req.url);
   const qs = url.searchParams;
-  const matchingRoute = router.match(req.url);
-
-  if (!matchingRoute) {
-    return new Response('Not found!', {
-      status: 404,
-      headers: { 'content-type': 'text/html' },
-    });
-  }
-
-  // Redirect to canonical URL so there are no dupe URLs
-  if (matchingRoute.kind === 'exact' && url.pathname !== matchingRoute.name) {
-    return Response.redirect(matchingRoute.name, 301);
-  }
 
   // @TODO: Move this to config or something...
   const streamOpt = qs.get('__nostream') ? !Boolean(qs.get('__nostream')) : undefined;
   const streamingEnabled = streamOpt !== undefined ? streamOpt : true;
 
   // Import route component
-  const RouteModule = _routeCache[matchingRoute.name] || (await import(matchingRoute.filePath));
+  const RouteModule = _routeCache[routeFile] || (await import(routeFile));
 
   if (IS_PROD) {
     // Only cache routes in prod
-    _routeCache[matchingRoute.name] = RouteModule;
+    _routeCache[routeFile] = RouteModule;
   }
 
   // Route module
@@ -56,73 +45,223 @@ export async function useFilesystemRouter(req: Request) {
   const reqMethod = req.method.toUpperCase();
 
   // Middleware?
-  // @TODO: Add middleware support...
-  const middleware = RouteModule.middleware || {}; // Example: { auth: apiAuth, logger: logMiddleware, }
+  const routeMiddleware = RouteModule.middleware || {}; // Example: { auth: apiAuth, logger: logMiddleware, }
+  const middlewareResult: any = {};
 
-  // API Route?
-  if (RouteComponent === undefined && RouteModule[reqMethod] !== undefined) {
-    return await RouteModule[reqMethod](req);
+  try {
+    // Run middleware if present...
+    if (Object.keys(routeMiddleware).length) {
+      for (const mKey in routeMiddleware) {
+        const mRes = await routeMiddleware[mKey](req);
+
+        if (mRes instanceof Response) {
+          return mRes;
+        }
+
+        middlewareResult[mKey] = mRes;
+      }
+    }
+
+    // API Route?
+    if (RouteModule[reqMethod] !== undefined) {
+      return await runAPIRoute(RouteModule[reqMethod], req, middlewareResult);
+    }
+
+    // Route component
+    const routeContent = await RouteComponent(req, middlewareResult);
+
+    if (routeContent instanceof Response) {
+      return routeContent;
+    }
+
+    if (streamingEnabled && !requestIsBot(req)) {
+      return new StreamResponse(renderToStream(routeContent)) as Response;
+    } else {
+      // Render content and template
+      // TODO: Use any context variables from RouteComponent rendering to set values in layout (dynamic title, etc.)...
+      const output = await renderToString(routeContent);
+
+      // Render it...
+      return new Response(output, {
+        headers: { 'content-type': 'text/html' },
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    return await showErrorReponse(req, e as Error);
   }
+}
 
-  // Route component
-  const routeContent = await RouteComponent(req);
+/**
+ * Run route and handle response
+ */
+async function runAPIRoute(routeFn: any, req: Request, middlewareResult?: any) {
+  try {
+    return await routeFn(req, middlewareResult);
+  } catch (err) {
+    const e = err as Error;
+    console.error(e);
 
-  if (routeContent instanceof Response) {
-    return routeContent;
+    return new Response(
+      JSON.stringify({
+        meta: { success: false },
+        data: {
+          message: e.message,
+          stack: IS_PROD ? undefined : e.stack?.split('\n'),
+        },
+      }),
+      { status: 500 }
+    );
   }
+}
 
-  if (streamingEnabled && !requestIsBot(req)) {
-    return new StreamResponse(renderToStream(routeContent)) as Response;
-  } else {
-    // Render content and template
-    // TODO: Use any context variables from RouteComponent rendering to set values in layout (dynamic title, etc.)...
-    const html = await renderToString(routeContent);
+/**
+ * Basic error handling
+ * @TODO: Should check for and load user-customizeable template with special name (app/__error.ts ?)
+ */
+async function showErrorReponse(req: Request, err: Error) {
+  const output = await renderToString(html`
+    <main>
+      <h1>Error</h1>
+      <pre>${err.message}</pre>
+      <pre>${!IS_PROD && err.stack ? err.stack.split('\n').slice(1).join('\n') : ''}</pre>
+    </main>
+  `);
 
-    // Render it...
-    return new Response(html, {
-      headers: { 'content-type': 'text/html' },
-    });
-  }
+  return new Response(output, {
+    headers: { 'content-type': 'text/html' },
+    status: 500,
+  });
 }
 
 export type THSServerConfig = {
   appDir: string;
   staticFileRoot: string;
-  // Can intercept the current request and return a custom Response
-  onRequest: (req: Request) => void | Response | StreamResponse;
+  // For customizing the routes and adding your own...
+  beforeRoutesAdded?: (app: HSApp) => void;
+  afterRoutesAdded?: (app: HSApp) => void;
 };
+
+export type THSRouteMap = {
+  file: string;
+  route: string;
+  params: string[];
+};
+
+/**
+ * Build routes
+ */
+const ROUTE_SEGMENT = /(\[[a-zA-Z_\.]+\])/g;
+export async function buildRoutes(config: THSServerConfig): Promise<THSRouteMap[]> {
+  // Walk all pages and add them as routes
+  const routesDir = join(config.appDir, 'routes');
+  const files = await readdir(routesDir, { recursive: true });
+  const routes: THSRouteMap[] = [];
+
+  for (const file of files) {
+    // No directories
+    if (!file.includes('.') || basename(file).startsWith('.')) {
+      continue;
+    }
+
+    let route = '/' + file.replace(extname(file), '');
+
+    // Index files
+    if (route.endsWith('index')) {
+      route = route === 'index' ? '/' : route.substring(0, route.length - 6);
+    }
+
+    // Dynamic params
+    let params: string[] = [];
+    const dynamicPaths = ROUTE_SEGMENT.test(route);
+
+    if (dynamicPaths) {
+      params = [];
+      route = route.replace(ROUTE_SEGMENT, (match: string, p1: string, offset: number) => {
+        const paramName = match.replace(/[^a-zA-Z_\.]+/g, '');
+
+        if (match.includes('...')) {
+          params.push(paramName.replace('...', ''));
+          return '*';
+        } else {
+          params.push(paramName);
+          return ':' + paramName;
+        }
+      });
+    }
+
+    routes.push({
+      file,
+      route: route || '/',
+      params,
+    });
+  }
+
+  return routes;
+}
 
 /**
  * Create and start Bun HTTP server
  */
-export async function createServer(config: THSServerConfig) {
-  // Build client JS bundle so it is available for templates when streaming starts
-  await buildClientJS();
+export async function createServer(config: THSServerConfig): Promise<HSApp> {
+  // Build client JS and CSS bundles so they are available for templates when streaming starts
+  await Promise.all([buildClientJS(), buildClientCSS()]);
 
-  // Start server
-  return Bun.serve({
-    port: process.env.PORT || 3005,
-    async fetch(req) {
-      // Static files
-      if (STATIC_FILE_MATCHER.test(req.url)) {
-        const filePath = config.staticFileRoot + new URL(req.url).pathname;
-        const file = Bun.file(filePath);
-        return new Response(file);
-      }
+  const app = new HSApp();
 
-      // Run onRequest
-      const matchedRoute = config.onRequest(req);
+  app.defaultRoute(() => {
+    return new Response('Not... found?', { status: 404 });
+  });
 
+  // [Customization] Before routes added...
+  config.beforeRoutesAdded && config.beforeRoutesAdded(app);
+
+  // Scan routes folder and add all file routes to the router
+  const fileRoutes = await buildRoutes(config);
+
+  for (let i = 0; i < fileRoutes.length; i++) {
+    let route = fileRoutes[i];
+    const fullRouteFile = join('../../', config.appDir, 'routes', route.file);
+    const routePattern = normalizePath(route.route);
+
+    console.log('[Hyperspan] Added route: ', routePattern);
+
+    app.all(routePattern, async (context) => {
+      const matchedRoute = await runFileRoute(fullRouteFile, context);
       if (matchedRoute) {
         return matchedRoute as Response;
       }
 
-      return new Response(null, { status: 404 });
-    },
-    error() {
-      return new Response(null, { status: 404 });
-    },
+      return app._defaultRoute(context);
+    });
+  }
+
+  // [Customization] After routes added...
+  config.afterRoutesAdded && config.afterRoutesAdded(app);
+
+  // Static files and catchall
+  app.all('*', (context) => {
+    const req = context.req;
+
+    // Static files
+    if (STATIC_FILE_MATCHER.test(req.url)) {
+      const filePath = config.staticFileRoot + new URL(req.url).pathname;
+      const file = Bun.file(filePath);
+      let headers = {};
+
+      if (IS_PROD) {
+        headers = {
+          'cache-control': 'public, max-age=31557600',
+        };
+      }
+
+      return new Response(file, { headers });
+    }
+
+    return app._defaultRoute(context);
   });
+
+  return app;
 }
 
 /**
@@ -139,6 +278,34 @@ export async function buildClientJS() {
 
   clientJSFile = output.outputs[0].path.split('/').reverse()[0];
   return clientJSFile;
+}
+
+/**
+ * Find client CSS file built for end users
+ * @TODO: Build this in code here vs. relying on tailwindcss CLI tool from package scripts
+ */
+export let clientCSSFile: string;
+export async function buildClientCSS() {
+  if (clientCSSFile) {
+    return clientCSSFile;
+  }
+
+  // Find file already built from tailwindcss CLI
+  const cssDir = './public/_hs/css/';
+  const cssFiles = await readdir(cssDir);
+
+  for (const file of cssFiles) {
+    // Only looking for CSS files
+    if (clientCSSFile || !file.endsWith('.css')) {
+      continue;
+    }
+
+    return (clientCSSFile = file.replace(cssDir, ''));
+  }
+
+  if (!clientCSSFile) {
+    throw new Error(`Unable to build CSS files from ${cssDir}`);
+  }
 }
 
 /**
@@ -180,4 +347,22 @@ export function createReadableStreamFromAsyncGenerator(output: AsyncGenerator) {
       }
     },
   });
+}
+
+/**
+ * Form route
+ * Automatically handles and parses form data
+ *
+ * 1. Renders component as initial form markup
+ * 2. Bind form onSubmit function to custom client JS handling
+ * 3. Submits form with JavaScript fetch()
+ * 4. Replaces form content with content from server
+ * 5. All validation and save logic is on the server
+ * 6. Handles any Exception thrown on server as error displayed in client
+ */
+export type TFormRouteFn = (req: Request) => HSTemplate | Response;
+export function formRoute(handlerFn: TFormRouteFn) {
+  return function _formRouteHandler(req: Request) {
+    // @TODO: Parse form data and pass it into form route handler
+  };
 }

@@ -1,6 +1,7 @@
 import escapeHTML from 'escape-html';
-// @ts-ignore
-import mixin from 'mixin-deep';
+import { md5 } from './clientjs/md5';
+
+const IS_CLIENT = typeof window !== 'undefined';
 
 /**
  * Template object - used so it will be possible to (eventually) pass down context
@@ -43,6 +44,10 @@ export function html(strings: TemplateStringsArray, ...values: any[]): HSTemplat
 
   return new HSTemplate(content);
 }
+// Allow raw/unescaped HTML
+html.raw = (value: string) => {
+  return new HSTemplate([{ kind: 'string_safe', value }]);
+};
 
 type TRenderPromise = {
   id: string;
@@ -55,21 +60,17 @@ async function* _render(
   promises: Array<TRenderPromise> = [],
   { js }: { js: string[] }
 ): AsyncGenerator<string> {
-  if (obj === undefined || obj === null) {
-    return '';
-  }
-
   let { kind, value } = obj;
   let id = randomId();
 
-  if (!kind || value === undefined) {
+  if (!kind || !value) {
     kind = _typeOf(obj);
     value = obj;
   }
 
   if (value instanceof HSTemplate) {
     yield* renderToStream(value);
-  } else if (value instanceof HSClientTemplate) {
+  } else if (typeof value.render !== 'undefined') {
     value.id = id;
     yield await value.render();
   } else if (value === undefined || value === null) {
@@ -91,13 +92,18 @@ async function* _render(
         });
         const pid = 'async_' + id;
         promises.push({ id: pid, pending: true, promise });
-        yield* renderToStream(
-          html`<div id="${pid}" class="loading loading-spinner loading-sm">Loading...</div>`
-        );
+        yield* renderToStream(html`<div id="${pid}">Loading...</div>`);
         break;
       case 'function':
-        js.push(`window.__hs.fn('${id}', ${value.toString()})`);
-        yield `"javascript:window.__hs.fnc('${id}')"`;
+        const fns = renderFunctionToString(value);
+        const fnId = 'fn_' + md5(fns);
+
+        // @ts-ignore
+        if (!IS_CLIENT || !window.hyperspan._fn.has(fnId)) {
+          js.push(`hyperspan.fn('${fnId}', ${fns});`);
+        }
+
+        yield `"hyperspan:${fnId}"`;
         break;
       case 'json':
         yield ''; //JSON.stringify(value);
@@ -171,84 +177,6 @@ export async function renderToString(template: HSTemplate | string): Promise<str
   return result;
 }
 
-export type THSUserState = {
-  [key: string]: any;
-};
-export type THSClientComponent = {
-  id?: string;
-  props?: any;
-  state?: any;
-  initialState?: ({ props }: { props: THSClientComponentProps }) => THSUserState;
-  mount?: () => void;
-  render: () => HSTemplate;
-};
-
-/**
- * Client component - Runs BOTH on ther sever (initial render), AND on the client. Results in JavaScript being sent to
- * the client and extra work done in the browser
- */
-export type THSClientComponentProps = Record<string, any>;
-export function clientComponent<T>(clientTmpl: THSClientComponent) {
-  return (props: THSClientComponentProps) => {
-    const c = new HSClientTemplate(clientTmpl, props);
-
-    return c;
-  };
-}
-
-export class HSClientTemplate {
-  __hsTemplate = true;
-  id: string;
-  comp;
-  props;
-  state: any = {};
-  __updateFn: any;
-  constructor(comp: THSClientComponent, props: THSClientComponentProps) {
-    this.id = comp.id || randomId();
-    this.comp = comp;
-    this.props = props;
-    this.state = this.comp.state
-      ? this.comp.state
-      : this.comp.initialState
-        ? this.comp.initialState({ props })
-        : {};
-  }
-  mount() {
-    return this.comp.mount && this.comp.mount.call(this);
-  }
-  setState<T>(newState: THSUserState): T {
-    this.state = newState;
-    this.__updateFn && this.__updateFn(this);
-    return this.state;
-  }
-  mergeState<T>(newState: Partial<THSUserState>): T {
-    this.state = mixin(this.state, newState);
-    this.__updateFn && this.__updateFn(this);
-    return this.state;
-  }
-  _onUpdate(fn: any) {
-    this.__updateFn = fn;
-  }
-  componentToString() {
-    return `{
-      id: '${this.id}',
-      props: ${JSON.stringify(this.props)},
-      state: ${JSON.stringify(this.state)},
-      ${this.comp.mount ? this.comp.mount : ''},
-      ${this.comp.render},
-    }`;
-  }
-  async render(): Promise<string | HSTemplate> {
-    const content = await renderToString(this.comp.render.call(this));
-    return [
-      `<script data-hscs-id="${this.id}">window.__hsc = window.__hsc || []; window.__hsc.push(${this.componentToString()})</script>`,
-      `<div data-hsc-id="${this.id}">`,
-      content,
-      '</div>',
-    ].join('\n');
-  }
-}
-
 /**
  * Strip extra spacing between HTML tags (used for tests)
  */
@@ -288,4 +216,127 @@ function isGenerator(obj: any): boolean {
 
 function isPlainObject(val: any) {
   return Object == val.constructor;
+}
+
+/**
+ * Client component
+ */
+export type THSWCState = Record<string, any>;
+export type THSWCSetStateArg = THSWCState | ((state: THSWCState) => THSWCState);
+export type THSWC = {
+  this: THSWC;
+  state: THSWCState | undefined;
+  id: string;
+  setState: (fn: THSWCSetStateArg) => THSWCState;
+  mergeState: (newState: THSWCState) => THSWCState;
+  render: () => any;
+};
+export type THSWCUser = Pick<THSWC, 'render'> & Record<string, any>;
+export function clientComponent(id: string, wc: THSWCUser) {
+  const comp = {
+    ...wc,
+    state: wc.state || {},
+    id,
+    randomId() {
+      return Math.random().toString(36).substring(2, 9);
+    },
+    setState(fn: THSWCSetStateArg): THSWCState {
+      try {
+        const val = typeof fn === 'function' ? fn(this.state) : fn;
+        this.state = val;
+        const el = document.getElementById(this.id);
+        if (el) {
+          el.dataset.state = JSON.stringify(val);
+          //this.render();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return this.state;
+    },
+    mergeState(newState: THSWCState): THSWCState {
+      return this.setState(Object.assign(this.state, newState));
+    },
+  };
+
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.hyperspan.wc.set(id, comp);
+  }
+
+  return (attrs?: Record<string, string>, state?: Record<string, any>) => {
+    const _state = Object.assign({}, comp.state, state || {});
+    return html`
+      <script>
+        ${html.raw(renderObjectToLiteralString(comp))};
+      </script>
+      <hs-wc id="${attrs?.id || id}" data-state="${JSON.stringify(_state)}"></hs-wc>
+    `;
+  };
+}
+
+export function renderFunctionToString(fn: Function): string {
+  let fns = fn.toString();
+  const firstLine = fns.split('\n')[0];
+  const isFatArrow = firstLine.includes('=>');
+  const isAsync = firstLine.includes('async');
+  const hasFunctionWord = firstLine.includes('function');
+
+  // Ensure word 'function' is present
+  if (isFatArrow) {
+    fns = 'function (...args) { return (' + fns + ')(..args); }';
+  } else {
+    // Class methods can omit the 'function' word without being a fat arrow function
+    if (!hasFunctionWord) {
+      fns = 'function ' + fns;
+    }
+  }
+
+  // Ensure 'async' is first word in function declration
+  if (isAsync) {
+    fns = 'async ' + fns.replace('async ', '');
+  }
+
+  return fns;
+}
+
+/**
+ * Render object out to string literal (one level only)
+ */
+function renderObjectToLiteralString(obj: Record<string, any>): string {
+  const lines: string[][] = [];
+
+  let str = 'hyperspan.wc.set("' + obj.id + '", {\n';
+
+  for (const prop in obj) {
+    const kind = _typeOf(obj[prop]);
+    let val = obj[prop];
+
+    switch (kind) {
+      case 'string':
+        lines.push([prop, ': ', '"' + val + '"']);
+        break;
+      case 'object':
+      case 'json':
+        lines.push([prop, ': ', "JSON.parse('" + JSON.stringify(val) + "')"]);
+        break;
+      case 'function':
+        const fn = val.toString();
+        const isFatArrow = fn.split('\n')[0].includes('=>');
+
+        if (isFatArrow) {
+          lines.push([prop, ': ', fn]);
+        } else {
+          lines.push([fn]);
+        }
+        break;
+      default:
+        lines.push([prop, ': ', val]);
+    }
+  }
+
+  str += lines.map((line) => line.join('') + ',').join('\n');
+  str += '\n})';
+
+  return str;
 }

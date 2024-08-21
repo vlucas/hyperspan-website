@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { compressHTMLString, html, renderToString, renderToStream } from './html';
+import { compressHTMLString, html, renderToString, renderFunctionToString } from './html';
 
 describe('html', () => {
   const htmlPromise1 = () => Promise.resolve('content_promise1');
@@ -57,4 +57,13 @@ describe('html', () => {
     });
   });
   */
+
+  describe('renderFunctionToString', () => {
+    it('should render fat arrow function to string', async () => {
+      const fn = () => 'blah!';
+      const fns = renderFunctionToString(fn);
+
+      expect(fns).toEqual("function () { return 'blah'; }");
+    });
+  });
 });
