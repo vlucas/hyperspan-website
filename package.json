@@ -5,11 +5,12 @@
     "build:styles": "npm run clean:styles && npx @tailwindcss/cli -i ./app/styles/globals.css -o ./public/_hs/css/styles-$(date \"+%Y%m%d%H%M%S\").css --minify",
     "build:styles:dev": "npm run clean:styles && npx @tailwindcss/cli -i ./app/styles/globals.css -o ./public/_hs/css/styles-$(date \"+%Y%m%d%H%M%S\").css --watch",
     "clean:styles": "rm ./public/styles-*.css 2> /dev/null || true && rm ./public/_hs/css/styles-*.css 2> /dev/null || true",
-    "dev": "npm run build:styles && PORT=3005 npm run --hot app/server.ts",
+    "dev": "npm run build:styles && PORT=3006 npm run --hot app/server.ts",
     "start": "npm run build:styles && npm run app/server.ts",
     "test": "bun test"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@types/bun": "^1.1.9",
     "@types/node": "^22.5.5",
     "@types/react": "^19.1.0",

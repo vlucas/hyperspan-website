@@ -1,7 +1,7 @@
 import { html } from '@/src/hyperspan/html';
 import { hyperspanScriptTags, hyperspanStyleTags } from '@/src/hyperspan/assets';
 
-export default async function MarketingLayout({ title, content }: { title: string; content: any }) {
+export default function MarketingLayout({ title, content }: { title: string; content: any }) {
   return html`
     <!doctype html>
     <html class="w-full h-full" lang="en" data-theme="sunset">
@@ -30,8 +30,7 @@ export default async function MarketingLayout({ title, content }: { title: strin
           </div>
           <div class="flex-1">
             <ul class="menu menu-horizontal px-1">
-              <li><a href="/components">Components</a></li>
-              <li><a href="/search">SRP + Map Example</a></li>
+              <li><a href="/docs">Documentation</a></li>
             </ul>
           </div>
           <div class="flex-none">
