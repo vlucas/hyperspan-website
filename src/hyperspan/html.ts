@@ -1,200 +1,188 @@
-import escapeHTML from 'escape-html';
-import { md5 } from './clientjs/md5';
+import escapeHtml from './escape-html';
 
-const IS_CLIENT = typeof window !== 'undefined';
+export class TmplHtml {
+  content = '';
+  asyncContent: Array<{
+    id: string;
+    promise: Promise<{ id: string; value: unknown }>;
+  }>;
 
-/**
- * Template object - used so it will be possible to (eventually) pass down context
- */
-export class HSTemplate {
-  __hsTemplate = true;
-  content: any[];
-  constructor(content: any[]) {
-    this.content = content;
+  constructor(props: TmplHtml) {
+    this.content = props.content;
+    this.asyncContent = props.asyncContent;
   }
 }
 
-/**
- * HTML template
- */
-export function html(strings: TemplateStringsArray, ...values: any[]): HSTemplate {
-  const content: any[] = [];
+let htmlId = 0;
+export function html(strings: TemplateStringsArray, ...values: any[]): TmplHtml {
+  const asyncContent: TmplHtml['asyncContent'] = [];
 
-  // String templates only?
-  if (values.length === 0) {
-    content.push({ kind: 'string_safe', value: strings.join('\n') });
-    return new HSTemplate(content);
-  }
+  let content = '';
+  for (let i = 0; i < strings.length; i++) {
+    let value = values[i];
+    let renderValue: string | undefined;
 
-  let i = 0;
-  for (i = 0; i < values.length; i++) {
-    content.push({ kind: 'string_safe', value: strings[i] });
+    // Any scalar value
+    if (value !== null && value !== undefined) {
+      let id = `async_loading_${htmlId++}`;
+      let kind = _typeOf(value);
 
-    let tValue = values[i] === undefined || values[i] === null || values[i] === '' ? '' : values[i];
-
-    if (!Array.isArray(tValue)) {
-      tValue = [tValue];
+      if (!renderValue) {
+        renderValue = _renderValue(value, { id, kind, asyncContent }) || '';
+      }
     }
 
-    for (let j = 0; j < tValue.length; j++) {
-      content.push({ kind: _typeOf(tValue[j]), value: tValue[j] });
-    }
+    content += strings[i] + (renderValue ? renderValue : '');
   }
-  content.push({ kind: 'string_safe', value: strings[i] });
-
-  return new HSTemplate(content);
+  return new TmplHtml({ content, asyncContent });
 }
-// Allow raw/unescaped HTML
-html.raw = (value: string) => {
-  return new HSTemplate([{ kind: 'string_safe', value }]);
-};
+// Insert raw HTML as string (do not escape HTML characters)
+html.raw = (content: string) => ({ _kind: 'html_safe', content });
 
-type TRenderPromise = {
-  id: string;
-  pending: boolean;
-  value?: any;
-  promise: Promise<any>;
-};
-async function* _render(
-  obj: any,
-  promises: Array<TRenderPromise> = [],
-  { js }: { js: string[] }
-): AsyncGenerator<string> {
-  let { kind, value } = obj;
-  let id = randomId();
-
-  if (!kind || !value) {
-    kind = _typeOf(obj);
-    value = obj;
+// Render unknown value based on type
+// Will always render a string for every value (possibly empty)
+// MAY also push new items into 'asyncContent' option to resolve in the future
+function _renderValue(
+  value: unknown,
+  opts: { kind?: string; id?: string; asyncContent: any[] } = {
+    kind: undefined,
+    id: undefined,
+    asyncContent: [],
   }
+): string {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return '';
+  }
+  const kind = opts.kind || _typeOf(value);
+  const id = opts.id || '';
 
-  if (value instanceof HSTemplate) {
-    yield* renderToStream(value);
-  } else if (typeof value.render !== 'undefined') {
-    value.id = id;
-    yield await value.render();
-  } else if (value === undefined || value === null) {
-    yield '';
-  } else {
-    switch (kind) {
-      case 'string':
-        yield escapeHTML(value);
-        break;
-      case 'string_safe':
-        yield value;
-        break;
-      case 'array':
-        yield* value;
-        break;
-      case 'promise':
-        const promise = value.then((v: unknown) => {
-          return _render(v, promises, { js });
-        });
-        const pid = 'async_' + id;
-        promises.push({ id: pid, pending: true, promise });
-        yield* renderToStream(html`<div id="${pid}">Loading...</div>`);
-        break;
-      case 'function':
-        const fns = renderFunctionToString(value);
-        const fnId = 'fn_' + md5(fns);
-
+  switch (kind) {
+    case 'array':
+      return (value as any[])
+        .map((v) => _renderValue(v, { id, asyncContent: opts.asyncContent }))
+        .join('');
+    case 'object':
+      // THtmlReturn (HTML template)
+      if (value instanceof TmplHtml) {
+        opts.asyncContent.push(...value.asyncContent);
+        return value.content;
+      }
+      // @ts-ignore - this is "raw HTML" object - do not escape
+      if (value?._kind === 'html_safe') {
         // @ts-ignore
-        if (!IS_CLIENT || !window.hyperspan._fn.has(fnId)) {
-          js.push(`hyperspan.fn('${fnId}', ${fns});`);
-        }
-
-        yield `"hyperspan:${fnId}"`;
-        break;
-      case 'json':
-        yield ''; //JSON.stringify(value);
-        break;
-      case 'object':
-        if (typeof value.render === 'function') {
-          yield value.render();
-        } else if (typeof value.toString === 'function') {
-          yield value.toString();
-        } else {
-          yield value;
-        }
-        break;
-      case 'generator':
-        yield* value;
-        break;
-      case 'date':
-        yield value.toISOString();
-        break;
-      default:
-        yield String(value);
-    }
+        return value?.content || '';
+      }
+      // renderAsync() method
+      // @ts-ignore
+      if (typeof value.renderAsync === 'function') {
+        opts.asyncContent.push({
+          id,
+          // @ts-ignore
+          promise: value.renderAsync().then((result: unknown) => ({
+            id,
+            value: result,
+            asyncContent: opts.asyncContent,
+          })),
+        });
+      }
+      // render() method
+      // @ts-ignore
+      if (typeof value.render === 'function') {
+        // @ts-ignore
+        return render(_htmlPlaceholder(id, value.render()));
+      }
+      return JSON.stringify(value);
+    case 'promise':
+      opts.asyncContent.push({
+        id,
+        promise: (value as Promise<any>).then((result: unknown) => ({
+          id,
+          value: result,
+          asyncContent: opts.asyncContent,
+        })),
+      });
+      return render(_htmlPlaceholder(id));
+    case 'generator':
+      throw new Error('Generators are not supported as a template value at this time. Sorry :(');
   }
+
+  return escapeHtml(String(value));
 }
 
 /**
- * Render HSTemplate to async generator that streams output to a string
+ * Placeholder for async content.
+ * This will be replaced with the actual content when the async content is resolved.
  */
-export async function* renderToStream(template: HSTemplate | string): AsyncGenerator<string> {
-  let promises: Array<TRenderPromise> = [];
-  let js: string[] = [];
+function _htmlPlaceholder(id: string | number, content: any = 'Loading...') {
+  // prettier-ignore
+  return html`<!--hs:loading:${id}--><slot id="${id}">${content}</slot><!--/hs:loading:${id}-->`
+}
 
-  if (typeof template === 'string') {
-    return template;
-  }
+/**
+ * Renders all static markup and non-async content for provided template.
+ * This will NOT render any async content. For that, use renderAsync or renderStream.
+ */
+export function render(tmpl: TmplHtml): string {
+  return tmpl.content;
+}
 
-  for (let i = 0; i < template.content.length; i++) {
-    yield* _render(template.content[i], promises, { js });
-  }
+/**
+ * Render HTML and async content as one block and return string output
+ * This will wait for ALL async chunks in the template to resolve before rendering.
+ * If you want streaming rendering, use 'renderStream' instead.
+ */
+export async function renderAsync(tmpl: TmplHtml): Promise<string> {
+  let { content, asyncContent } = tmpl;
 
-  while (promises.length > 0) {
-    const promisesToRun = promises.map((p) =>
-      p.promise.then((v) => {
-        return { id: p.id, pending: false, value: v, promise: null };
-      })
-    );
-    const result = await Promise.race(promisesToRun);
+  while (asyncContent.length !== 0) {
+    // @TODO: Use Promise.allSettled() instead with error handling
+    const resolvedHtml = await Promise.all(asyncContent.map((p) => p.promise));
+    asyncContent = [];
+    resolvedHtml.map((obj) => {
+      const r = new RegExp(
+        `<\!\-\-hs:loading:${obj.id}\-\->(.*?)<\!\-\-/hs:loading:${obj.id}\-\->`
+      );
+      const found = content.match(r);
 
-    yield* renderToStream(html`<template id="${result.id}_content">${result.value}</template>`);
-
-    promises = promises.filter((p) => {
-      return p.id !== result.id;
+      if (found) {
+        content = content.replace(found[0], _renderValue(obj.value, { asyncContent }));
+      }
     });
   }
 
-  if (js.length !== 0) {
-    yield '<script>' + js.join('\n') + '</script>';
+  return content;
+}
+
+/**
+ * Render HTML as a stream (async generator)
+ * Uses Promise.race() to output new resolved chunks of HTML as soon as each promise resolves.
+ * Primary render method for streaming HTML from server
+ */
+export async function* renderStream(tmpl: TmplHtml): AsyncGenerator<string> {
+  yield render(tmpl);
+  let asyncContent = tmpl.asyncContent;
+
+  while (asyncContent.length > 0) {
+    // Resolve the next async content as soon as it is ready
+    const nextContent = await Promise.race(asyncContent.map((p) => p.promise));
+
+    // Remove current promise from list (resolved now)
+    asyncContent = asyncContent.filter((p) => p.id !== nextContent.id);
+
+    const id = nextContent.id;
+    const content = _renderValue(nextContent.value, {
+      asyncContent,
+    });
+    const script = html`<template id="${id}_content">${html.raw(content)}</template>`;
+
+    yield render(script);
   }
 }
 
 /**
- * Render HSTemplate to string (awaits/buffers entire response)
+ * LOL JavaScript typeof...
  */
-export async function renderToString(template: HSTemplate | string): Promise<string> {
-  let result = '';
-
-  for await (const chunk of renderToStream(template)) {
-    result += chunk;
-  }
-
-  return result;
-}
-
-/**
- * Strip extra spacing between HTML tags (used for tests)
- */
-export function compressHTMLString(str: string) {
-  return str.replace(/(<(pre|script|style|textarea)[^]+?<\/\2)|(^|>)\s+|\s+(?=<|$)/g, '$1$3');
-}
-
-/**
- * Generate random ID (used for promise/async resolver)
- */
-function randomId() {
-  return Math.random().toString(36).substring(2, 9);
-}
-
-/**
- * LOL JavaScript...
- */
-export function _typeOf(obj: any): string {
+function _typeOf(obj: any): string {
   if (obj instanceof Promise) return 'promise';
   if (obj instanceof Date) return 'date';
   if (obj instanceof String) return 'string';
@@ -202,11 +190,10 @@ export function _typeOf(obj: any): string {
   if (obj instanceof Boolean) return 'boolean';
   if (obj instanceof Function) return 'function';
   if (Array.isArray(obj)) return 'array';
-  if (Number.isNaN(obj)) return 'nan';
+  if (Number.isNaN(obj)) return 'NaN';
   if (obj === undefined) return 'undefined';
   if (obj === null) return 'null';
   if (isGenerator(obj)) return 'generator';
-  if (isPlainObject(obj)) return 'json';
   return typeof obj;
 }
 
@@ -214,129 +201,9 @@ function isGenerator(obj: any): boolean {
   return obj && 'function' == typeof obj.next && 'function' == typeof obj.throw;
 }
 
-function isPlainObject(val: any) {
-  return Object == val.constructor;
-}
-
 /**
- * Client component
+ * Strip extra spacing between HTML tags (used for tests)
  */
-export type THSWCState = Record<string, any>;
-export type THSWCSetStateArg = THSWCState | ((state: THSWCState) => THSWCState);
-export type THSWC = {
-  this: THSWC;
-  state: THSWCState | undefined;
-  id: string;
-  setState: (fn: THSWCSetStateArg) => THSWCState;
-  mergeState: (newState: THSWCState) => THSWCState;
-  render: () => any;
-};
-export type THSWCUser = Pick<THSWC, 'render'> & Record<string, any>;
-export function clientComponent(id: string, wc: THSWCUser) {
-  const comp = {
-    ...wc,
-    state: wc.state || {},
-    id,
-    randomId() {
-      return Math.random().toString(36).substring(2, 9);
-    },
-    setState(fn: THSWCSetStateArg): THSWCState {
-      try {
-        const val = typeof fn === 'function' ? fn(this.state) : fn;
-        this.state = val;
-        const el = document.getElementById(this.id);
-        if (el) {
-          el.dataset.state = JSON.stringify(val);
-          //this.render();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      return this.state;
-    },
-    mergeState(newState: THSWCState): THSWCState {
-      return this.setState(Object.assign(this.state, newState));
-    },
-  };
-
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    window.hyperspan.wc.set(id, comp);
-  }
-
-  return (attrs?: Record<string, string>, state?: Record<string, any>) => {
-    const _state = Object.assign({}, comp.state, state || {});
-    return html`
-      <script>
-        ${html.raw(renderObjectToLiteralString(comp))};
-      </script>
-      <hs-wc id="${attrs?.id || id}" data-state="${JSON.stringify(_state)}"></hs-wc>
-    `;
-  };
-}
-
-export function renderFunctionToString(fn: Function): string {
-  let fns = fn.toString();
-  const firstLine = fns.split('\n')[0];
-  const isFatArrow = firstLine.includes('=>');
-  const isAsync = firstLine.includes('async');
-  const hasFunctionWord = firstLine.includes('function');
-
-  // Ensure word 'function' is present
-  if (isFatArrow) {
-    fns = 'function (...args) { return (' + fns + ')(..args); }';
-  } else {
-    // Class methods can omit the 'function' word without being a fat arrow function
-    if (!hasFunctionWord) {
-      fns = 'function ' + fns;
-    }
-  }
-
-  // Ensure 'async' is first word in function declration
-  if (isAsync) {
-    fns = 'async ' + fns.replace('async ', '');
-  }
-
-  return fns;
-}
-
-/**
- * Render object out to string literal (one level only)
- */
-function renderObjectToLiteralString(obj: Record<string, any>): string {
-  const lines: string[][] = [];
-
-  let str = 'hyperspan.wc.set("' + obj.id + '", {\n';
-
-  for (const prop in obj) {
-    const kind = _typeOf(obj[prop]);
-    let val = obj[prop];
-
-    switch (kind) {
-      case 'string':
-        lines.push([prop, ': ', '"' + val + '"']);
-        break;
-      case 'object':
-      case 'json':
-        lines.push([prop, ': ', "JSON.parse('" + JSON.stringify(val) + "')"]);
-        break;
-      case 'function':
-        const fn = val.toString();
-        const isFatArrow = fn.split('\n')[0].includes('=>');
-
-        if (isFatArrow) {
-          lines.push([prop, ': ', fn]);
-        } else {
-          lines.push([fn]);
-        }
-        break;
-      default:
-        lines.push([prop, ': ', val]);
-    }
-  }
-
-  str += lines.map((line) => line.join('') + ',').join('\n');
-  str += '\n})';
-
-  return str;
+export function compressHTMLString(str: string) {
+  return str.replace(/(<(pre|script|style|textarea)[^]+?<\/\2)|(^|>)\s+|\s+(?=<|$)/g, '$1$3');
 }

@@ -11,14 +11,15 @@
     "strict": true,
     "downlevelIteration": true,
     "skipLibCheck": true,
-    "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "types": ["bun-types"],
     "paths": {
-      "@app/*": ["./app/*"],
-      "@hyperspan/*": ["./src/hyperspan/*"]
-    }
+      "@/*": ["./*"]
+    },
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
   }
 }
