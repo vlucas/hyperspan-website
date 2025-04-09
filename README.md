@@ -1,10 +1,15 @@
-# Hyperspan. Simple. Server. Streaming.
+# Hyperspan
 
 > [!NOTE] > **Hyperspan is still in the early stages of development, your feedback is appreciated.**
 
-Hyperspan is a server-oriented framework built with [Bun](https://bun.sh) that is focused on simplicity and ease of use.
+## Simple. Server. Streaming.
 
-No JSX. No Virtual DOM. No hydration time. No nonsense. Just blazing fast HTML strings with full streaming support.
+Hyperspan is a dynamic server-oriented framework built with TypeScript, [Hono](https://hono.dev), and
+[Bun](https://bun.sh). Hyperspan is focused on performance, simplicity, and ease of use.
+
+Hyperspan bridges the gap between older server-only frameworks like Express with EJS templates that made client-side
+interactivity hard, and full React frameworks that make server-only work hard and ship everything to the client by
+default. Hyperspan is server first, but also allows embedded Preact dynamic islands for modern client interactivity.
 
 ## Who Is Hyperspan For?
 
@@ -25,13 +30,13 @@ Hyperspan can be best thought of as an _alternative_ to React-based frameworks l
 types of things, like file-based page routes, API routes, _true_ middleware, etc. but Hyperspan has a very different
 runtime and execution model. React-based frameworks ship all React components and code to the client by default,
 resulting in surprisingly large JS bundle sizes that grow more over time as your site does. Hyperspan takes the
-opposite approach, and does not ship ANY components to the client by default.
+opposite approach, and does not ship ANY components or templates to the client by default.
 
 You can still use React/Preact client components with Hyperspan, but these are explicitly opt-in and are mounted as
 independent dynamic islands in a sea of otherwise static content that is not &quot;hydrated&quot;.
 
 React frameworks are all JavaScript, all the time, delivered to the client. Hyperspan is mostly static content and
-markup delivered to the client, with JavaScript sprinkles where needed.
+markup delivered to the client, with JavaScript sprinkles only where needed.
 
 ## Philosophy
 
@@ -67,13 +72,14 @@ You don't need a Virtual DOM or expensive reconciliation diff calculations to ma
 applications. You just need the ability to make specific pieces of the site interactive on the client while leaving the
 rest of it alone.
 
-### P3: Just JavaScript.
+### P3: Just TypeScript/JavaScript.
 
-Rendering should work the same in every context. There should be no difference in how a template or component is
-rendered in one context vs. another. It should not matter if a component runs on the client or the server, or fetches
-data or streams in. The behavior and core conceptual semantics should be the same everywhere, because it's all just
-JavaScript.
+Modern JavaScript is a robust language that provides all the tools necessary to render HTML and stream in async content.
+The code and templates should be pure JavaScript or TypeScript &mdash; Not special framework-flavored JavaScript or a
+new custom template syntax you have to learn.
 
-JavaScript is a robust language that provides all the tools necessary to render HTML and stream in async content. The
-code should be just JavaScript &mdash; Not special framework-flavored JavaScript or a custom template syntax you have to
-learn or compile.
+There should be no difference in how a template or component is rendered in one context vs. another &mdash; it should
+always work the same. If it fetches data, it can be an async funtion with await. If it doesn't, it's not. There are no
+new semantics or edge cases to learn. It should not matter if a component runs on the client or the server, or fetches
+data or streams in or just renders static markup. The behavior and core conceptual semantics should be the same
+everywhere, because it's all just JavaScript.
