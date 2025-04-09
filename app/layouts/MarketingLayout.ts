@@ -15,7 +15,7 @@ export default function MarketingLayout({ title, content }: { title: string; con
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
           rel="stylesheet"
         />
 
@@ -26,7 +26,9 @@ export default function MarketingLayout({ title, content }: { title: string; con
         ${hyperspanScriptTags()}
         <nav class="navbar bg-base-100 border-b border-base-300">
           <div class="flex-1">
-            <a href="/">Hyperspan</a>
+            <ul class="menu menu-horizontal px-1">
+              <li><a href="/">Hyperspan</a></li>
+            </ul>
           </div>
           <div class="flex-1">
             <ul class="menu menu-horizontal px-1">
@@ -40,9 +42,9 @@ export default function MarketingLayout({ title, content }: { title: string; con
           </div>
         </nav>
         <div class="h-full w-screen-lg m-auto" id="root">${content}</div>
-        <footer class="py-20 mt-20">
-          <p class="block my-20">
-            Created by <a href="https://www.vancelucas.com">Vance Lucas</a>. &copy;
+        <footer class="p-8 mt-20">
+          <p class="block my-20 text-sm">
+            Created by <a href="https://www.vancelucas.com">Vance Lucas</a> &copy;
             ${new Date().getFullYear()}.
           </p>
         </footer>

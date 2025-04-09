@@ -27,7 +27,7 @@ export default createRoute(() => {
           <a href="https://caniuse.com/template-literals">Template Literals</a>
           and
           <a href="https://caniuse.com/mdn-javascript_builtins_asyncgenerator">AsyncGenerator</a>
-          (all major browsers, Bun, Deno, Node.js, Workers, Edge, etc.).
+          (for streaming) (all major browsers, Bun, Deno, Node.js, Workers, Edge, etc.).
         </li>
         <li>Instantly separate <em>static content</em> from <em>async content</em>.</li>
         <li>
