@@ -10,6 +10,12 @@ export default function DocsLayout({ title, content }: { title: string; content:
           <li><a href="/docs/html">HTML Templates</a></li>
         </ul>
       </nav>
+
+      <!-- for code highlighting in docs... -->
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css"
+      />
       <div class="p-6">${content}</div>
     </div>
   `;

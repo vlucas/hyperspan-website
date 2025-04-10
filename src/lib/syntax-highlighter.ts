@@ -1,7 +1,11 @@
+import { html } from '@/src/hyperspan/html';
 import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
 
 // Then register the languages you need
-hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('typescript', typescript);
 
-export { hljs };
+export function highlightTS(code: string) {
+  const codeHighlighted = hljs.highlight(code, { language: 'typescript' }).value;
+  return html`<pre><code class="language-typescript">${html.raw(codeHighlighted)}</code></pre>`;
+}

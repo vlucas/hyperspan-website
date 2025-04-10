@@ -67,3 +67,8 @@ a {
 a.btn {
   text-decoration: none;
 }
+
+/* Tailwind overrides */
+.prose {
+  max-width: 84ch;
+}
