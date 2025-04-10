@@ -1,6 +1,7 @@
 import { html } from '@/src/hyperspan/html';
 import { createRoute } from '@/src/hyperspan/server';
 import DocsLayout from '@/app/layouts/DocsLayout';
+import { hljs } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
   const content = html`
@@ -48,6 +49,25 @@ export default createRoute(() => {
           <code>renderAsync</code> (returns <code>string</code>)
         </li>
       </ol>
+
+      <h2>Example Template</h2>
+      <p>
+        A Hyperspan template is a
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates"
+          >Tagged Template Literal</a
+        >
+        that starts with <code>html\`...\`</code>.
+      </p>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css"
+      />
+      ${HTMLTemplateExampleAsync()}
+      <p>
+        Templates can include any HTML markup you want. Your markup does <em>not</em> have to start
+        with a root node or a fragment.
+      </p>
     </main>
   `;
 
@@ -56,3 +76,32 @@ export default createRoute(() => {
     content,
   });
 });
+
+/**
+ * Example markup
+ */
+function HTMLTemplateExampleAsync() {
+  const code = `
+  // Template syntax
+  // Values can be any scalar value, Promise, nested template, or object with a 'render' method
+  function getContent() {
+    return html\`<div>
+      <p>Some static content here first</p>
+      <p>\${sleep(600, (resolve) => resolve(&quot;Resolves second&quot;))}</p>
+      <p>A bit more static content here as well</p>
+      <p>
+        \${Promise.resolve(
+          html\`Resolves first... (Nested:
+          \${sleep(800, (resolve) => resolve(html\`Resolves third\`))})\`
+        )}
+      </p>
+      <hr />
+      \${new AsyncValue()}
+    </div>\`;
+  }
+  `;
+
+  const codeHighlighted = hljs.highlight(code, { language: 'javascript' }).value;
+
+  return html`<pre><code class="language-javascript">${html.raw(codeHighlighted)}</code></pre>`;
+}
