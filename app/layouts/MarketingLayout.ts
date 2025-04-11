@@ -29,31 +29,33 @@ export default function MarketingLayout({ title, content }: { title: string; con
       </head>
       <body class="">
         ${hyperspanScriptTags()}
-        <nav class="navbar bg-base-100 border-b border-base-300">
-          <div class="flex-1">
-            <ul class="menu menu-horizontal px-1">
-              <li><a href="/">Hyperspan</a></li>
-            </ul>
-          </div>
-          <div class="flex-1">
-            <ul class="menu menu-horizontal px-1">
-              <li><a href="/examples/streaming">Streaming Example</a></li>
-              <li><a href="/docs">Documentation</a></li>
-            </ul>
-          </div>
-          <div class="flex-none">
-            <ul class="menu menu-horizontal px-1">
-              <li><a href="https://github.com/vlucas/hyperspan">GitHub</a></li>
-            </ul>
-          </div>
-        </nav>
-        <div class="h-full w-screen-lg m-auto" id="root">${content}</div>
-        <footer class="bg-base-200 p-8 mt-20">
-          <p class="block my-20 text-sm">
-            Created by <a href="https://www.vancelucas.com">Vance Lucas</a> &copy;
-            ${new Date().getFullYear()}.
-          </p>
-        </footer>
+        <div class="max-w-5xl m-auto">
+          <nav class="navbar bg-base-100 border-b border-base-300">
+            <div class="flex-1">
+              <ul class="menu menu-horizontal px-1">
+                <li><a href="/">Hyperspan</a></li>
+              </ul>
+            </div>
+            <div class="flex-1">
+              <ul class="menu menu-horizontal px-1">
+                <li><a href="/docs">Documentation</a></li>
+                <li><a href="/examples/streaming">Streaming Example</a></li>
+              </ul>
+            </div>
+            <div class="flex-none">
+              <ul class="menu menu-horizontal px-1">
+                <li><a href="https://github.com/vlucas/hyperspan">GitHub</a></li>
+              </ul>
+            </div>
+          </nav>
+          <div class="h-full w-screen-lg m-auto my-8" id="root">${content}</div>
+          <footer class="bg-base-200 p-8 mt-20">
+            <p class="block my-20 text-sm">
+              Created by <a href="https://www.vancelucas.com">Vance Lucas</a> &copy;
+              ${new Date().getFullYear()}.
+            </p>
+          </footer>
+        </div>
       </body>
     </html>
   `;

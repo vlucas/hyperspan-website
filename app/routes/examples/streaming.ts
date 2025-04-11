@@ -6,7 +6,7 @@ import { highlightTS } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
   const content = html`
-    <main class="prose m-8">
+    <main class="prose">
       <h1>Streaming Content Example</h1>
       <p>
         Each content chunk will stream render in and render in-place whenever it is done loading.
