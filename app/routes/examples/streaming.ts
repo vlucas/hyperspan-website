@@ -50,4 +50,3 @@ async function AsyncRenderBlock(waitMs: number, msg: string) {
 
   return html`<div>${msg}</div>`;
 }
-AsyncRenderBlock.loading = () => html`<mark>Loading...</mark>`;

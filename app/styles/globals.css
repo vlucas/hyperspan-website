@@ -68,6 +68,13 @@ a.btn {
   text-decoration: none;
 }
 
+/* loading slots for async content */
+slot {
+  display: inline-block;
+  background-color: var(--color-neutral);
+  color: var(--color-neutral-content);
+}
+
 /* Tailwind overrides */
 .prose {
   max-width: 84ch;
