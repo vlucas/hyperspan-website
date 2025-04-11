@@ -32,6 +32,7 @@ export default function MarketingLayout({ title, content }: { title: string; con
           </div>
           <div class="flex-1">
             <ul class="menu menu-horizontal px-1">
+              <li><a href="/examples/streaming">Streaming Example</a></li>
               <li><a href="/docs">Documentation</a></li>
             </ul>
           </div>
@@ -42,7 +43,7 @@ export default function MarketingLayout({ title, content }: { title: string; con
           </div>
         </nav>
         <div class="h-full w-screen-lg m-auto" id="root">${content}</div>
-        <footer class="p-8 mt-20">
+        <footer class="bg-base-200 p-8 mt-20">
           <p class="block my-20 text-sm">
             Created by <a href="https://www.vancelucas.com">Vance Lucas</a> &copy;
             ${new Date().getFullYear()}.
