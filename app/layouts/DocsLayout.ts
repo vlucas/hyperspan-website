@@ -1,4 +1,4 @@
-import { html } from '@/src/hyperspan/html';
+import { html } from '@hyperspan/html';
 import MarketingLayout from './MarketingLayout';
 
 export default function DocsLayout({ title, content }: { title: string; content: any }) {

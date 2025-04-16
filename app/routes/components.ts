@@ -1,5 +1,5 @@
-import { html } from '@/src/hyperspan/html';
-import { createRoute } from '@/src/hyperspan/server';
+import { html } from '@hyperspan/html';
+import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/MarketingLayout';
 
 export default createRoute(() => {

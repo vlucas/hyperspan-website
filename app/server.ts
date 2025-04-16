@@ -1,4 +1,4 @@
-import { createServer } from '@/src/hyperspan/server';
+import { createServer } from '@hyperspan/framework';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 
 const app = await createServer({

@@ -1,5 +1,5 @@
-import { html } from '@/src/hyperspan/html';
-import { hyperspanScriptTags, hyperspanStyleTags } from '@/src/hyperspan/assets';
+import { html } from '@hyperspan/html';
+import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
 
 export default function MarketingLayout({ title, content }: { title: string; content: any }) {
   return html`

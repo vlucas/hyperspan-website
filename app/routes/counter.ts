@@ -1,6 +1,6 @@
-import { html } from '@/src/hyperspan/html';
-import { createRoute } from '@/src/hyperspan/server';
-import { createPreactIsland } from '@/src/hyperspan/assets';
+import { html } from '@hyperspan/html';
+import { createRoute } from '@hyperspan/framework';
+import { createPreactIsland } from '@hyperspan/framework/assets';
 import MarketingLayout from '@/app/layouts/MarketingLayout';
 
 const ClientCounter = await createPreactIsland(

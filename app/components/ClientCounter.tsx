@@ -6,8 +6,12 @@ export default function ClientCounter({ count: initialCount = 0 }: { count?: num
   return (
     <div>
       <h2>Counter: {count}</h2>
-      <button onClick={() => setCount(count - 1)}>Decrement</button>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button className="btn" onClick={() => setCount(count - 1)}>
+        Decrement
+      </button>
+      <button className="btn" onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
     </div>
   );
 }
