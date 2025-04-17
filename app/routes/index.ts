@@ -8,7 +8,7 @@ export default createRoute(() => {
       <div class="hero bg-base-200 min-h-96 py-20">
         <div class="hero-content text-center">
           <div class="max-w-lg">
-            <h1 class="my-6 text-5xl font-bold">Simple. Server. Streaming.</h1>
+            <h1 class="my-6 text-5xl font-bold">Make Hypermedia Cool Again.</h1>
             <p class="my-6">
               Opinionated server-oriented framework built with TypeScript,
               <a href="https://hono.dev">Hono</a> and <a href="https://bun.sh">Bun</a>.

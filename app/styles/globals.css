@@ -68,6 +68,11 @@ a.btn {
   text-decoration: none;
 }
 
+.navbar .brand {
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
 /* loading slots for async content */
 slot {
   display: inline-block;
