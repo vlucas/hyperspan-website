@@ -23,6 +23,57 @@ export default createRoute(() => {
         file in the <code>app/routes</code> directory and it will be automatically picked up by the
         framework and added to your routing table.
       </p>
+      <p>
+        Here are some examples of how files in the <code>app/routes</code> directory map to URL
+        patterns:
+      </p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="w-1/2">File Path</th>
+            <th class="w-1/2">URL Pattern</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>app/routes/index.ts</code></td>
+            <td><code>/</code></td>
+          </tr>
+          <tr>
+            <td><code>app/routes/about.ts</code></td>
+            <td><code>/about</code></td>
+          </tr>
+          <tr>
+            <td><code>app/routes/posts/index.ts</code></td>
+            <td><code>/posts</code></td>
+          </tr>
+          <tr>
+            <td><code>app/routes/posts/[id].ts</code></td>
+            <td><code>/posts/:id</code></td>
+          </tr>
+          <tr>
+            <td><code>app/routes/auth/[...authPath].ts</code></td>
+            <td><code>/auth/*</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Route and query params can be accessed from the
+        <a href="https://hono.dev/docs/api/request">Hono Request</a> object by name.
+      </p>
+      ${highlightTS(`// File: app/routes/posts/[id].ts
+import { createRoute } from '@hyperspan/framework';
+import { fetchPostById } from '@/src/entities/posts'; // whatever your data layer is
+
+export default createRoute(async (c) => {
+  const id = c.req.param('id');
+  const post = await fetchPostById(id);
+
+  return html\`<main>
+    <h1>\${post.title}</h1>
+    <div>\${post.content}</div>
+  </main>\`;
+});`)}
 
       <h3>The <code>createRoute</code> Function</h3>
       <p>
@@ -59,8 +110,8 @@ export default function (c: Context) {
       <p>
         The <code>createRoute</code> function has a
         <a href="https://hono.dev/docs/api/context">Hono Context</a> parameter that can be used to
-        access information from the request, like parameters from the route path, query string
-        parameters, headers, cookies, etc.
+        access information from the <a href="https://hono.dev/docs/api/request">request</a>, like
+        parameters from the route path, query string parameters, headers, cookies, etc.
       </p>
 
       ${highlightTS(`import { createRoute } from '@hyperspan/framework';

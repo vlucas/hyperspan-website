@@ -82,5 +82,6 @@ slot {
 
 /* Tailwind overrides */
 .prose {
-  max-width: 84ch;
+  width: 80ch;
+  max-width: 80ch;
 }
