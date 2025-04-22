@@ -1,7 +1,7 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/DocsLayout';
-import { highlightTS } from '@/src/lib/syntax-highlighter';
+import { highlightTS, highlightShell } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
   const content = html`
@@ -50,6 +50,10 @@ export default createRoute(() => {
         </li>
       </ol>
 
+      <h2>Installation</h2>
+      <p>Install the <code>@hyperspan/html</code> package to get started.</p>
+      ${highlightShell(`npm install @hyperspan/html`)} ${highlightShell(`bun add @hyperspan/html`)}
+
       <h2>Example Template</h2>
       <p>
         A Hyperspan template is a
@@ -91,7 +95,9 @@ export default createRoute(() => {
         all async content. This is useful when you need to get some initial content to the screen
         immediately.
       </p>
-      ${highlightTS(`const content = render(tmpl);`)}
+      ${highlightTS(`import { render } from '@hyperspan/html';
+
+const content = render(tmpl);`)}
 
       <h3><code>renderAsync(tmpl): Promise&lt;string&gt;</code></h3>
       <p>
@@ -100,7 +106,9 @@ export default createRoute(() => {
         useful if you need the full complete page response as a single chunk without streaming.
         Recommended for bots and crawlers.
       </p>
-      ${highlightTS(`const content = await renderAsync(tmpl);`)}
+      ${highlightTS(`import { renderAsync } from '@hyperspan/html';
+
+const content = await renderAsync(tmpl);`)}
 
       <h3><code>renderStream(tmpl): AsyncGenerator&lt;string&gt;</code></h3>
       <p>
@@ -120,7 +128,9 @@ export default createRoute(() => {
         cross-browser compatability. This is automatically added when used in the Hyperspan
         framework.
       </p>
-      ${highlightTS(`const root = document.getElementById('root');
+      ${highlightTS(`import { renderStream } from '@hyperspan/html';
+
+const root = document.getElementById('root');
 for await (const chunk of renderStream(tmpl)) {
   root.insertAdjacentHTML("beforeend", chunk);
 }`)}
@@ -137,43 +147,45 @@ for await (const chunk of renderStream(tmpl)) {
  * Example markup
  */
 function HTMLTemplateExample() {
-  const code = `
-  // Template syntax
-  // Values can be any scalar value, Promise, nested template, or object with a 'render' method
-  function getContent() {
-    return html\`<div>
-      <p>Some static content here first</p>
-      <p>\${sleep(600, (resolve) => resolve("Resolves second"))}</p>
-      <p>A bit more static content here as well</p>
-      <p>
-        \${Promise.resolve(
-          html\`Resolves first... (Nested:
-          \${sleep(800, (resolve) => resolve(html\`Resolves third\`))})\`
-        )}
-      </p>
-      <hr />
-      \${new AsyncValue()}
-    </div>\`;
-  }
+  const code = `import { html } from '@hyperspan/html';
+
+// Template syntax
+// Values can be any scalar value, Promise, nested template, or object with a 'render' method
+function getContent() {
+  return html\`<div>
+    <p>Some static content here first</p>
+    <p>\${sleep(600, (resolve) => resolve("Resolves second"))}</p>
+    <p>A bit more static content here as well</p>
+    <p>
+      \${Promise.resolve(
+        html\`Resolves first... (Nested:
+        \${sleep(800, (resolve) => resolve(html\`Resolves third\`))})\`
+      )}
+    </p>
+    <hr />
+    \${new AsyncValue()}
+  </div>\`;
+}
   `;
 
   return highlightTS(code);
 }
 
 function HTMLTemplateExampleAsync() {
-  const code = `
-  async function MyTemplate() {
-    const posts = await fetchBlogPosts({ page: 1 });
+  const code = `import { html } from '@hyperspan/html';
 
-    return html\`
-      <main>
-        <h1>Blog Posts</h1>
-        <ul>
-          \${posts.map(post => html\`<li><a href="/blog/\${post.id}">\${post.title}</a></li>\`)}
-        </ul>
-      </main>
-    \`;
-  }
+async function MyTemplate() {
+  const posts = await fetchBlogPosts({ page: 1 });
+
+  return html\`
+    <main>
+      <h1>Blog Posts</h1>
+      <ul>
+        \${posts.map(post => html\`<li><a href="/blog/\${post.id}">\${post.title}</a></li>\`)}
+      </ul>
+    </main>
+  \`;
+}
   `;
 
   return highlightTS(code);

@@ -1,5 +1,5 @@
 import { html } from '@hyperspan/html';
-import MarketingLayout from './MarketingLayout';
+import MarketingLayout from '@/app/layouts/MarketingLayout';
 
 export default function DocsLayout({ title, content }: { title: string; content: any }) {
   const docLayout = html`
@@ -9,6 +9,7 @@ export default function DocsLayout({ title, content }: { title: string; content:
         <ul class="menu bg-base-200 rounded-box w-56">
           <li><a href="/docs">Get Started</a></li>
           <li><a href="/docs/html">HTML Templates</a></li>
+          <li><a href="/docs/routes">Routes</a></li>
         </ul>
       </nav>
     </div>
