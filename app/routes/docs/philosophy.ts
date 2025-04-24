@@ -45,24 +45,32 @@ export default createRoute(() => {
       </p>
       <p>
         Hyperspan's approach ensures your initial page content is always rendered as fast as
-        possible in an SEO-friendly way, and your interactive bits don't interfere with user
-        interactions or time to interactive metrics.
+        possible in an SEO-friendly way, and your interactive bits don't slow down user interactions
+        or time to interactive metrics.
       </p>
 
       <h2>Use The Platform.</h2>
       <p>
-        Web browsers are <em>really, really good</em> at rendering arbitrary strings of HTML.
-        <em>That is the job that browsers were built specifically to do</em>. Servers are
-        <em>great</em>
-        at responding to URLs with HTML. It's okay to keep these two concerns separate. The client
-        doesn't need to know about all your URLs and layouts. The bundler doesn't need to be
-        concerned with accidentally shipping server code to the client.
-        <em>Some of these things are best kept separate.</em>
+        Web browsers are <em>really good</em> at rendering arbitrary strings of HTML and caching
+        static assets across requests. Servers are <em>awesome</em> at responding to URLs. It's okay
+        to keep these two concerns separate. The client doesn't need to know about all your URLs and
+        layouts. The browser can handle page navigations and caching. The web has worked like this
+        <em>for decades</em>.
       </p>
       <p>
-        Client JavaScript in a browser runs on a single JavaScript thread. There is no sense in
-        putting more work on the JavaScript thread for rendering static HTML markup and CSS that can
-        just be sent directly by the server (<em>and cached!</em>).
+        Stable and widely supported web standards and features like ES Modules, Template Literals,
+        Generators, and Web Components are criminally under-used by frontend frameworks whose
+        approach is to compile the world into a single file.
+      </p>
+      <p>
+        Client JavaScript in a browser runs on a single thread. The more work you put on the only
+        execution thread you have, the slower your app will be. This isn't rocket science.
+        JavaScript should not be used for rendering static HTML markup and CSS that can just be sent
+        directly by the server (<em>and cached!</em>).
+      </p>
+      <p>
+        We need to stop using JavaScript for everything under the sun while end users pay the price.
+        We can and should do better.
       </p>
 
       <h2>Embrace Hypermedia.</h2>
