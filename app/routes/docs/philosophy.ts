@@ -7,58 +7,79 @@ export default createRoute(() => {
     <main class="prose">
       <h1>Philosophy</h1>
 
-      <h2>P1: Server-Side First.</h2>
+      <p><strong>There is a gap in the JavaScript framework landscape</strong>.</p>
       <p>
-        Current JavaScript frameworks ship everything to the browser by default and use
-        non-intuitive ways to opt-out of this. The first clue that this approach was backwards was
-        when JavaScript bundle sizes started being measured in hundreds of kilobytes to megabytes.
+        Older server-only frameworks like Express are fast and easy, but make client-side
+        interactivity tedious and manual.
       </p>
       <p>
-        Keeping bundle sizes down in large projects over time can be challenging. A performant
-        framework should render as much as possible on the server by default.
-        <strong
-          >Sending JavaScript code to the client and increasing bundle sizes for all your users
-          should be explicit and opt-in.</strong
-        >
+        Modern frontend frameworks ship all your code and logic to the client by default, resulting
+        in bloated bundle sizes and worse performance as your app grows over time. Opting out of
+        this &mdash; if it is even possible &mdash; is often confusing, unintuitive and error prone.
       </p>
       <p>
-        Modern frameworks make it too easy to <em>accidentally</em> ship code to the client that you
-        don't want. They often mix client and server concerns in a way that is hard to understand
-        and keep separate. They return cryptic and confusing errors when you make mistakes around
-        client and server boundaries.
-      </p>
-      <p>
-        We've lost the forest from the trees. The complixity has become too much, and end users are
-        paying the price.
-      </p>
-      <p>This is the way back for a full-stack framework:</p>
-      <ul>
-        <li>Server fetching and rendering by default.</li>
-        <li>
-          Minimal client-side JavaScript by default. Code that ships to the client should be
-          explicit and opt-in.
-        </li>
-        <li>
-          Most of the work and state should be maintained on the server. The framework should help
-          make this easy.
-        </li>
-      </ul>
-      <h2>P2: Performance Oriented.</h2>
-
-      <p>
-        Server-side code is fast because it sends HTML strings to the client and lets the browser do
-        its job - the job that is was built specifically to do. There is no sense in tying up the
-        JavaScript thread for rendering static HTML markup that can just be sent directly.
-      </p>
-      <p>
-        You don't need a Virtual DOM or expensive reconciliation diff calculations to make
-        interactive web sites or applications. You just need the ability to make specific pieces of
-        the site interactive on the client while leaving the rest of the page alone. If new HTML
-        content or partials come from the server, they can be diffed against the current DOM to only
-        apply the changes without modeling the entire structure of the page in memory.
+        There is room for a new approach. Hyperspan aims to strike a balance between these two
+        extremes, offering both performant server-rendered streaming HTML and rich modern
+        client-side interactivity.
       </p>
 
-      <h2>P3: Just TypeScript/JavaScript.</h2>
+      <h2>Server-Oriented.</h2>
+      <p>
+        The complexity of modern frontend frameworks has become overwhelming. We should have stopped
+        when JavaScript bundle sizes started being measured in megabytes.
+      </p>
+      <p>
+        State belongs on the server. Most of the work and logic for your app or website should run
+        on the server, <em>and should stay on the server</em>.
+      </p>
+      <p>
+        Server rendered HTML is more secure, easier to cache, and more performant for both SEO and
+        end users alike. It should be the default.
+      </p>
+
+      <h2>JavaScript Sprinkles.</h2>
+      <p>
+        You don't need write your whole entire website in JavaScript to make interactive web sites
+        or applications that feel great to use. You just need the ability to make specific pieces of
+        the site interactive or dynamic on the client while leaving the rest of the page alone.
+      </p>
+      <p>
+        Hyperspan's approach ensures your initial page content is always rendered as fast as
+        possible in an SEO-friendly way, and your interactive bits don't interfere with user
+        interactions or time to interactive metrics.
+      </p>
+
+      <h2>Use The Platform.</h2>
+      <p>
+        Web browsers are <em>really, really good</em> at rendering arbitrary strings of HTML.
+        <em>That is the job that browsers were built specifically to do</em>. Servers are
+        <em>great</em>
+        at responding to URLs with HTML. It's okay to keep these two concerns separate. The client
+        doesn't need to know about all your URLs and layouts. The bundler doesn't need to be
+        concerned with accidentally shipping server code to the client.
+        <em>Some of these things are best kept separate.</em>
+      </p>
+      <p>
+        Client JavaScript in a browser runs on a single JavaScript thread. There is no sense in
+        putting more work on the JavaScript thread for rendering static HTML markup and CSS that can
+        just be sent directly by the server (<em>and cached!</em>).
+      </p>
+
+      <h2>Embrace Hypermedia.</h2>
+      <p>
+        The framework should make fetching and replacing new pieces of UI content easy. If new HTML
+        content or partials come from the server, it can be diffed against the current DOM and
+        applied without modeling the entire structure of the page in memory.
+      </p>
+      <p>
+        Forms are the primary way browsers handle mutations in HTML documents. Forms should be
+        embraced and enhanced by the framework instead of forcing the creation of custom API
+        endpoints to handle state changes and updates on the client. Server responses should be able
+        to return HTML partials in response, and the framework should make it easy to apply these
+        updates to the DOM.
+      </p>
+
+      <h2>Just TypeScript/JavaScript.</h2>
       <p>
         Modern JavaScript is a robust language that provides all the tools necessary to render HTML
         and stream in async content. The code and templates should be pure JavaScript or TypeScript
