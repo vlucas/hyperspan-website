@@ -1,7 +1,7 @@
-import {html} from '@hyperspan/html';
-import {hyperspanScriptTags, hyperspanStyleTags} from '@hyperspan/framework/assets';
+import { html } from '@hyperspan/html';
+import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
 
-export default function MarketingLayout({title, content}: {title: string; content: any}) {
+export default function MarketingLayout({ title, content }: { title: string; content: any }) {
   return html`
     <!doctype html>
     <html class="w-full h-full" lang="en" data-theme="sunset">
@@ -39,7 +39,14 @@ export default function MarketingLayout({title, content}: {title: string; conten
             <div class="flex-1">
               <ul class="menu menu-horizontal px-1">
                 <li><a href="/docs">Documentation</a></li>
-                <li><a href="/examples/streaming">Streaming Example</a></li>
+                <li>
+                  <details>
+                    <summary>Examples</summary>
+                    <ul class="p-2 w-64">
+                      <li><a href="/examples/streaming">Streaming Example</a></li>
+                    </ul>
+                  </details>
+                </li>
               </ul>
             </div>
             <div class="flex-none">
