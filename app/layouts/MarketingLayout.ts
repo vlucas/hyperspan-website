@@ -33,7 +33,7 @@ export default function MarketingLayout({ title, content }: { title: string; con
           <nav class="navbar bg-base-100 border-b border-base-300">
             <div class="flex-1">
               <ul class="menu menu-horizontal px-1">
-                <li><a class="brand" href="/">Hyperspan</a></li>
+                <li><a class="brand" href="/">&lt;<span>Hyperspan</span>&gt;</a></li>
               </ul>
             </div>
             <div class="flex-1">
