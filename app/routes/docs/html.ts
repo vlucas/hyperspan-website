@@ -1,6 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import DocsLayout from '@/app/layouts/DocsLayout';
+import DocsLayout from '@/app/layouts/docs-layout';
 import { highlightTS, highlightShell } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
@@ -53,6 +53,13 @@ export default createRoute(() => {
       <h2>Installation</h2>
       <p>Install the <code>@hyperspan/html</code> package to get started.</p>
       ${highlightShell(`npm install @hyperspan/html`)} ${highlightShell(`bun add @hyperspan/html`)}
+      <div class="alert alert-info alert-outline">
+        <p>
+          <strong>Note:</strong> The Hyperspan <em>framework</em> requires Bun to use, but the HTML
+          templates package is separate, and can be used in any JavaScript runtime that supports
+          Template Literals and Async Generators.
+        </p>
+      </div>
 
       <h2>Example Template</h2>
       <p>
@@ -82,11 +89,96 @@ export default createRoute(() => {
         placeholder and the content will be replaced later when it is done streaming in.
       </p>
 
+      <h2>Custom Loading Placeholders</h2>
+      <p>
+        By default, Hyperspan will render <code>&lt;span&gt;Loading...&lt;/span&gt;</code> as a
+        placeholder for all async values rendered in templates. If you want to customize this with
+        loading skeletons, spinners, or other custom content, you can do so with the
+        <code>placeholder(tmpl, promise)</code> function in the
+        <code>@hyperspan/html</code> package.
+      </p>
+      ${highlightTS(`import { html, placeholder } from '@hyperspan/html';
+
+const content = html\`<div>
+  \${placeholder(
+    html\`<div class="blog-posts-skeleton">Loading blog posts...</div>\`,
+    sleep(600, (resolve) => resolve("Blog posts HTML chunk here..."))
+  )}
+</div>\`;`)}
+
+      <h2>Custom Async Values</h2>
+      <p>
+        If you want a more structured way to wrap up custom async logic with custom loading
+        placeholders, you can do so by creating an object that has both <code>render</code> and
+        <code>renderAsync</code> methods that return an HTML template.
+      </p>
+      <p>
+        The <code>render</code> method will be called immediately for the loading placeholder, and
+        the
+        <code>renderAsync</code>
+        method will be the content that will replace the loading placeholder once resolved.
+      </p>
+      ${highlightTS(`import { html } from '@hyperspan/html';
+
+// Custom value class
+class RemoteCMSContentBlock {
+  id: number;
+
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  // Loading placeholder (rendered immediately)
+  render() {
+    return html\`<div>CMS Content Loading...</div>\`;
+  }
+
+  // Actual content - replaces the loading placeholder when Promise is resolved
+  async renderAsync() {
+    const response = await fetch(\`https://api.mycompanycms.com/contentblocks/\${this.id}\`);
+    return html.raw(await response.text());
+  }
+}
+
+// Use it in a template
+const content = html\`<h1>Remote CMS Content:</h1>\${new RemoteCMSContentBlock(123)}\`;`)}
+
+      <h2>HTML Escaping</h2>
+      <p>
+        Hyperspan HTML templates escape HTML by default. This means that any variables you pass into
+        the template will be sanitized to prevent XSS attacks.
+      </p>
+      ${highlightTS(`import { html } from '@hyperspan/html';
+
+const userName = '<script>alert("XSS")</script>';
+const content = html\`<div>\${userName}</div>\`;
+// content is now: <div>&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;</div>`)}
+
+      <h2>Rendering Raw HTML</h2>
+      <p>
+        Sometimes chunks of content are already formatted with HTML &mdash; like if they are coming
+        from an internal or headless CMS &mdash; and you need to render them as-is.
+      </p>
+      <p>
+        When you need to render HTML inside your template, you can use the
+        <code>html.raw()</code> function. Just make sure it is <em>trusted</em> content, because it
+        could be a potential security risk if not.
+      </p>
+      ${highlightTS(`import { html } from '@hyperspan/html';
+
+const userName = '<script>alert("XSS")</script>';
+const content = html\`<div>\${html.raw(userName)}</div>\`; // html.raw() around userName
+// content is now: <div><script>alert("XSS")</script></div>`)}
+
       <h2>Rendering Options</h2>
       <p>
         The main options you have to render Hyperspan templates are streaming or async. Which one
         you use depends on your needs. The Hyperspan framework defaults to stream rendering for
         users, and async rendering for bots and crawlers.
+      </p>
+      <p>
+        Regardless of which rendering method you use, the template syntax and semantics are always
+        the same.
       </p>
 
       <h3><code>render(tmpl): string</code></h3>
@@ -134,33 +226,6 @@ const root = document.getElementById('root');
 for await (const chunk of renderStream(tmpl)) {
   root.insertAdjacentHTML("beforeend", chunk);
 }`)}
-
-      <h2>HTML Escaping</h2>
-      <p>
-        Hyperspan HTML templates escape HTML by default. This means that any variables you pass into
-        the template will be sanitized to prevent XSS attacks.
-      </p>
-      ${highlightTS(`import { html } from '@hyperspan/html';
-
-const userName = '<script>alert("XSS")</script>';
-const content = html\`<div>\${userName}</div>\`;
-// content is now: <div>&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;</div>`)}
-
-      <h2>Rendering Raw HTML</h2>
-      <p>
-        Sometimes chunks of content are already formatted with HTML &mdash; like if they are coming
-        from an internal or headless CMS &mdash; and you need to render them as-is.
-      </p>
-      <p>
-        When you need to render HTML inside your template, you can use the
-        <code>html.raw()</code> function. Just make sure it is <em>trusted</em> content, because it
-        could be a potential security risk if not.
-      </p>
-      ${highlightTS(`import { html } from '@hyperspan/html';
-
-const userName = '<script>alert("XSS")</script>';
-const content = html\`<div>\${html.raw(userName)}</div>\`; // html.raw() around userName
-// content is now: <div><script>alert("XSS")</script></div>`)}
     </main>
   `;
 

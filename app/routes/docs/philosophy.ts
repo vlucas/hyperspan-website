@@ -1,6 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import DocsLayout from '@/app/layouts/DocsLayout';
+import DocsLayout from '@/app/layouts/docs-layout';
 
 export default createRoute(() => {
   const content = html`

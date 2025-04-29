@@ -1,6 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import MarketingLayout from '@/app/layouts/MarketingLayout';
+import MarketingLayout from '@/app/layouts/marketing-layout';
 
 export default createRoute(() => {
   const content = html`

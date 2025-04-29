@@ -1,6 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import DocsLayout from '@/app/layouts/DocsLayout';
+import DocsLayout from '@/app/layouts/docs-layout';
 
 export default createRoute(() => {
   const content = html`
@@ -16,9 +16,9 @@ export default createRoute(() => {
       <p>The app directory structure is as follows:</p>
       <pre><code>app/
 ├── actions/     [coming soon!]
-│   └── createUser.ts
+│   └── create-user.ts
 ├── layouts/     [not managed by Hyperspan, but recommended]
-│   └── MainLayout.tsx
+│   └── main-layout.tsx
 ├── styles/      [global styles & Tailwind setup]
 │   └── global.css
 └── routes/      [all your routes go here]

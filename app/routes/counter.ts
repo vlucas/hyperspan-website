@@ -1,10 +1,10 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import { createPreactIsland } from '@hyperspan/framework/assets';
-import MarketingLayout from '@/app/layouts/MarketingLayout';
+import MarketingLayout from '@/app/layouts/marketing-layout';
 
 const ClientCounter = await createPreactIsland(
-  import.meta.resolve('@/app/components/ClientCounter')
+  import.meta.resolve('@/app/components/client-counter')
 );
 
 export default createRoute(() => {

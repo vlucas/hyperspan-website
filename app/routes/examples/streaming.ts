@@ -1,6 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import MarketingLayout from '@/app/layouts/MarketingLayout';
+import MarketingLayout from '@/app/layouts/marketing-layout';
 import { sleep } from '@/src/lib/sleep';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
 

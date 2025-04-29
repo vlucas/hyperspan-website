@@ -1,6 +1,7 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import MarketingLayout from '@/app/layouts/MarketingLayout';
+import MarketingLayout from '@/app/layouts/marketing-layout';
+import { highlightTS } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
   const content = html`
@@ -9,8 +10,8 @@ export default createRoute(() => {
         <div class="hero-content text-center">
           <div class="max-w-3xl">
             <h1 class="my-6 text-5xl/14">
-              Ditch The Complexity.<br />
-              Keep the Power.
+              Less Complexity.<br />
+              More Power.
             </h1>
             <h2 class="my-10 text-2xl">Web Framework for High-Performance Sites and Apps.</h2>
             <p class="mt-10 my-6">
@@ -24,6 +25,105 @@ export default createRoute(() => {
           </div>
         </div>
       </div>
+
+      <section>
+        <div class="my-32 card lg:card-side bg-base-200 shadow-sm">
+          <div class="card-body text-lg">
+            <h2 class="card-title text-2xl mb-6">All TypeScript.</h2>
+            <p>
+              No special syntax to learn. No custom file extensions or formats. No special rules or
+              weird semantics. No magic. No compiler (thanks Bun!). All TypeScript, all the way
+              down.
+            </p>
+          </div>
+          <div class="md:w-2/3 p-4 bg-base-300">
+            ${highlightTS(`import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute(async (context) => {
+  const posts = await fetchPosts();
+
+  return html\`
+    <div>
+      <h1>Posts</h1>
+      <ul>
+        \${posts.map((post) => html\`<li>\${post.title}</li>\`)}
+      </ul>
+    </div>
+  \`;
+});
+`)}
+          </div>
+        </div>
+
+        <div class="my-32 card lg:card-side bg-base-200 shadow-sm">
+          <div class="md:w-2/3 p-4 bg-base-300">
+            ${highlightTS(`import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute(() => {
+  return html\`
+    <div>
+      <h1>Async Content Blocks:</h1>
+      \${AsyncBlock(1000, "Loading...")}
+      \${AsyncBlock(2000, "Loading 2...")}
+    </div>
+  \`;
+});
+
+async function AsyncBlock(waitMs: number, msg: string) {
+  await sleep(waitMs);
+  return html\`<div>\${msg}</div>\`;
+}
+
+`)}
+          </div>
+          <div class="card-body text-lg">
+            <h2 class="card-title text-2xl mb-6">Streaming Templates.</h2>
+            <p>
+              Streaming responses by default for any template that contains async content. Send all
+              your static content immediately for better
+              <abbr title="Time To First Byte">TTFB</abbr>, then stream in each piece of dynamic
+              content as it's ready. Automatic opt-outs for bots and crawlers.
+            </p>
+            <div class="card-actions">
+              <a class="btn btn-outline" href="/examples/streaming">See Streaming Example</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="my-32 card lg:card-side bg-base-200 shadow-sm">
+          <div class="card-body text-lg">
+            <h2 class="card-title text-2xl mb-6">Dynamic Islands.</h2>
+            <p>
+              Rich client-side interactivity with server-first performance and minimal client-side
+              JavaScript.
+            </p>
+            <div class="card-actions">
+              <a class="btn btn-outline" href="/docs/islands-architecture"
+                >Islands Architecture Docs</a
+              >
+            </div>
+          </div>
+          <div class="md:w-2/3 p-4 bg-base-300">
+            ${highlightTS(`import { html } from '@hyperspan/html';
+import { createRoute } from '@hyperspan/framework';
+import { createPreactIsland } from '@hyperspan/framework/assets';
+
+// Bun supports top-level await, so this compiles at build/server start time
+const ExampleCounter = await createPreactIsland(import.meta.resolve('@/src/components/example-counter.tsx'));
+
+export default createRoute(() => {
+  return html\`
+    <div>
+      <!-- Call the component as a function and pass any props you need! -->
+      \${ExampleCounter({ count: 5 })}
+    </div>
+  \`;
+});`)}
+          </div>
+        </div>
+      </section>
     </main>
   `;
 

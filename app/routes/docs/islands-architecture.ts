@@ -1,11 +1,11 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import DocsLayout from '@/app/layouts/DocsLayout';
+import DocsLayout from '@/app/layouts/docs-layout';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
 import { createPreactIsland } from '@hyperspan/framework/assets';
 
 const ClientCounter = await createPreactIsland(
-  import.meta.resolve('@/app/components/ClientCounter.tsx')
+  import.meta.resolve('@/app/components/client-counter')
 );
 
 export default createRoute(() => {

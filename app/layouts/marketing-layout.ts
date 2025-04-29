@@ -44,6 +44,7 @@ export default function MarketingLayout({ title, content }: { title: string; con
                     <summary>Examples</summary>
                     <ul class="p-2 w-64">
                       <li><a href="/examples/streaming">Streaming Example</a></li>
+                      <li><a href="/examples/dynamic-islands">Dynamic Islands Example</a></li>
                       <li><a href="/examples/actions">Actions Example</a></li>
                     </ul>
                   </details>
