@@ -134,6 +134,33 @@ const root = document.getElementById('root');
 for await (const chunk of renderStream(tmpl)) {
   root.insertAdjacentHTML("beforeend", chunk);
 }`)}
+
+      <h2>HTML Escaping</h2>
+      <p>
+        Hyperspan HTML templates escape HTML by default. This means that any variables you pass into
+        the template will be sanitized to prevent XSS attacks.
+      </p>
+      ${highlightTS(`import { html } from '@hyperspan/html';
+
+const userName = '<script>alert("XSS")</script>';
+const content = html\`<div>\${userName}</div>\`;
+// content is now: <div>&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;</div>`)}
+
+      <h2>Rendering Raw HTML</h2>
+      <p>
+        Sometimes chunks of content are already formatted with HTML &mdash; like if they are coming
+        from an internal or headless CMS &mdash; and you need to render them as-is.
+      </p>
+      <p>
+        When you need to render HTML inside your template, you can use the
+        <code>html.raw()</code> function. Just make sure it is <em>trusted</em> content, because it
+        could be a potential security risk if not.
+      </p>
+      ${highlightTS(`import { html } from '@hyperspan/html';
+
+const userName = '<script>alert("XSS")</script>';
+const content = html\`<div>\${html.raw(userName)}</div>\`; // html.raw() around userName
+// content is now: <div><script>alert("XSS")</script></div>`)}
     </main>
   `;
 

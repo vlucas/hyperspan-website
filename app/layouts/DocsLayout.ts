@@ -10,8 +10,9 @@ export default function DocsLayout({ title, content }: { title: string; content:
           <li><a href="/docs">Get Started</a></li>
           <li><a href="/docs/philosophy">Philosophy</a></li>
           <li><a href="/docs/install">Installation</a></li>
-          <li><a href="/docs/html">HTML Templates</a></li>
           <li><a href="/docs/islands-architecture">Islands Architecture</a></li>
+          <li><a href="/docs/structure">App Structure</a></li>
+          <li><a href="/docs/html">HTML Templates</a></li>
           <li><a href="/docs/routes">Routes</a></li>
         </ul>
       </nav>

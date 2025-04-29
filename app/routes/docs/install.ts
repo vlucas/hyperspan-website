@@ -1,7 +1,6 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/DocsLayout';
-import { highlightShell } from '@/src/lib/syntax-highlighter';
 
 export default createRoute(() => {
   const content = html`
