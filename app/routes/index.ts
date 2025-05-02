@@ -96,8 +96,8 @@ async function AsyncBlock(waitMs: number, msg: string) {
           <div class="card-body text-lg">
             <h2 class="card-title text-2xl mb-6">Dynamic Islands.</h2>
             <p>
-              Rich client-side interactivity with server-first performance and minimal client-side
-              JavaScript.
+              Rich client-side interactivity with server-first performance. Only ship the JavaScript
+              you need, when you need it.
             </p>
             <div class="card-actions">
               <a class="btn btn-outline" href="/docs/islands-architecture"

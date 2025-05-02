@@ -22,8 +22,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hyperspan/framework": "^0.1.5",
-    "@hyperspan/html": "^0.1.4",
+    "@hyperspan/framework": "^0.1.7",
+    "@hyperspan/html": "^0.1.6",
     "@preact/compat": "^18.3.1",
     "@tailwindcss/cli": "^4.0.17",
     "daisyui": "^5.0.9",

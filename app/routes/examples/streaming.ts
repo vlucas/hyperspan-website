@@ -1,4 +1,4 @@
-import { html } from '@hyperspan/html';
+import { html, placeholder } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 import { sleep } from '@/src/lib/sleep';
@@ -28,7 +28,10 @@ export default createRoute(() => {
           <div class="card-body">
             <h2>Content Block 2</h2>
             <p>Waits 5000ms to render</p>
-            ${AsyncRenderBlock(5000, 'Rendered after 5000ms!')}
+            ${placeholder(
+              html`<span>Custom Loading HTML...</span>`,
+              AsyncRenderBlock(5000, 'Rendered after 5000ms!')
+            )}
           </div>
         </div>
 
@@ -43,7 +46,9 @@ export default createRoute(() => {
 
       <h2>Example Streaming Code</h2>
       <p>The code to enable this streaming behavior is a simple <code>html</code> template:</p>
-      ${highlightTS(`const tmpl = html\`
+      ${highlightTS(`import { html, placeholder } from '@hyperspan/html';
+
+const tmpl = html\`
   <section class="flex gap-4">
     <div class="card">
       <h2>Content Block 1</h2>
@@ -54,7 +59,10 @@ export default createRoute(() => {
     <div class="card">
       <h2>Content Block 2</h2>
       <p>Waits 5000ms to render</p>
-      \${AsyncRenderBlock(5000, 'Rendered after 5000ms!')}
+      \${placeholder(
+        html\`<span>Custom Loading HTML...</span>\`,
+        AsyncRenderBlock(5000, 'Rendered after 5000ms!')
+      )}
     </div>
 
     <div class="card">
