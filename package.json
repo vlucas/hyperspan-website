@@ -10,6 +10,7 @@
     "test": "bun test"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.0.17",
     "@tailwindcss/typography": "^0.5.16",
     "@types/bun": "^1.1.9",
     "@types/node": "^22.5.5",
@@ -22,15 +23,9 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hyperspan/framework": "^0.1.7",
+    "@hyperspan/framework": "^0.1.8",
     "@hyperspan/html": "^0.1.6",
-    "@preact/compat": "^18.3.1",
-    "@tailwindcss/cli": "^4.0.17",
     "daisyui": "^5.0.9",
-    "highlight.js": "^11.11.1",
-    "hono": "^4.7.4",
-    "isbot": "^5.1.25",
-    "tailwind-merge": "^2.5.2",
-    "valibot": "^1.0.0-rc.3"
+    "highlight.js": "^11.11.1"
   }
 }

@@ -8,16 +8,19 @@ export default createRoute(() => {
     <main class="prose">
       <h1>Layouts</h1>
       <p>
-        The Hyperspan framework <strong>does not currently have a built-in layout system</strong>,
-        but the recommended way to use layouts is to place them in the <code>app/layouts</code>
-        directory.
+        The Hyperspan framework
+        <strong>does not have a built-in layout system</strong> where layouts get automatically
+        applied to routes. However, the recommended way to use layouts is to place them in the
+        <code>app/layouts</code> directory and use the <code>createLayout</code> function from
+        <code>@hyperspan/framework</code> to define them.
       </p>
 
       <p>For example, you can create a <code>app/layouts/main-layout.ts</code> file like this:</p>
       ${highlightTS(`import { html } from '@hyperspan/html';
+import { createLayout } from '@hyperspan/framework';
 
 type LayoutProps = { children: any, title: string };
-export default function MainLayout({ children, title }: LayoutProps) {
+export default createLayout(({ children, title }: LayoutProps) => {
   return html\`
     <html>
       <head>
@@ -26,7 +29,7 @@ export default function MainLayout({ children, title }: LayoutProps) {
       <body>\${children}</body>
     </html>
   \`;
-}`)}
+});`)}
 
       <p>Then, you can use the layout in your <code>app/routes/index.ts</code> file like this:</p>
       ${highlightTS(`import { createRoute } from '@hyperspan/framework';
