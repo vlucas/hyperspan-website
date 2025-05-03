@@ -120,9 +120,36 @@ export default createRoute((c) => {
   return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
 });`)}
 
+      <h2>Custom Route Paths</h2>
+      <p>
+        If you need to use a custom path for a file-based route, you can import any file-based route
+        and make it accessible with any custom path or URL pattern you need.
+      </p>
+      <p>
+        Just import <code>createRouteFromModule</code> from <code>@hyperspan/framework</code> and
+        pass in the imported module.
+      </p>
+
+      ${highlightTS(`import { createServer, createRouteFromModule } from '@hyperspan/framework';
+import PostPageRoute from '@/app/routes/posts/[id].ts';
+
+const app = await createServer({
+  appDir: './app',
+  staticFileRoot: './public',
+});
+
+// Post page route is now accessible at /articles/:id in addition to /posts/:id
+app.get('/articles/:id', createRouteFromModule(PostPageRoute));
+
+export default app;`)}
+      <p>
+        This is similar to how rewrites work in Next.js, only this is more direct and flexible
+        instead of limited toa config file.
+      </p>
+
       <h2>Custom Route Handlers</h2>
       <p>
-        If you need more control over routing or need to do something does doesn't fit within
+        If you need more control over routing or need to do something that doesn't fit within
         file-based routing, you can create a custom route handler function in
         <code>app/server.ts</code>. The <code>createServer</code> function will return a
         <a href="https://hono.dev">Hono</a> instance that you can use to add custom

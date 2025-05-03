@@ -21,7 +21,8 @@ export default createRoute(() => {
             <p class="my-6">
               Tailwind, file-based routes, streaming templates, dynamic islands, and more.
             </p>
-            <a class="my-6 btn btn-primary" href="/docs">Read The Docs</a>
+            <a class="my-6 btn btn-outline" href="/docs">Read The Docs</a>
+            <a class="my-6 btn btn-primary" href="/docs/install">Install Hyperspan</a>
           </div>
         </div>
       </div>
