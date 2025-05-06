@@ -13,6 +13,7 @@ export default function DocsLayout({ title, content }: { title: string; content:
           <li><a href="/docs/islands-architecture">Islands Architecture</a></li>
           <li><a href="/docs/html">HTML Templates</a></li>
           <li><a href="/docs/structure">App Structure</a></li>
+          <li><a href="/docs/env">Environment</a></li>
           <li><a href="/docs/layouts">Layouts</a></li>
           <li><a href="/docs/routes">Routes</a></li>
         </ul>
