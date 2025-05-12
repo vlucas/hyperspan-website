@@ -27,6 +27,7 @@ export default createLayout(({ title, content }: { title: string; content: any }
 
         <title>${title}</title>
         ${hyperspanStyleTags()}
+        <script defer data-domain="hyperspan.dev" src="https://plausible.io/js/script.js"></script>
       </head>
       <body class="">
         ${hyperspanScriptTags()}
