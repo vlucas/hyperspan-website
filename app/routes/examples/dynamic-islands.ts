@@ -2,41 +2,37 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/docs-layout';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
-import { createPreactIsland } from '@hyperspan/framework/assets';
-
-const ClientCounter = await createPreactIsland(
-  import.meta.resolve('@/app/components/client-counter')
-);
+import { renderIsland } from '@hyperspan/framework/assets';
+import ClientCounter from '@/app/components/client-counter.tsx';
 
 export default createRoute(() => {
   const content = html`
     <main class="prose">
       <h1>Dynamic Islands Example</h1>
       <p>
-        This example shows how to use the <code>createPreactIsland</code> function to create a
-        dynamic island for a Preact component.
+        This example shows how to embed dynamic Preact components in otherwise static HTML content.
       </p>
 
       <h2>Embedded Client Counter:</h2>
-      ${ClientCounter({ count: 5 })}
+      ${renderIsland(ClientCounter, { count: 5 })}
 
       <h2>Code Example:</h2>
       <p>
-        You can use the <code>createPreactIsland</code> function from the <code>assets</code> path
-        to create a dynamic island for your Preact components.
+        Once your frontend framework plugin of choice is loaded, You can use the
+        <code>renderIsland</code> function from the <code>assets</code> path to render and hydrate
+        your client component.
       </p>
       ${highlightTS(`import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { createPreactIsland } from '@hyperspan/framework/assets';
-
-// Bun supports top-level await, so this compiles at build/server start time
-const ExampleCounter = await createPreactIsland(import.meta.resolve('@/src/components/ExampleCounter.tsx'));
+import { renderIsland } from '@hyperspan/framework/assets';
+// Import your Preact component like normal once the island plugin is loaded
+import ExampleCounter from '@/src/components/ExampleCounter.tsx';
 
 export default createRoute(() => {
   return html\`
     <div>
-      <!-- Call the component as a function and pass any props you need! -->
-      \${ExampleCounter({ count: 5 })}
+      <!-- Call the component with renderIsland() and pass any props you need! -->
+      \${renderIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;
 });`)}
