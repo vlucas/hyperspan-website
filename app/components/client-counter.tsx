@@ -1,4 +1,5 @@
-import { useState } from 'preact/compat';
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
 
 export default function ClientCounter({ count: initialCount = 0 }: { count?: number }) {
   const [count, setCount] = useState(initialCount);

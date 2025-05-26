@@ -22,10 +22,15 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
+  "overrides": {
+    "preact": "^10.26.6"
+  },
   "dependencies": {
     "@hyperspan/framework": "^0.1.8",
-    "@hyperspan/html": "^0.1.6",
+    "@hyperspan/html": "^0.1.7",
     "daisyui": "^5.0.9",
-    "highlight.js": "^11.11.1"
+    "highlight.js": "^11.11.1",
+    "preact": "^10.26.6",
+    "react": "^19.1.0"
   }
 }
