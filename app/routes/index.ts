@@ -109,16 +109,14 @@ async function AsyncBlock(waitMs: number, msg: string) {
           <div class="md:w-2/3 p-4 bg-base-300">
             ${highlightTS(`import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { createPreactIsland } from '@hyperspan/framework/assets';
-
-// Bun supports top-level await, so this compiles at build/server start time
-const ExampleCounter = await createPreactIsland(import.meta.resolve('@/src/components/example-counter.tsx'));
+import { renderIsland } from '@hyperspan/framework/assets';
+import ExampleCounter from '@/src/components/example-counter.tsx';
 
 export default createRoute(() => {
   return html\`
     <div>
-      <!-- Call the component as a function and pass any props you need! -->
-      \${ExampleCounter({ count: 5 })}
+      <!-- Call the renderIsland() function and pass any props you need! -->
+      \${renderIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;
 });`)}
