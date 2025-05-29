@@ -16,18 +16,36 @@ export default createRoute(() => {
 
       <p>For example, you can create a <code>app/layouts/main-layout.ts</code> file like this:</p>
       ${highlightTS(`import { html } from '@hyperspan/html';
+import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
 
-export type MainLayoutProps = { children: any, title: string };
-export default function MainLayout({ children, title }: MainLayoutProps) {
-  return html\`
-    <html>
+export type MainLayoutProps = { content: any, title: string };
+export default function MainLayout({ content, title }: MainLayoutProps) {
+  return html\`<!doctype html>
+    <html lang="en">
       <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>\${title}</title>
+        \${hyperspanStyleTags()}
       </head>
-      <body>\${children}</body>
+      <body>
+        \${hyperspanScriptTags()}
+        <main>
+          \${content}
+        </main>
+      </body>
     </html>
   \`;
 }`)}
+
+      <div class="alert alert-info alert-outline">
+        <span
+          >Note: The <code>hyperspanStyleTags()</code> and
+          <code>hyperspanScriptTags()</code> functions are used to inject the Hyperspan styles and
+          scripts into the page. Don't forget to use them in your layouts to ensure that the styles
+          and scripts are loaded properly!
+        </span>
+      </div>
 
       <p>Then, you can use the layout in your <code>app/routes/index.ts</code> file like this:</p>
       ${highlightTS(`import { createRoute } from '@hyperspan/framework';
