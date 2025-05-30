@@ -62,7 +62,7 @@ export default createRoute(() => {
     title: 'Home',
     content,
   });
-}`)}
+});`)}
 
       <p>
         In this example, layouts are just normal functions that return HTML. You can use them in any
