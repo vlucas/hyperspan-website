@@ -66,8 +66,8 @@ export default createRoute(() => {
   return html\`
     <div>
       <h1>Async Content Blocks:</h1>
-      \${AsyncBlock(1000, "Loading...")}
-      \${AsyncBlock(2000, "Loading 2...")}
+      \${AsyncBlock(1000, "Content Block 1")}
+      \${AsyncBlock(2000, "Content Block 2")}
     </div>
   \`;
 });

@@ -1,8 +1,7 @@
 import { html } from '@hyperspan/html';
 import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
-import { createLayout } from '@hyperspan/framework';
 
-export default createLayout(({ title, content }: { title: string; content: any }) => {
+export default function MainLayout({ title, content }: { title: string; content: any }) {
   return html`
     <!doctype html>
     <html class="w-full h-full" lang="en" data-theme="sunset">
@@ -70,4 +69,4 @@ export default createLayout(({ title, content }: { title: string; content: any }
       </body>
     </html>
   `;
-});
+}

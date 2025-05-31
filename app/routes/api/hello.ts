@@ -1,11 +1,11 @@
-import type { Context } from 'hono';
+import { createAPIRoute } from '@hyperspan/framework';
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function GET(c: Context) {
+export default createAPIRoute(async (c) => {
   await sleep(200);
 
-  return Response.json({ foo: 'bar' });
-}
+  return { foo: 'bar' };
+});
