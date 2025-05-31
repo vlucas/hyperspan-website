@@ -138,14 +138,13 @@ const app = await createServer({
   staticFileRoot: './public',
 });
 
-// Post page route is now accessible at /articles/:id in addition to /posts/:id
-app.get('/articles/:id', createRouteFromModule(PostPageRoute));
+// Make post page route accessible at:
+// /posts/:id      (file-based route via Hyperspan)
+// /articles/:id   (custom path defined here)
+const postRouteHandlers = createRouteFromModule(PostPageRoute);
+app.get('/articles/:id', ...postRouteHandlers);
 
 export default app;`)}
-      <p>
-        This is similar to how rewrites work in Next.js, only this is more direct and flexible
-        instead of limited toa config file.
-      </p>
 
       <h2>Custom Route Handlers</h2>
       <p>
@@ -186,10 +185,33 @@ const app = await createServer({
 
 export default app;`)}
 
-      <h2>Custom Middleware</h2>
+      <h2>Route-Specific Middleware</h2>
       <p>
-        You can also add custom middleware to the Hono server in <code>app/server.ts</code>. This is
-        useful for things like authentication, logging, etc.
+        The <code>createRoute</code> function returns an object with a
+        <code>middleware()</code> method to define middleware for one specific route. This is useful
+        for things like caching that are highly contextual and should only be applied to specific
+        routes.
+      </p>
+      <p>
+        The middleware is applied in the order it is defined, and is applied to the route before the
+        route handler is called. Any middleware that is made for Hono can be used here.
+      </p>
+      ${highlightTS(`import { createRoute } from '@hyperspan/framework';
+import { logger } from 'hono/logger';
+import { csrf } from 'hono/csrf';
+
+export default createRoute((c) => {
+  return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
+}).middleware([
+  csrf(),
+  logger(),
+]);`)}
+
+      <h2>Global or Path-Specific Middleware</h2>
+      <p>
+        You can add custom global or path-specific middleware to the Hono server directly in
+        <code>app/server.ts</code>. This is useful for more global or path-specific things like
+        authentication, logging, etc.
       </p>
 
       ${highlightTS(`import { createServer } from '@hyperspan/framework';
