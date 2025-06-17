@@ -1,8 +1,8 @@
-import {html} from '@hyperspan/html';
-import {createRoute} from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/docs-layout';
-import {highlightTS} from '@/src/lib/syntax-highlighter';
-import {renderIsland} from '@hyperspan/framework/assets';
+import { highlightTS } from '@/src/lib/syntax-highlighter';
+import { renderIsland } from '@hyperspan/framework/assets';
 import ClientCounter from '@/app/components/client-counter.tsx';
 
 export default createRoute(() => {
@@ -92,6 +92,44 @@ export default createRoute(() => {
         </span>
       </div>
 
+      <h2>renderIsland() Arguments</h2>
+      <p>The <code>renderIsland</code> function takes 1-3 arguments:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Argument</th>
+            <th>Description</th>
+            <th>Required</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>component</code></td>
+            <td>The client component to render</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td><code>props</code></td>
+            <td>Props to pass to the component (object)</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><code>options</code></td>
+            <td>
+              An options object with:
+              <ul>
+                <li><code>ssr</code>: boolean (default: <code>true</code>)</li>
+                <li>
+                  <code>loading</code>: <code>'lazy' | undefined</code> (default:
+                  <code>undefined</code>)
+                </li>
+              </ul>
+            </td>
+            <td>No</td>
+          </tr>
+        </tbody>
+      </table>
+
       <h2>Server-Side Rendering (SSR) with Islands</h2>
       <p>
         By default, <code>renderIsland</code> will server-side render (SSR) the Preact component.
@@ -108,8 +146,26 @@ export default createRoute(() => {
         empty.
       </p>
 
+      <h2>Lazy Loading/Hydrating Islands</h2>
+      <p>
+        You can wait to hydrate your client island until the element scrolls into view by passing
+        <code>{ loading: 'lazy' }</code> as the third argument to <code>renderIsland</code>.
+      </p>
+      <p>Example code for dynamic island with lazy loading/hydration:</p>
+      <p><code>renderIsland(ExampleCounter, { count: 5 }, { loading: 'lazy' })</code>.</p>
+      <p>
+        This will render the initial <code>&lt;script&gt;</code> tag inside a
+        <code>&lt;template&gt;</code> tag so the script will not evaluate or run for the current
+        user until the element scrolls into view (within 200px of the viewport).
+      </p>
+      <p>
+        This can provide some significant performance benefits, but it is not on by default since it
+        can lead to some unexpected behaviors, like timers not running and data not being fetched
+        until the component is nearly in view.
+      </p>
+
       <h2>Example Client Counter Component</h2>
-      ${renderIsland(ClientCounter, {count: 5})}
+      ${renderIsland(ClientCounter, { count: 5 }, { ssr: true, loading: 'lazy' })}
 
       <h2>Using Other Frontend Frameworks</h2>
       <p>

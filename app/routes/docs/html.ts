@@ -85,7 +85,7 @@ export default createRoute(() => {
       ${HTMLTemplateExampleAsync()}
       <p class="text-sm">
         When stream rendering is used, async work at the top level template will hold up the initial
-        page response. Any subsequent async work in nested templates will be render a loading
+        page response. Any subsequent async work in nested templates will render a loading
         placeholder and the content will be replaced later when it is done streaming in.
       </p>
 
