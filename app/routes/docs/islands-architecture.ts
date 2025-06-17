@@ -165,6 +165,10 @@ export default createRoute(() => {
       </p>
 
       <h2>Example Client Counter Component</h2>
+      <p>
+        This example is lazy loaded/hydrated. Check the Elements tab in your browser's developer
+        tools to watch how it loads in.
+      </p>
       ${renderIsland(ClientCounter, { count: 5 }, { ssr: true, loading: 'lazy' })}
 
       <h2>Using Other Frontend Frameworks</h2>
