@@ -20,7 +20,7 @@
   "dependencies": {
     "@hyperspan/framework": "^0.3.3",
     "@hyperspan/html": "^0.1.7",
-    "@hyperspan/plugin-preact": "^0.1.4",
+    "@hyperspan/plugin-preact": "^0.1.5",
     "daisyui": "^5.0.9",
     "highlight.js": "^11.11.1",
     "preact": "^10.26.6"
