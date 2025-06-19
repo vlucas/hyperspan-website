@@ -2,11 +2,8 @@
   "name": "hyperspan-website",
   "version": "0.0.1",
   "scripts": {
-    "build:styles": "bun run clean:styles && bunx @tailwindcss/cli -i ./app/styles/globals.css -o ./public/_hs/css/styles-$(date \"+%Y%m%d%H%M%S\").css --minify",
-    "build:styles:dev": "bun run clean:styles && bunx @tailwindcss/cli -i ./app/styles/globals.css -o ./public/_hs/css/styles-$(date \"+%Y%m%d%H%M%S\").css --watch",
-    "clean:styles": "rm ./public/styles-*.css 2> /dev/null || true && rm ./public/_hs/css/styles-*.css 2> /dev/null || true",
-    "dev": "bun run build:styles && PORT=3005 bun run --watch app/server.ts",
-    "start": "bun run build:styles && bun run app/server.ts",
+    "dev": "PORT=3005 bun run --hot app/server.ts",
+    "start": "bun run app/server.ts",
     "test": "bun test"
   },
   "devDependencies": {

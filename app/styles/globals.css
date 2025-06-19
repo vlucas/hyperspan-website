@@ -88,5 +88,5 @@ slot {
 /* Tailwind overrides */
 .prose {
   width: 80ch;
-  max-width: 80ch;
+  @apply lg:max-w-[80ch];
 }

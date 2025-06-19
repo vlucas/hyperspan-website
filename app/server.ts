@@ -1,3 +1,4 @@
+import './styles/build';
 import { createServer } from '@hyperspan/framework';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import { preactPlugin } from '@hyperspan/plugin-preact';
