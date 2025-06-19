@@ -4,7 +4,7 @@
     "": {
       "name": "hyperspan-website",
       "dependencies": {
-        "@hyperspan/framework": "^0.3.1",
+        "@hyperspan/framework": "^0.3.2",
         "@hyperspan/html": "^0.1.7",
         "@hyperspan/plugin-preact": "0.1.3",
         "daisyui": "^5.0.9",
@@ -27,7 +27,7 @@
   "packages": {
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
 
-    "@hyperspan/framework": ["@hyperspan/framework@0.3.1", "", { "dependencies": { "@hyperspan/html": "^0.1.7", "hono": "^4.7.10", "isbot": "^5.1.28", "zod": "^3.25.42" } }, "sha512-Qtf01+et1/PtuB9KIH4mVOCW1kHcrD6rqOC2ADkbac+1etRfpOHptHw65YFEGPXv6jw+WllrLX0jiq3n8bgQkg=="],
+    "@hyperspan/framework": ["@hyperspan/framework@0.3.2", "", { "dependencies": { "@hyperspan/html": "^0.1.7", "hono": "^4.7.10", "isbot": "^5.1.28", "zod": "^3.25.42" } }, "sha512-DYDb6L83J82rTspZ3x9luSxUrVLoLx947xSyX6/PPyz7P/bynDvGCK+/dMNJlCggG9E00yiRO5HSD0FlC0KUuQ=="],
 
     "@hyperspan/html": ["@hyperspan/html@0.1.7", "", {}, "sha512-MNU7oxA2PNvfGmr98IG1uMEPfsFVcmTSHRmc/yWuTTHX/QY08tqRWdPl1wWTDvjkCcekNxK3/yujyRiXm9m3GQ=="],
 
