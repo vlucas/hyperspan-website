@@ -1,5 +1,6 @@
 import './styles/build';
 import { createServer } from '@hyperspan/framework';
+import { cacheTime } from '@hyperspan/framework/middleware';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import { preactPlugin } from '@hyperspan/plugin-preact';
 
@@ -9,7 +10,7 @@ const app = await createServer({
   islandPlugins: [preactPlugin()],
 });
 
-// Any normal Hono middleware you want to use here...
 app.use(trimTrailingSlash());
+app.use('/docs/*', cacheTime('1w'));
 
 export default app;
