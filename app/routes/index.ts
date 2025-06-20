@@ -2,6 +2,7 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
+import { cacheTime } from '@hyperspan/framework/middleware';
 
 export default createRoute(() => {
   const content = html`
@@ -130,4 +131,4 @@ export default createRoute(() => {
     title: 'Hyperspan - Simple. Server. Streaming.',
     content,
   });
-});
+}).middleware([cacheTime('1w')]);

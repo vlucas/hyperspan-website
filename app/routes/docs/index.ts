@@ -17,9 +17,12 @@ export default createRoute(() => {
       </p>
       <p>
         Hyperspan is built on top of <a href="https://hono.dev">Hono</a> and gives you full access
-        to it, so it feels a lot <em>&quot;closer to the metal&quot;</em> than most modern frontend
-        frameworks do today. It's also built using <a href="https://bun.sh">Bun</a> as the runtime,
-        so there is <strong>no build or compile step</strong> required to run your code.
+        to it, so it feels a lot <em>&quot;closer to the metal&quot;</em> than other frontend
+        frameworks do. With <a href="https://bun.sh">Bun</a> as the runtime, there is
+        <strong>no build or compile step</strong> required to run your code. You can just write
+        TypeScript and run it directly. Any client-side code that needs to be bundled is done on
+        server startup via Bun plugins that run on <code>import</code>. Everything is seamless and
+        automatic.
       </p>
       <p>
         Some key features that Hyperspan adds to the mix are fast, lightweight streaming

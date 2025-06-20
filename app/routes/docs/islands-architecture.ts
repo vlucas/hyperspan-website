@@ -1,7 +1,7 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/docs-layout';
-import { highlightTS } from '@/src/lib/syntax-highlighter';
+import { highlightShell, highlightTS } from '@/src/lib/syntax-highlighter';
 import { renderIsland } from '@hyperspan/framework/assets';
 import ClientCounter from '@/app/components/client-counter.tsx';
 
@@ -37,9 +37,10 @@ export default createRoute(() => {
       </p>
       <p>
         To use Preact islands, you can install the
-        <code>@hyperspan/plugin-preact</code> package and add the plugin to your
-        <code>app/server.ts</code> file.
+        <code>@hyperspan/plugin-preact</code> package:
       </p>
+      ${highlightShell(`bun add @hyperspan/plugin-preact`)}
+      <p>Then add the plugin to your <code>app/server.ts</code> file:</p>
       ${highlightTS(`import { createServer } from '@hyperspan/framework';
 import { preactPlugin } from '@hyperspan/plugin-preact';
 
@@ -50,6 +51,11 @@ const app = await createServer({
 });
 
 export default app;`)}
+
+      <p>
+        After installing the plugin, any <code>import</code> of a <code>.tsx</code> file will be
+        handled by the plugin and will be prepared to be rendered as a dynamic island.
+      </p>
 
       <div class="alert alert-info alert-outline">
         <span
@@ -68,7 +74,7 @@ export default app;`)}
 import { createRoute } from '@hyperspan/framework';
 import { renderIsland } from '@hyperspan/framework/assets';
 // Import your Preact component like normal once the island plugin is loaded
-import ExampleCounter from '@/src/components/ExampleCounter.tsx';
+import ExampleCounter from '@/src/components/example-counter.tsx';
 
 export default createRoute(() => {
   return html\`
@@ -151,8 +157,10 @@ export default createRoute(() => {
         You can wait to hydrate your client island until the element scrolls into view by passing
         <code>{ loading: 'lazy' }</code> as the third argument to <code>renderIsland</code>.
       </p>
-      <p>Example code for dynamic island with lazy loading/hydration:</p>
-      <p><code>renderIsland(ExampleCounter, { count: 5 }, { loading: 'lazy' })</code>.</p>
+      <p>Example code for dynamic island with lazy loading/hydration and SSR:</p>
+      <p>
+        <code>renderIsland(ExampleCounter, { count: 42 }, { ssr: true, loading: 'lazy' })</code>.
+      </p>
       <p>
         This will render the initial <code>&lt;script&gt;</code> tag inside a
         <code>&lt;template&gt;</code> tag so the script will not evaluate or run for the current
@@ -174,15 +182,15 @@ export default createRoute(() => {
       <h2>Using Other Frontend Frameworks</h2>
       <p>
         If you want to use a different frontend framework like Vue, Svelete, etc., feel free to do
-        too! There is no magic here &mdash; Hyperspan is just using <code>Bun.build()</code> to get
+        so! There is no magic here &mdash; Hyperspan is just using <code>Bun.build()</code> to get
         the JavaScript output of your component file, adding some SSR code to it, putting the output
         in a <code>&lt;script&gt;</code> tag, and then adding a bit of extra code to render and
         hydrate it as a component into a corresponding <code>&lt;div&gt;</code> tag.
       </p>
       <p>
-        Although Hyperspan only provides support for Preact/React components out of the box, you can
-        use the same approach to create islands for other frameworks as well. Just look at the
-        implementation of
+        Although Hyperspan only provides a plugin for Preact/React components out of the box (for
+        now!), you can use the same approach to create islands for other frameworks as well. Just
+        look at the implementation of
         <a href="https://github.com/vlucas/hyperspan/tree/main/packages/plugin-preact"
           ><code>@hyperspan/plugin-preact</code></a
         >
