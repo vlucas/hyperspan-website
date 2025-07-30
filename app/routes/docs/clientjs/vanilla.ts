@@ -116,8 +116,8 @@ export default createRoute(() => {
       <p>Example content for a page route.</p>
 
       <script>
-        \${showGreeting.toString()}
-        showGreeting('John');
+        // Use an IIFE because the name might change when minified!
+        (\${showGreeting.toString()})('John');
       </script>
     </main>
   \`;

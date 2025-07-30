@@ -28,7 +28,7 @@ export default createRoute(() => {
         Some key features that Hyperspan adds to the mix are fast, lightweight streaming
         <a href="/docs/html">HTML Templates</a>,
         <a href="/docs/routes">file-based &amp; flexible routes</a>, and an
-        <a href="/docs/islands-architecture">Islands Architecture</a> that ensures you only ship
+        <a href="/docs/clientjs/islands">Islands Architecture</a> that ensures you only ship
         JavaScript to the client when you really need to.
       </p>
       <p>

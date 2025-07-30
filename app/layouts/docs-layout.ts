@@ -16,8 +16,12 @@ export default function DocsLayout({ title, content }: { title: string; content:
           <li><a href="/docs/clientjs/islands">Islands Architecture</a></li>
           <li><a href="/docs/clientjs/vanilla">Vanilla JS</a></li>
 
-          <li class="menu-title">Structure &amp; Routes</li>
-          <li><a href="/docs/routes">Routes &amp; Filesystem</a></li>
+          <li class="menu-title">Routes</li>
+          <li><a href="/docs/routes">Routing Basics</a></li>
+          <li><a href="/docs/routes/pages">Page Routes</a></li>
+          <li><a href="/docs/routes/api">API Routes</a></li>
+
+          <li class="menu-title">Structure</li>
           <li><a href="/docs/layouts">Layouts</a></li>
           <li><a href="/docs/structure">App Structure</a></li>
           <li><a href="/docs/html">HTML Templates</a></li>

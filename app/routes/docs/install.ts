@@ -24,8 +24,8 @@ bun run dev`)}
 
       <p>
         From there, you can add <a href="/docs/routes">custom routes</a>,
-        <a href="/docs/layouts">layouts</a>, and
-        <a href="/docs/islands-architecture">client components</a> to your app. The sky is the
+        <a href="/docs/layouts">layouts</a>, <a href="/docs/clientjs/vanilla">vanilla JS</a>, and
+        <a href="/docs/clientjs/islands">Preact/React components</a> to your app. The sky is the
         limit!
       </p>
     </main>

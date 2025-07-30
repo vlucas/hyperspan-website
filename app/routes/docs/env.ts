@@ -33,7 +33,7 @@ export default createRoute(() => {
         <code>process.env.APP_PUBLIC_API_URL</code>. Any environment variables used in client
         components that start with <code>APP_PUBLIC_</code> will be automatically inlined into the
         component on build as strings (when they are imported with an
-        <a href="/docs/islands-architecture">island plugin</a>) so that the
+        <a href="/docs/clientjs/islands">island plugin</a>) so that the
         <code>process.env</code> object is removed from the end result.
       </p>
       <p>

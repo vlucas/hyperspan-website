@@ -38,7 +38,7 @@ export default createRoute(() => {
 });`)}
       <p>
         Read more about dynamic islands in the
-        <a href="/docs/islands-architecture">Islands Architecture</a> docs.
+        <a href="/docs/clientjs/islands">Islands Architecture</a> docs.
       </p>
     </main>
   `;

@@ -6,22 +6,40 @@ import { highlightTS } from '@/src/lib/syntax-highlighter';
 export default createRoute(() => {
   const content = html`
     <main class="prose">
-      <h1>Routes</h1>
+      <h1>Routing Basics</h1>
       <p>
         Routes are the entry point for all requests to your application. They map a specific URL
         pattern to a specific file or route handler function.
       </p>
-      <p>In Hyperspan, routes can live in two main places:</p>
-      <ol>
+      <div class="alert alert-info alert-outline">
+        <span
+          >This page includes information about base functionality for
+          <strong>both page routes and API routes</strong>. Read this page first, then read the page
+          for the type of route you are interested in.</span
+        >
+      </div>
+
+      <p>In Hyperspan, there are 2 built-in types of routes:</p>
+      <ol class="list-decimal list-inside">
+        <li><a href="/docs/routes/pages">Page routes</a> &mdash; for HTML pages</li>
+        <li>
+          <a href="/docs/routes/api">API routes</a> &mdash; for JSON endpoints and other types of
+          content
+        </li>
+      </ol>
+
+      <p>Both types of routes can live in two main places:</p>
+      <ol class="list-decimal list-inside">
         <li><code>app/routes</code> directory (file-based routes)</li>
         <li><code>app/server.ts</code> file (custom route handlers)</li>
       </ol>
 
       <h2>File-Based Routing</h2>
       <p>
-        To make things easier, Hyperspan uses file-based routing. This means that you can create a
-        file in the <code>app/routes</code> directory and it will be automatically picked up by the
-        framework and added to your routing table.
+        Both <a href="/docs/routes/pages">page routes</a> and
+        <a href="/docs/routes/api">API routes</a> use file-based routing. This means that you can
+        create a file in the <code>app/routes</code> directory and it will be automatically picked
+        up by the framework and added to your routing table.
       </p>
       <p>
         Here are some examples of how files in the <code>app/routes</code> directory map to URL
@@ -75,17 +93,6 @@ export default createRoute(async (c) => {
   </main>\`;
 });`)}
 
-      <h3>The <code>createRoute</code> Function</h3>
-      <p>
-        File-based routes are created by default exporting the results of calling the
-        <code>createRoute</code> function.
-      </p>
-      <p>The most basic route is a function that returns a string of HTML.</p>
-
-      ${highlightTS(`import { createRoute } from '@hyperspan/framework';
-
-export default createRoute(() => html\`<div>Hello, world!</div>\`);`)}
-
       <h3>Using Plain Functions</h3>
       <p>
         You <em>can</em> define a route with a plain function, but you won't have the proper types
@@ -108,7 +115,7 @@ export default function (c: Context) {
 
       <h2>Route Parameters</h2>
       <p>
-        The <code>createRoute</code> function has a
+        The <code>createRoute</code> and <code>createAPIRoute</code> functions have a
         <a href="https://hono.dev/docs/api/context">Hono Context</a> parameter that can be used to
         access information from the <a href="https://hono.dev/docs/api/request">request</a>, like
         parameters from the route path, query string parameters, headers, cookies, etc.
@@ -122,21 +129,17 @@ export default createRoute((c) => {
 
       <h2>Custom Route Paths</h2>
       <p>
-        If you need to use a custom path for a file-based route, you can import any file-based route
-        and make it accessible with any custom path or URL pattern you need.
-      </p>
-      <p>
-        Just import <code>createRouteFromModule</code> from <code>@hyperspan/framework</code> and
-        pass in the imported module.
+        If you need more flexibility than file-based routing provides, you can import any file-based
+        route and make it accessible with any custom path or URL pattern you define. Just import
+        <code>createRouteFromModule</code> from <code>@hyperspan/framework</code> and pass in the
+        whole imported module.
       </p>
 
-      ${highlightTS(`import { createServer, createRouteFromModule } from '@hyperspan/framework';
+      ${highlightTS(`import hyperspanConfig from '../hyperspan.config';
+import { createServer, createRouteFromModule } from '@hyperspan/framework';
 import PostPageRoute from '@/app/routes/posts/[id].ts';
 
-const app = await createServer({
-  appDir: './app',
-  staticFileRoot: './public',
-});
+const app = await createServer(hyperspanConfig);
 
 // Make post page route accessible at:
 // /posts/:id      (file-based route via Hyperspan)
@@ -145,6 +148,13 @@ const postRouteHandlers = createRouteFromModule(PostPageRoute);
 app.get('/articles/:id', ...postRouteHandlers);
 
 export default app;`)}
+      <div class="alert">
+        <span
+          >Note that <code>createRouteFromModule</code> returns an array that includes any
+          middleware that was defined in the route. Use the spread operator (<code>...</code>) to
+          ensure all route handlers are added for the path.</span
+        >
+      </div>
 
       <h2>Custom Route Handlers</h2>
       <p>
@@ -156,12 +166,10 @@ export default app;`)}
         <a href="https://hono.dev/docs/concepts/middleware">Hono Middleware</a>.
       </p>
 
-      ${highlightTS(`import { createServer } from '@hyperspan/framework';
+      ${highlightTS(`import hyperspanConfig from '../hyperspan.config';
+import { createServer } from '@hyperspan/framework';
 
-const app = await createServer({
-  appDir: './app',
-  staticFileRoot: './public',
-});
+const app = await createServer(hyperspanConfig);
 
 // Custom Hono Route
 app.get('/my-custom-route', (c) => c.html('<div>Hello, world!</div>'));
@@ -170,20 +178,19 @@ export default app;`)}
 
       <p>
         If you need to add routes <em>before</em> the file-based routes are processed, you can do so
-        by using the <code>beforeRoutesAdded</code> hook in <code>createServer</code>.
+        by using the <code>beforeRoutesAdded</code> hook in <code>createConfig</code> in your
+        <code>hyperspan.config.ts</code> file.
       </p>
 
-      ${highlightTS(`import { createServer } from '@hyperspan/framework';
+      ${highlightTS(`import { createConfig } from '@hyperspan/framework';
 
-const app = await createServer({
+export default createConfig({
   appDir: './app',
   staticFileRoot: './public',
   beforeRoutesAdded: (app) => {
     app.get('/custom-route-before-file-routes', (c) => c.html('<div>Hello, world!</div>'));
   },
-});
-
-export default app;`)}
+});`)}
 
       <h2>Route-Specific Middleware</h2>
       <p>
@@ -214,13 +221,11 @@ export default createRoute((c) => {
         authentication, logging, etc.
       </p>
 
-      ${highlightTS(`import { createServer } from '@hyperspan/framework';
+      ${highlightTS(`import hyperspanConfig from '../hyperspan.config';
+import { createServer } from '@hyperspan/framework';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 
-const app = await createServer({
-  appDir: './app',
-  staticFileRoot: './public',
-});
+const app = await createServer(hyperspanConfig);
 
 // Custom Hono Middleware
 app.use(trimTrailingSlash());
@@ -234,7 +239,7 @@ export default app;`)}
   `;
 
   return DocsLayout({
-    title: 'Routes',
+    title: 'Routing Basics',
     content,
   });
 });

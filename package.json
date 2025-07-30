@@ -7,22 +7,24 @@
     "test": "bun test"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.0.17",
     "@tailwindcss/typography": "^0.5.16",
     "@types/bun": "^1.1.9",
     "@types/node": "^22.5.5",
     "@types/react": "^19.1.0",
+    "@types/timestring": "^7.0.0",
     "bun-types": "latest",
     "prettier": "^3.2.5",
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@hyperspan/framework": "^0.3.3",
+    "@hyperspan/framework": "^0.4.2",
     "@hyperspan/html": "^0.1.7",
     "@hyperspan/plugin-preact": "^0.1.5",
+    "@tailwindcss/cli": "^4.0.17",
     "daisyui": "^5.0.9",
     "highlight.js": "^11.11.1",
-    "preact": "^10.26.6"
+    "preact": "^10.26.6",
+    "timestring": "^7.0.0"
   }
 }

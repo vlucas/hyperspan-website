@@ -19,9 +19,7 @@ export default createRoute(() => {
               Opinionated server-oriented framework built with TypeScript,
               <a href="https://hono.dev">Hono</a> and <a href="https://bun.sh">Bun</a>.
             </p>
-            <p class="my-6">
-              Tailwind, file-based routes, streaming templates, dynamic islands, and more.
-            </p>
+            <p class="my-6">File-based routes, streaming templates, dynamic islands, and more.</p>
             <a class="my-6 btn btn-outline" href="/docs">Read The Docs</a>
             <a class="my-6 btn btn-primary" href="/docs/install">Install Hyperspan</a>
           </div>
@@ -86,7 +84,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
               Streaming responses by default for any template that contains async content. Send all
               your static content immediately for better
               <abbr title="Time To First Byte">TTFB</abbr>, then stream in each piece of dynamic
-              content as it's ready. Automatic opt-outs for bots and crawlers.
+              content as it's ready. Automatic opt-outs for bots, crawlers, and AI.
             </p>
             <div class="card-actions">
               <a class="btn btn-outline" href="/examples/streaming">See Streaming Example</a>
@@ -102,9 +100,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
               you need, when you need it.
             </p>
             <div class="card-actions">
-              <a class="btn btn-outline" href="/docs/islands-architecture"
-                >Islands Architecture Docs</a
-              >
+              <a class="btn btn-outline" href="/docs/clientjs/islands">Islands Architecture Docs</a>
             </div>
           </div>
           <div class="md:w-2/3 p-4 bg-base-300">
