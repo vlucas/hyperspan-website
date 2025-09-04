@@ -46,12 +46,12 @@ export function initDatadog() {
       <h2>Using Your Own Client-Side Code</h2>
       <p>
         Once the file is created, you can import it and use it in any template, layout, or route
-        with the <code>renderScriptTag</code> function like this:
+        with the <code>renderClientJS</code> function like this:
       </p>
       ${highlightTS(`import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
-import datadog from 'app/clientjs/datadog.client'; // Import the whole module
-import { renderScriptTag } from '@hyperspan/framework/assets'; // Render the script tag
+import * as datadog from 'app/clientjs/datadog.client'; // Import ENTIRE module with '* as <name>'
+import { renderClientJS } from '@hyperspan/framework/assets'; // Render <script> tag with client JS
 
 export default createRoute(() => {
   return html\`
@@ -59,7 +59,7 @@ export default createRoute(() => {
       <h1>Some Page Route</h1>
       <p>Example content for a page route.</p>
 
-      \${renderScriptTag(datadog, (module) => {
+      \${renderClientJS(datadog, (module) => {
         module.initDatadog();
       })}
     </main>
@@ -134,7 +134,7 @@ function showGreeting(name: string) {
       </p>
       <p>
         This approach works suprisingly well for simple things, but if you need to use dependencies,
-        you should use the <code>renderScriptTag</code> function instead (see above).
+        you should use the <code>renderClientJS</code> function instead (see above).
       </p>
     </main>
   `;
