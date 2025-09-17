@@ -18,13 +18,13 @@ export default createRoute(() => {
 ├── actions/     [coming soon!]
 │   └── create-user.ts
 ├── layouts/     [not managed by Hyperspan, but recommended]
-│   └── main-layout.tsx
+│   └── main-layout.ts
 ├── styles/      [global styles & Tailwind setup]
 │   └── global.css
 └── routes/      [all your routes go here]
-    └── index.tsx
-    └── about.tsx
-    └── contact.tsx
+    └── index.ts
+    └── about.ts
+    └── contact.ts
       </code></pre>
     </main>
   `;

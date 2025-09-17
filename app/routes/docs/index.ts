@@ -1,6 +1,5 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { cacheTime } from '@hyperspan/framework/middleware';
 import DocsLayout from '@/app/layouts/docs-layout';
 
 export default createRoute(() => {
