@@ -14,7 +14,7 @@
     "@types/timestring": "^7.0.0",
     "bun-types": "latest",
     "prettier": "^3.2.5",
-    "tailwindcss": "^4.0.17",
+    "tailwindcss": "^4.1.13",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -22,7 +22,7 @@
     "@hyperspan/html": "^0.2.0",
     "@hyperspan/plugin-preact": "^0.2.1",
     "@tailwindcss/cli": "^4.0.17",
-    "daisyui": "^5.0.9",
+    "daisyui": "^5.1.13",
     "highlight.js": "^11.11.1",
     "preact": "^10.26.6",
     "timestring": "^7.0.0"
