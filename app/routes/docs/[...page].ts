@@ -7,7 +7,6 @@ import { renderPreactIsland } from "@hyperspan/plugin-preact";
 import ClientCounter from "@/app/components/client-counter.tsx";
 
 export default createDocsRoute().get(async (c) => {
-  console.log('c.route =', c.route);
   const page = c.route.params?.page || 'index';
 
   // Convert URL path to file path
@@ -58,7 +57,7 @@ export default createDocsRoute().get(async (c) => {
           const options = optionsStr ? eval(`(${optionsStr})`) : {};
 
           if (componentName === "ClientCounter") {
-            return renderPreactIsland(ClientCounter, props, options).toString();
+            return renderPreactIsland(ClientCounter, props, options)
           }
           return match; // Return original if component not found
         } catch (e) {

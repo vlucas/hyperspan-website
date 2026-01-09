@@ -1,11 +1,11 @@
 import { createConfig } from '@hyperspan/framework';
 import { preactPlugin } from '@hyperspan/plugin-preact';
-import { memoryCacheTime } from './app/middleware';
 
 export default createConfig({
   appDir: './app',
-  staticFileRoot: './public',
-  islandPlugins: [preactPlugin()],
+  publicDir: './public',
+  plugins: [preactPlugin()],
+  /*
   beforeRoutesAdded(app) {
     // Redirect non-www to www
     app.use('*', (c, next) => {
@@ -22,8 +22,6 @@ export default createConfig({
 
       return next();
     });
-
-    // Cache docs pages
-    app.use('/docs/*', memoryCacheTime('1w'));
   },
+  */
 });
