@@ -7,15 +7,23 @@ import { renderPreactIsland } from "@hyperspan/plugin-preact";
 import ClientCounter from "@/app/components/client-counter.tsx";
 
 export default createDocsRoute().get(async (c) => {
-  const page = c.route.params?.page || 'index';
+  let page = c.route.params.page || 'index';
+
+  if (page.endsWith('/')) {
+    return c.res.redirect(`/docs/${page.slice(0, -1)}`);
+  }
 
   // Convert URL path to file path
   // e.g., "routes/pages" -> "routes/pages.md"
   // e.g., "clientjs/islands" -> "clientjs/islands.md"
-  const filePath = `app/collections/docs/${page}.md`;
-
   try {
-    const file = Bun.file(filePath);
+    let file = Bun.file(`app/collections/docs/${page}.md`);
+    const fileExists = await file.exists();
+
+    if (!fileExists) {
+      file = Bun.file(`app/collections/docs/${page}/index.md`);
+    }
+
     const markdown = await file.text();
 
     if (!markdown) {
@@ -27,6 +35,7 @@ export default createDocsRoute().get(async (c) => {
 
     // Override code block rendering to use syntax highlighter
     renderer.code = (code: string, language: string | undefined) => {
+      console.log('code', { code, language });
       if (language === "typescript" || language === "ts") {
         return highlightTS(code).toString();
       } else if (language === "shell" || language === "bash" || language === "sh") {
