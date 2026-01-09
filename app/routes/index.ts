@@ -2,9 +2,9 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
-import { cacheTime } from '@hyperspan/framework/middleware';
+import { memoryCacheTime } from '@/app/middleware';
 
-export default createRoute(() => {
+export default createRoute().get((c) => {
   const content = html`
     <main>
       <div class="hero bg-base-200 min-h-96 py-12">
@@ -16,8 +16,7 @@ export default createRoute(() => {
             </h1>
             <h2 class="my-10 text-2xl">Web Framework for High-Performance Sites and Apps.</h2>
             <p class="mt-10 my-6">
-              Opinionated server-oriented framework built with TypeScript,
-              <a href="https://hono.dev">Hono</a> and <a href="https://bun.sh">Bun</a>.
+              Opinionated server-oriented framework built with TypeScript and <a href="https://bun.sh">Bun</a>.
             </p>
             <p class="my-6">File-based routes, streaming templates, dynamic islands, and more.</p>
             <a class="my-6 btn btn-outline" href="/docs">Read The Docs</a>
@@ -40,7 +39,7 @@ export default createRoute(() => {
             ${highlightTS(`import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
-export default createRoute(async (context) => {
+export default createRoute().get(async (c) => {
   const posts = await fetchPosts();
 
   return html\`
@@ -61,7 +60,7 @@ export default createRoute(async (context) => {
             ${highlightTS(`import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
-export default createRoute(() => {
+export default createRoute().get(() => {
   return html\`
     <div>
       <h1>Async Content Blocks:</h1>
@@ -97,7 +96,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
             <h2 class="card-title text-2xl mb-6">Dynamic Islands.</h2>
             <p>
               Rich client-side interactivity with server-first performance. Only ship the JavaScript
-              you need, when you need it.
+              you need, when you need it. Zero client-side JavaScript by default.
             </p>
             <div class="card-actions">
               <a class="btn btn-outline" href="/docs/clientjs/islands">Islands Architecture Docs</a>
@@ -106,14 +105,14 @@ async function AsyncBlock(waitMs: number, msg: string) {
           <div class="md:w-2/3 p-4 bg-base-300">
             ${highlightTS(`import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { renderIsland } from '@hyperspan/framework/assets';
+import { renderPreactIsland } from '@hyperspan/plugin-preact';
 import ExampleCounter from '@/src/components/example-counter.tsx';
 
-export default createRoute(() => {
+export default createRoute().get(() => {
   return html\`
     <div>
       <!-- Call the renderIsland() function and pass any props you need! -->
-      \${renderIsland(ExampleCounter, { count: 5 })}
+      \${renderPreactIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;
 });`)}
@@ -123,8 +122,8 @@ export default createRoute(() => {
     </main>
   `;
 
-  return MarketingLayout({
+  return MarketingLayout(c, {
     title: 'Hyperspan - Simple. Server. Streaming.',
     content,
   });
-}).middleware([cacheTime('1w')]);
+});

@@ -2,7 +2,7 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 
-export default createRoute(() => {
+export default createRoute().get((c) => {
   const content = html`
     <main>
       <h1>DaisyUI Components</h1>
@@ -286,7 +286,7 @@ export default createRoute(() => {
     </main>
   `;
 
-  return MarketingLayout({
+  return MarketingLayout(c, {
     title: 'Components from DaisyUI',
     content,
   });

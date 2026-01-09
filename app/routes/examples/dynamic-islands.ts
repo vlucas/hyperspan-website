@@ -2,10 +2,10 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import DocsLayout from '@/app/layouts/docs-layout';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
-import { renderIsland } from '@hyperspan/framework/assets';
+import { renderPreactIsland } from '@hyperspan/plugin-preact';
 import ClientCounter from '@/app/components/client-counter.tsx';
 
-export default createRoute(() => {
+export default createRoute().get((c) => {
   const content = html`
     <main class="prose">
       <h1>Dynamic Islands Example</h1>
@@ -14,7 +14,7 @@ export default createRoute(() => {
       </p>
 
       <h2>Embedded Client Counter:</h2>
-      ${renderIsland(ClientCounter, { count: 5 })}
+      ${renderPreactIsland(ClientCounter, { count: 5 })}
 
       <h2>Code Example:</h2>
       <p>
@@ -24,7 +24,7 @@ export default createRoute(() => {
       </p>
       ${highlightTS(`import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { renderIsland } from '@hyperspan/framework/assets';
+import { renderPreactIsland } from '@hyperspan/plugin-preact';
 // Import your Preact component like normal once the island plugin is loaded
 import ExampleCounter from '@/src/components/ExampleCounter.tsx';
 
@@ -32,7 +32,7 @@ export default createRoute(() => {
   return html\`
     <div>
       <!-- Call the component with renderIsland() and pass any props you need! -->
-      \${renderIsland(ExampleCounter, { count: 5 })}
+      \${renderPreactIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;
 });`)}
@@ -43,7 +43,7 @@ export default createRoute(() => {
     </main>
   `;
 
-  return DocsLayout({
+  return DocsLayout(c, {
     title: 'Dynamic Islands Example',
     content,
   });

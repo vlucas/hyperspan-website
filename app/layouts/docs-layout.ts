@@ -1,7 +1,9 @@
 import { html } from '@hyperspan/html';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 
-export default function DocsLayout({ title, content }: { title: string; content: any }) {
+import type { Hyperspan as HS } from '@hyperspan/framework';
+
+export default function DocsLayout(c: HS.Context, { title, content }: { title: string; content: any }) {
   const docLayout = html`
     <div class="flex gap-2 pl-6">
       <div class="flex-1">${content}</div>
@@ -31,5 +33,5 @@ export default function DocsLayout({ title, content }: { title: string; content:
     </div>
   `;
 
-  return MarketingLayout({ title: title + ' - Hyperspan Documentation', content: docLayout });
+  return MarketingLayout(c, { title: title + ' - Hyperspan Documentation', content: docLayout });
 }
