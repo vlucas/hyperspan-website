@@ -8,17 +8,17 @@ To use your own JavaScript code in the browser, you first need to create a file 
 
 For example, if you want to track RUM data with Datadog, you can create a file called `app/clientjs/datadog.client.ts` and add the following code:
 
-\`\`\`typescript
-import { datadogRum } from '@datadog/browser-rum'
+```typescript
+import { datadogRum } from '@datadog/browser-rum';
 
 export function initDatadog() {
-datadogRum.init({
-applicationId: process.env.APP_PUBLIC_DATADOG_APPLICATION_ID,
-clientToken: process.env.APP_PUBLIC_DATADOG_CLIENT_TOKEN,
-site: 'datadoghq.com',
-});
+  datadogRum.init({
+    applicationId: process.env.APP_PUBLIC_DATADOG_APPLICATION_ID,
+    clientToken: process.env.APP_PUBLIC_DATADOG_CLIENT_TOKEN,
+    site: 'datadoghq.com',
+  });
 }
-\`\`\`
+```
 
 Note: Variables prefixed with `APP_PUBLIC_` will be replaced with their literal string values. See the [Environment Variables](/docs/env) docs for details.
 
@@ -26,26 +26,25 @@ Note: Variables prefixed with `APP_PUBLIC_` will be replaced with their literal 
 
 Once the file is created, you can import it and use it in any template, layout, or route with the `renderClientJS` function like this:
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
-import _ as datadog from 'app/clientjs/datadog.client'; // Import ENTIRE module with '_ as <name>'
-import { renderClientJS } from '@hyperspan/framework/assets'; // Render <script> tag with client JS
+import * as datadog from 'app/clientjs/datadog.client'; // Import ENTIRE module with '* as <name>'
+import { renderClientJS } from '@hyperspan/framework/client/js'; // Render <script> tag with client JS
 
 export default createRoute(() => {
-return html\`
-<main>
-<h1>Some Page Route</h1>
-<p>Example content for a page route.</p>
+  return html`
+    <main>
+      <h1>Some Page Route</h1>
+      <p>Example content for a page route.</p>
 
-      \${renderClientJS(datadog, (module) => {
+      ${renderClientJS(datadog, (module) => {
         module.initDatadog();
       })}
     </main>
-
-\`;
+  `;
 });
-\`\`\`
+```
 
 The code above will:
 
@@ -57,48 +56,48 @@ The code above will:
 
 For less complex use cases, you can always use a `script` tag directly in your template. Hyperspan templates are just HTML!
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
 export default createRoute(() => {
-return html\`
-<main>
-<h1>Some Page Route</h1>
-<p>Example content for a page route.</p>
+  return html`
+    <main>
+      <h1>Some Page Route</h1>
+      <p>Example content for a page route.</p>
 
-      <script>alert('Hello, world!');</script>
+      <script>
+        alert('Hello, world!');
+      </script>
     </main>
-
-\`;
+  `;
 });
-\`\`\`
+```
 
 If you want to write the script using TypeScript instead of inside a template string, you can define the function in the file and then render it as a string in the template before calling it. The compiler will transpile your code into JavaScript that will work in the browser before the template is rendered.
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
 export default createRoute(() => {
-return html\`
-<main>
-<h1>Some Page Route</h1>
-<p>Example content for a page route.</p>
+  return html`
+    <main>
+      <h1>Some Page Route</h1>
+      <p>Example content for a page route.</p>
 
       <script>
         // Use an IIFE because the name might change when minified!
-        (\${showGreeting.toString()})('John');
+        (${showGreeting.toString()})('John');
       </script>
     </main>
-
-\`;
+  `;
 });
 
 function showGreeting(name: string) {
-alert(\`Hello, \${name}!\`);
+  alert(`Hello, ${name}!`);
 }
-\`\`\`
+```
 
 Note: The major caveat to stringifying functions is that you can't use any dependencies or references to any other symbols in the file outside of the function itself. It's like copying the function and pasting it somewhere else.
 

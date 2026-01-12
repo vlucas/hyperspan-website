@@ -2,21 +2,14 @@
 
 Routes are the entry point for all requests to your application. They map a specific URL pattern to a specific file or route handler function.
 
-> This page includes information about base functionality for **both page routes and API routes**. Read this page first, then read the page for the type of route you are interested in.
-
-In Hyperspan, there are 2 built-in types of routes:
-
-1. [Page routes](/docs/routes/pages) — for HTML pages
-2. [API routes](/docs/routes/api) — for JSON endpoints and other types of content
-
-Both types of routes can live in two main places:
+In Hyperspan, there are 2 main ways of defining routes:
 
 1. `app/routes` directory (file-based routes)
-2. `app/server.ts` file (custom route handlers)
+2. `hyperspan.config.ts` file (for adding custom routes)
 
 ## File-Based Routing
 
-Both [page routes](/docs/routes/pages) and [API routes](/docs/routes/api) use file-based routing. This means that you can create a file in the `app/routes` directory and it will be automatically picked up by the framework and added to your routing table.
+Hyperspan uses file-based routing. This means that you can create a file in the `app/routes` directory and it will be automatically picked up by the framework and added to your routing table.
 
 Here are some examples of how files in the `app/routes` directory map to URL patterns:
 
@@ -28,137 +21,184 @@ Here are some examples of how files in the `app/routes` directory map to URL pat
 | `app/routes/posts/[id].ts`         | `/posts/:id` |
 | `app/routes/auth/[...authPath].ts` | `/auth/*`    |
 
-Route and query params can be accessed from the [Hono Request](https://hono.dev/docs/api/request) object by name.
+Route and query params can be accessed from the [request context](/docs/request-context) object by name.
 
-\`\`\`typescript
+```typescript
 // File: app/routes/posts/[id].ts
 import { createRoute } from '@hyperspan/framework';
-import { fetchPostById } from '@/src/entities/posts'; // whatever your data layer is
+import { fetchPostById } from '~/src/entities/posts'; // whatever your data layer is
 
-export default createRoute(async (c) => {
-const id = c.req.param('id');
-const post = await fetchPostById(id);
+export default createRoute().get(async (c) => {
+  const id = c.route.params.id; // 'id' will be set on the 'c.route.params' object
+  const post = await fetchPostById(id);
 
-return html\`<main>
-<h1>\${post.title}</h1>
-<div>\${post.content}</div>
-
-  </main>\`;
+  return html`<main>
+    <h1>${post.title}</h1>
+    <div>${post.content}</div>
+  </main>`;
 });
-\`\`\`
-
-### Using Plain Functions
-
-You _can_ define a route with a plain function, but you won't have the proper types included by default, or other helpful APIs like limiting the route to a specific HTTP method, adding route-specific middleware, etc.
-
-\`\`\`typescript
-import { Context } from 'hono';
-
-export default function (c: Context) {
-return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
-}
-\`\`\`
-
-> Plain functions for routes can be useful for migrating over from another framework, but they are not recommended for new projects due to the lack of type safety and other helpful APIs that come with `createRoute`.
+```
 
 ## Route Parameters
 
-The `createRoute` and `createAPIRoute` functions have a [Hono Context](https://hono.dev/docs/api/context) parameter that can be used to access information from the [request](https://hono.dev/docs/api/request), like parameters from the route path, query string parameters, headers, cookies, etc.
+The `createRoute` function has a [request context](/docs/request-context), like parameters from the route path, query string parameters, headers, cookies, etc.
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 
-export default createRoute((c) => {
-return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
+export default createRoute().get((c) => {
+  return html`<div>Hello, ${c.route.params.name}!</div>`;
 });
-\`\`\`
-
-## Custom Route Paths
-
-If you need more flexibility than file-based routing provides, you can import any file-based route and make it accessible with any custom path or URL pattern you define. Just import `createRouteFromModule` from `@hyperspan/framework` and pass in the whole imported module.
-
-\`\`\`typescript
-import hyperspanConfig from '../hyperspan.config';
-import { createServer, createRouteFromModule } from '@hyperspan/framework';
-import PostPageRoute from '@/app/routes/posts/[id].ts';
-
-const app = await createServer(hyperspanConfig);
-
-// Make post page route accessible at:
-// /posts/:id (file-based route via Hyperspan)
-// /articles/:id (custom path defined here)
-const postRouteHandlers = createRouteFromModule(PostPageRoute);
-app.get('/articles/:id', ...postRouteHandlers);
-
-export default app;
-\`\`\`
-
-> Note that `createRouteFromModule` returns an array that includes any middleware that was defined in the route. Use the spread operator (`...`) to ensure all route handlers are added for the path.
+```
 
 ## Custom Route Handlers
 
-If you need more control over routing or need to do something that doesn't fit within file-based routing, you can create a custom route handler function in `app/server.ts`. The `createServer` function will return a [Hono](https://hono.dev) instance that you can use to add custom [Hono Routes](https://hono.dev/docs/api/routing) or [Hono Middleware](https://hono.dev/docs/concepts/middleware).
+If you need more control over routing or need to do something that doesn't fit within file-based routing, you can create custom route handlers in `hyperspan.config.ts`. The `beforeRoutesAdded` and `afterRoutesAdded` configuration options accept a function that [server instance](/docs/server) that you can use to add custom routes to.
 
-\`\`\`typescript
-import hyperspanConfig from '../hyperspan.config';
-import { createServer } from '@hyperspan/framework';
-
-const app = await createServer(hyperspanConfig);
-
-// Custom Hono Route
-app.get('/my-custom-route', (c) => c.html('<div>Hello, world!</div>'));
-
-export default app;
-\`\`\`
-
-If you need to add routes _before_ the file-based routes are processed, you can do so by using the `beforeRoutesAdded` hook in `createConfig` in your `hyperspan.config.ts` file.
-
-\`\`\`typescript
+```typescript
 import { createConfig } from '@hyperspan/framework';
 
 export default createConfig({
-appDir: './app',
-staticFileRoot: './public',
-beforeRoutesAdded: (app) => {
-app.get('/custom-route-before-file-routes', (c) => c.html('<div>Hello, world!</div>'));
-},
+  appDir: './app',
+  publicDir: './public',
+  beforeRoutesAdded: (server) => {
+    server.get('/custom-route-before-file-routes', (c) => c.res.html('<div>Hello, custom!</div>'));
+  },
+  afterRoutesAdded: (server) => {
+    server.get('/custom-route-after-file-routes', (c) => c.res.html('<div>Goodbye, custom!</div>'));
+  },
 });
-\`\`\`
+```
+
+## Handling POST Requests
+
+Sometimes, you may also want your page route to handle POST requests. This can be useful for things like handling form submissions and logins without having to create a separate API endpoint for it or hookup custom client-side JavaScript. You can do this by adding a `post()` handler to the route.
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute()
+  .get((c) => {
+    return html`
+      <p>Enter your name for a personalized greeting:</p>
+      <form method="post">
+        <input type="text" name="name" />
+        <button type="submit">Submit</button>
+      </form>
+    `;
+  })
+  .post(async (c) => {
+    const formData = await c.req.formData();
+    const name = formData.get('name');
+
+    return html`<div>Hello, ${name}! Nice to meet you.</div>`;
+  });
+```
+
+## Handling Other HTTP Methods
+
+Routes support all standard HTTP request methods like `PUT`, `PATCH`, `DELETE`, etc.
 
 ## Route-Specific Middleware
 
 The `createRoute` function returns an object with a `middleware()` method to define middleware for one specific route. This is useful for things like caching that are highly contextual and should only be applied to specific routes.
 
-The middleware is applied in the order it is defined, and is applied to the route before the route handler is called. Any middleware that is made for Hono can be used here.
+The middleware is applied in the order it is defined, and is applied to the route before the route handler is called.
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
-import { logger } from 'hono/logger';
-import { csrf } from 'hono/csrf';
+import { logger } from '~/src/middleware/logger';
+import { csrf } from '~/src/middleware/csrf';
 
-export default createRoute((c) => {
-return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
-}).middleware([
-csrf(),
-logger(),
-]);
-\`\`\`
+export default createRoute()
+  .get((c) => {
+    return html`<div>Hello, ${c.route.params.name}!</div>`;
+  })
+  .middleware([csrf(), logger()]);
+```
 
-## Global or Path-Specific Middleware
+## Global Middleware
 
-You can add custom global or path-specific middleware to the Hono server directly in `app/server.ts`. This is useful for more global or path-specific things like authentication, logging, etc.
+You can add custom global middleware in `hyperspan.config.ts`. This is useful for things like logging and authentication.
 
-\`\`\`typescript
-import hyperspanConfig from '../hyperspan.config';
-import { createServer } from '@hyperspan/framework';
-import { trimTrailingSlash } from 'hono/trailing-slash';
+```typescript
+import { createConfig } from '@hyperspan/framework';
+import { logger } from '~/src/middleware/logger';
 
-const app = await createServer(hyperspanConfig);
+export default createConfig({
+  appDir: './app',
+  publicDir: './public',
+  beforeRoutesAdded: (server) => {
+    // Add global logger middleware for ALL routes
+    server.use(logger());
+  },
+});
+```
 
-// Custom Hono Middleware
-app.use(trimTrailingSlash());
+If you are unfamiliar with middleware, you can read more about it in the [middleware documentation](/docs/middleware).
 
-export default app;
-\`\`\`
+## Route API
 
-If you are unfamiliar with middleware, you can read more about it in the [Hono Middleware](https://hono.dev/docs/concepts/middleware) documentation.
+The `createRoute()` function returns a `Route` object with the following methods:
+
+| Method                             | Type                                                              | Description                              |
+| ---------------------------------- | ----------------------------------------------------------------- | ---------------------------------------- |
+| `route.get(handler, options?)`     | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a GET request handler           |
+| `route.post(handler, options?)`    | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a POST request handler          |
+| `route.put(handler, options?)`     | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a PUT request handler           |
+| `route.patch(handler, options?)`   | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a PATCH request handler         |
+| `route.delete(handler, options?)`  | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a DELETE request handler        |
+| `route.options(handler, options?)` | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register an OPTIONS request handler      |
+| `route.errorHandler(handler)`      | `(handler: RouteHandler) => Route`                                | Register an error handler for this route |
+| `route.middleware(middleware)`     | `(middleware: Array<MiddlewareFunction>) => Route`                | Add middleware to this route             |
+
+The object is a fluent API so you can chain methods together to handle multiple HTTP methods for a single route path, like so:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute()
+  .get((c) => {
+    return html`<p>GET request!</p>`;
+  })
+  .post((c) => {
+    return html`<p>POST request!</p>`;
+  })
+  .delete((c) => {
+    return html`<p>DELETE request!</p>`;
+  });
+```
+
+### RouteHandler
+
+A `RouteHandler` is a function that receives the context and returns a response:
+
+```typescript
+type RouteHandler = (context: Hyperspan.Context) => Response | Promise<Response> | unknown;
+```
+
+The handler can return:
+
+- HTML template (from `@hyperspan/html`)
+- A `Response` object
+- Any value that can be converted to a response
+
+## Automatic Request Handling
+
+For some request types, Hyperspan will return a response for you.
+
+### `OPTIONS` Pre-Flight Requests
+
+To be in-line with the pre-flight request specification, Hyperspan will find a matching route, and return an response with the allowed HTTP methods that can be called on that route for any matching `OPTIONS` requests.
+
+For example, if you define a route at `/example` with `GET` and `POST` handlers, an `OPTIONS /example` request will respond with `Access-Control-Allow-Methods: GET, POST`.
+
+### Method Not Allowed
+
+Any HTTP methods that are not handled for a given route path will automatically return a `405: Method Not Allowed` response.
+
+### Not Found
+
+Any request to a route path that with no match will return a `404: File Not Found` response.

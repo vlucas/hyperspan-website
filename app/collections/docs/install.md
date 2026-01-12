@@ -2,12 +2,16 @@
 
 To install Hyperspan, you first need to [install Bun](https://bun.sh/docs/installation) — a new fast JavaScript runtime with TypeScript support (and a lot more!) built in.
 
-Once Bun is installed on your system, you can create a new Hyperspan app from the starter template:
+Once Bun is installed on your system, use the `hyperspan` package to create a new app from the starter template:
 
 ```shell
-bunx degit vlucas/hyperspan/packages/starter-template my-app
-cd my-app
-bun install
+bunx hyperspan create MyApp
+```
+
+You can then step into your new project and check it out:
+
+```shell
+cd MyApp
 bun run dev
 ```
 

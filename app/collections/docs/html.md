@@ -31,7 +31,7 @@ bun add @hyperspan/html
 
 ## Example Template
 
-A Hyperspan template is a [Tagged Template Literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates) that starts with `html\`...\``. It's just JavaScript. Nothing to compile!
+A Hyperspan template is a [Tagged Template Literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates) that starts with ``html`..```. It's just JavaScript. Nothing to compile!
 
 ```typescript
 import { html } from '@hyperspan/html';
@@ -39,21 +39,18 @@ import { html } from '@hyperspan/html';
 // Template syntax
 // Values can be any scalar value, Promise, nested template, or object with a 'render' method
 function getContent() {
-return html\`<div>
-
-<p>Some static content here first</p>
-<p>\${sleep(600, (resolve) => resolve("Resolves second"))}</p>
-<p>A bit more static content here as well</p>
-<p>
-\${Promise.resolve(
-html\`Resolves first... (Nested:
-\${sleep(800, (resolve) => resolve(html\`Resolves third\`))})\`
-)}
-</p>
-<hr />
-\${new AsyncValue()}
-
-  </div>\`;
+  return html`<div>
+    <p>Some static content here first</p>
+    <p>${sleep(600, (resolve) => resolve('Resolves second'))}</p>
+    <p>A bit more static content here as well</p>
+    <p>
+      ${Promise.resolve(
+        html`Resolves first... (Nested: ${sleep(800, (resolve) => resolve(html`Resolves third`))})`
+      )}
+    </p>
+    <hr />
+    ${new AsyncValue()}
+  </div>`;
 }
 ```
 
@@ -67,17 +64,16 @@ Got some data to fetch before you can render your template? Just make your templ
 import { html } from '@hyperspan/html';
 
 async function MyTemplate() {
-const posts = await fetchBlogPosts({ page: 1 });
+  const posts = await fetchBlogPosts({ page: 1 });
 
-return html\`
-
-<main>
-<h1>Blog Posts</h1>
-<ul>
-\${posts.map(post => html\`<li><a href="/blog/\${post.id}">\${post.title}</a></li>\`)}
-</ul>
-</main>
-\`;
+  return html`
+    <main>
+      <h1>Blog Posts</h1>
+      <ul>
+        ${posts.map((post) => html`<li><a href="/blog/${post.id}">${post.title}</a></li>`)}
+      </ul>
+    </main>
+  `;
 }
 ```
 
@@ -90,13 +86,12 @@ By default, Hyperspan will render `<span>Loading...</span>` as a placeholder for
 ```typescript
 import { html, placeholder } from '@hyperspan/html';
 
-const content = html\`<div>
-\${placeholder(
-html\`<div class="blog-posts-skeleton">Loading blog posts...</div>\`,
-sleep(600, (resolve) => resolve("Blog posts HTML chunk here..."))
-)}
-
-</div>\`;
+const content = html`<div>
+  ${placeholder(
+    html`<div class="blog-posts-skeleton">Loading blog posts...</div>`,
+    sleep(600, (resolve) => resolve('Blog posts HTML chunk here...'))
+  )}
+</div>`;
 ```
 
 ## Custom Async Values
@@ -110,26 +105,27 @@ import { html } from '@hyperspan/html';
 
 // Custom value class
 class RemoteCMSContentBlock {
-id: number;
+  id: number;
 
-constructor(id: number) {
-this.id = id;
-}
+  constructor(id: number) {
+    this.id = id;
+  }
 
-// Loading placeholder (rendered immediately)
-render() {
-return html\`<div>CMS Content Loading...</div>\`;
-}
+  // Loading placeholder (rendered immediately)
+  render() {
+    return html`<div>CMS Content Loading...</div>`;
+  }
 
-// Actual content - replaces the loading placeholder when Promise is resolved
-async renderAsync() {
-const response = await fetch(\`https://api.mycompanycms.com/contentblocks/\${this.id}\`);
-return html.raw(await response.text());
-}
+  // Actual content - replaces the loading placeholder when Promise is resolved
+  async renderAsync() {
+    const response = await fetch(`https://api.mycompanycms.com/contentblocks/${this.id}`);
+    return html.raw(await response.text());
+  }
 }
 
 // Use it in a template
-const content = html\`<h1>Remote CMS Content:</h1>\${new RemoteCMSContentBlock(123)}\`;
+const content = html`<h1>Remote CMS Content:</h1>
+  ${new RemoteCMSContentBlock(123)}`;
 ```
 
 ## HTML Escaping
@@ -140,7 +136,7 @@ Hyperspan HTML templates escape HTML by default. This means that any variables y
 import { html } from '@hyperspan/html';
 
 const userName = '<script>alert("XSS")</script>';
-const content = html\`<div>\${userName}</div>\`;
+const content = html`<div>${userName}</div>`;
 // content is now: <div>&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;</div>
 ```
 
@@ -154,7 +150,7 @@ When you need to render HTML inside your template, you can use the `html.raw()` 
 import { html } from '@hyperspan/html';
 
 const userName = '<script>alert("XSS")</script>';
-const content = html\`<div>\${html.raw(userName)}</div>\`; // html.raw() around userName
+const content = html`<div>${html.raw(userName)}</div>`; // html.raw() around userName
 // content is now: <div><script>alert("XSS")</script></div>
 ```
 
@@ -186,7 +182,7 @@ const content = await renderAsync(tmpl);
 
 ### `renderStream(tmpl): AsyncGenerator<string>`
 
-The `renderStream` method renders initial content immediately with placeholders, and then continues to stream in async chunks of content as they resolve, one by one. Loading placeholders are rendered as a [\`<slot>\` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/slot). Async content chunks are appended as a [\`<template>\` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template) with a matching slot name.
+The `renderStream` method renders initial content immediately with placeholders, and then continues to stream in async chunks of content as they resolve, one by one. Loading placeholders are rendered as a [`<slot>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/slot). Async content chunks are appended as a [`<template>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template) with a matching slot name.
 
 > Note: This rendering method requires a small JavaScript shim on the client for maximum cross-browser compatability. This is automatically added when used in the Hyperspan framework.
 

@@ -1,4 +1,4 @@
-import { html } from "@hyperspan/html";
+import { html, render } from "@hyperspan/html";
 import { createDocsRoute } from "@/src/routes/create-docs-route";
 import DocsLayout from "@/app/layouts/docs-layout";
 import { marked } from "marked";
@@ -34,15 +34,15 @@ export default createDocsRoute().get(async (c) => {
     const renderer = new marked.Renderer();
 
     // Override code block rendering to use syntax highlighter
-    renderer.code = (code: string, language: string | undefined) => {
-      console.log('code', { code, language });
+    renderer.code = (code) => {
+      const language = code.lang;
       if (language === "typescript" || language === "ts") {
-        return highlightTS(code).toString();
+        return render(highlightTS(code.text));
       } else if (language === "shell" || language === "bash" || language === "sh") {
-        return highlightShell(code).toString();
+        return render(highlightShell(code.text));
       } else {
         // Default code block
-        return `<pre><code class="language-${language || ""}">${code}</code></pre>`;
+        return `<pre><code class="language-${language || ""}">${code.text}</code></pre>`;
       }
     };
 

@@ -8,25 +8,25 @@ Page routes are created by calling the `createRoute` function.
 
 The most basic route is a function that returns a string of HTML.
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
 export default createRoute(() => html\`<div>Hello, world!</div>\`);
-\`\`\`
+```
 
 ### Using Plain Functions
 
 You _can_ define a route with a plain function, but you won't have the proper types included by default, or other helpful APIs like limiting the route to a specific HTTP method, adding route-specific middleware, etc.
 
-\`\`\`typescript
+```typescript
 import { Context } from 'hono';
 import { html } from '@hyperspan/html';
 
 export default function (c: Context) {
 return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
 }
-\`\`\`
+```
 
 > Plain functions for routes can be useful for migrating over from another framework, but they are not recommended for new projects due to the lack of type safety and other helpful APIs that come with `createRoute`.
 
@@ -34,25 +34,25 @@ return html\`<div>Hello, \${c.req.param('name')}!</div>\`;
 
 Sometimes, you may also want your page route to handle POST requests. This can be useful for things like handling form submissions and logins without having to create a separate API endpoint for it or hookup custom client-side JavaScript. You can do this by adding a `post()` handler to the route.
 
-\`\`\`typescript
+```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
 export default createRoute((c) => {
-return html\`
-<p>Enter your name for a personalized greeting:</p>
-<form method="post">
-<input type="text" name="name" />
-<button type="submit">Submit</button>
-</form>
-\`;
+  return html`
+    <p>Enter your name for a personalized greeting:</p>
+    <form method="post">
+      <input type="text" name="name" />
+      <button type="submit">Submit</button>
+    </form>
+  `;
 }).post(async (c) => {
-const formData = await c.req.formData();
-const name = formData.get('name');
+  const formData = await c.req.formData();
+  const name = formData.get('name');
 
-return html\`<div>Hello, \${name}! Nice to meet you.</div>\`;
+  return html`<div>Hello, ${name}! Nice to meet you.</div>`;
 });
-\`\`\`
+```
 
 ## Handling Other HTTP Methods
 

@@ -12,77 +12,77 @@ To use islands, you need to install a plugin that will handle the rendering and 
 
 To use Preact islands, you can install the `@hyperspan/plugin-preact` package:
 
-\`\`\`shell
+```shell
 bun add @hyperspan/plugin-preact
-\`\`\`
+```
 
-Then add the plugin to your `app/server.ts` file:
+Then add the plugin to your `hyperspan.config.ts` file:
 
-\`\`\`typescript
-import { createServer } from '@hyperspan/framework';
+```typescript
+import { createConfig } from '@hyperspan/framework';
 import { preactPlugin } from '@hyperspan/plugin-preact';
 
-const app = await createServer({
-appDir: './app',
-staticFileRoot: './public',
-islandPlugins: [preactPlugin()], // Add the island plugin here
+export default createConfig({
+  appDir: './app',
+  publicDir: './public',
+  plugins: [preactPlugin()],
 });
-
-export default app;
-\`\`\`
+```
 
 After installing the plugin, any `import` of a `.tsx` file will be handled by the plugin and will be prepared to be rendered as a dynamic island.
 
-> The `renderIsland` function will not work unless you add the plugin here, so don't forget this step!
+> The `renderPreactIsland` function will not work unless you add the plugin here, so don't forget this step!
 
 ## Using Dynamic Islands
 
 Now that you have added the plugin you want, you can import your component like normal and use the `renderIsland` function from the `assets` path to create a dynamic island for your Preact components.
 
-\`\`\`typescript
+```typescript
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import { renderIsland } from '@hyperspan/framework/assets';
+import { renderPreactIsland } from '@hyperspan/plugin-preact';
 // Import your Preact component like normal once the island plugin is loaded
 import ExampleCounter from '@/src/components/example-counter.tsx';
 
 export default createRoute(() => {
-return html\`
-<div>
-<!-- Call the component with renderIsland() and pass any props you need! -->
-\${renderIsland(ExampleCounter, { count: 5 })}
-</div>
-\`;
+  return html`
+    <div>
+      <!-- Call the component with renderPreactIsland() and pass any props you need! -->
+      ${renderPreactIsland(ExampleCounter, { count: 5 })}
+    </div>
+  `;
 });
-\`\`\`
+```
 
 This will render a `<script type="module">` tag with the component contents in it and a `<div>` tag that the component will mount and render into.
 
-> For better performance and user experience, `renderIsland` will server-side render (SSR) the Preact component by default.
+> For better performance and user experience, `renderPreactIsland` will server-side render (SSR) the Preact component by default.
 
-## renderIsland() Arguments
+## renderPreactIsland() Arguments
 
-The `renderIsland` function takes 1-3 arguments:
+The `renderPreactIsland` function takes 1-3 arguments:
 
-| Argument    | Description                                                                           | Required                        |
-| ----------- | ------------------------------------------------------------------------------------- | ------------------------------- | --- |
-| `component` | The client component to render                                                        | Yes                             |
-| `props`     | Props to pass to the component (object)                                               | No                              |
-| `options`   | An options object with:<br>- `ssr`: boolean (default: `true`)<br>- `loading`: `'lazy' | undefined`(default:`undefined`) | No  |
+| Argument    | Description                             | Required |
+| ----------- | --------------------------------------- | -------- |
+| `component` | The client component to render          | Yes      |
+| `props`     | Props to pass to the component (object) | No       |
+| `options`   | An options object with:                 | No       |
+|             | - `ssr`: boolean (default: `true`)      |          |
+|             | - `loading`: `'lazy'                    |          |
 
 ## Server-Side Rendering (SSR) with Islands
 
-By default, `renderIsland` will server-side render (SSR) the Preact component. This means that the initial HTML from the component will be rendered on the server and sent to the client. This results in better web vitals scores, because it eliminates [layout shift](https://web.dev/articles/cls).
+By default, `renderPreactIsland` will server-side render (SSR) the Preact component. This means that the initial HTML from the component will be rendered on the server and sent to the client. This results in better web vitals scores, because it eliminates [layout shift](https://web.dev/articles/cls).
 
-If you do NOT want your component to be server-side rendered, you can pass `{ ssr: false }` as the third argument to `renderIsland`. That call might look like this: `renderIsland(ExampleCounter, { count: 5 }, { ssr: false })`. The component will still mount and hydrate on the client, but the initial HTML sent from the server will be empty.
+If you do NOT want your component to be server-side rendered, you can pass `{ ssr: false }` as the third argument to `renderPreactIsland`. That call might look like this: `renderPreactIsland(ExampleCounter, { count: 5 }, { ssr: false })`. The component will still mount and hydrate on the client, but the initial HTML sent from the server will be empty.
 
 ## Lazy Loading/Hydrating Islands
 
-You can wait to hydrate your client island until the element scrolls into view by passing `{ loading: 'lazy' }` as the third argument to `renderIsland`.
+You can wait to hydrate your client island until the element scrolls into view by passing `{ loading: 'lazy' }` as the third argument to `renderPreactIsland`.
 
 Example code for dynamic island with lazy loading/hydration and SSR:
 
-`renderIsland(ExampleCounter, { count: 42 }, { ssr: true, loading: 'lazy' })`.
+`renderPreactIsland(ExampleCounter, { count: 42 }, { ssr: true, loading: 'lazy' })`.
 
 This will render the initial `<script>` tag inside a `<template>` tag so the script will not evaluate or run for the current user until the element scrolls into view (within 200px of the viewport).
 
