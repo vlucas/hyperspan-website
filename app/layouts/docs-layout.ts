@@ -15,18 +15,17 @@ export default function DocsLayout(c: HS.Context, { title, content }: { title: s
           <li><a href="/docs/install">Installation</a></li>
           <li><a href="/docs/config">Config</a></li>
 
+          <li class="menu-title">Basics</li>
+          <li><a href="/docs/routes">Routes</a></li>
+          <li><a href="/docs/routes/composition">Route Composition</a></li>
+          <li><a href="/docs/request-context">Request Context</a></li>
+          <li><a href="/docs/middleware">Middleware</a></li>
+          <li><a href="/docs/server">Server</a></li>
+          <li><a href="/docs/styles">Styles &amp; CSS</a></li>
+
           <li class="menu-title">Client-Side JS</li>
           <li><a href="/docs/clientjs/islands">Islands Architecture</a></li>
           <li><a href="/docs/clientjs/vanilla">Vanilla JS</a></li>
-
-          <li class="menu-title">Basics</li>
-          <li><a href="/docs/request-context">Request Context API</a></li>
-          <li><a href="/docs/middleware">Middleware API</a></li>
-          <li><a href="/docs/server">Server API</a></li>
-
-          <li class="menu-title">Routing</li>
-          <li><a href="/docs/routes">Routes</a></li>
-
 
           <li class="menu-title">Structure</li>
           <li><a href="/docs/layouts">Layouts</a></li>

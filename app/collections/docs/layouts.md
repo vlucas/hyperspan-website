@@ -6,30 +6,28 @@ For example, you can create a `app/layouts/main-layout.ts` file like this:
 
 ```typescript
 import { html } from '@hyperspan/html';
-import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
+import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/layout';
+import type { Hyperspan as HS } from '@hyperspan/framework';
 
-export type MainLayoutProps = { content: any, title: string };
-export default function MainLayout({ content, title }: MainLayoutProps) {
-  return html\`<!doctype html>
+export type MainLayoutProps = { content: any; title: string };
+export default function MainLayout(c: HS.Context, { content, title }: MainLayoutProps) {
+  return html`<!doctype html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>\${title}</title>
-        \${hyperspanStyleTags()}
+        <title>${title}</title>
+        ${hyperspanStyleTags(c)}
       </head>
       <body>
-        \${hyperspanScriptTags()}
-        <main>
-          \${content}
-        </main>
+        ${hyperspanScriptTags()}
+        <main>${content}</main>
       </body>
-    </html>
-  \`;
+    </html>`;
 }
 ```
 
-> **Note:** The `hyperspanStyleTags()` and `hyperspanScriptTags()` functions are used to inject the Hyperspan styles and scripts into the page. Don't forget to use them in your layouts to ensure that the styles and scripts are loaded properly!
+> **Note:** The `hyperspanStyleTags(c)` and `hyperspanScriptTags()` functions are used to inject the Hyperspan styles and scripts into the page. Don't forget to use them in your layouts to ensure that the styles and scripts are loaded properly!
 
 Then, you can use the layout in your `app/routes/index.ts` file like this:
 
@@ -38,13 +36,13 @@ import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 import MainLayout from '@/app/layouts/main-layout';
 
-export default createRoute(() => {
-  const content = html\`
+export default createRoute().get((c) => {
+  const content = html`
     <h1>Hello, world!</h1>
     <p>Some page content here</p>
-  \`;
+  `;
 
-  return MainLayout({
+  return MainLayout(c, {
     title: 'Home',
     content,
   });

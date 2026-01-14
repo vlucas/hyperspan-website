@@ -1,4 +1,4 @@
-# Routing Basics
+# Hyperspan Routes
 
 Routes are the entry point for all requests to your application. They map a specific URL pattern to a specific file or route handler function.
 
