@@ -4,7 +4,7 @@ Modern JavaScript has come a _long way_ in the past decade or so. There is often
 
 ## Bring Your Own JavaScript (BYOJS)
 
-To use your own JavaScript code in the browser, you first need to create a file that ends with `.client.ts`. This tells Hyperspan to treat this file as a client-side module on import. All examples in the docs assume you are using a `app/clientjs` directory, but you can put this file in any other directory and organize your code however you like as long as it ends in `.client.ts`.
+To use your own JavaScript code in the browser, compile it with the `loadClientJS` method in the `@hyperspan/framework/client/js` pacakge.
 
 For example, if you want to track RUM data with Datadog, you can create a file called `app/clientjs/datadog.client.ts` and add the following code:
 
@@ -24,21 +24,23 @@ Note: Variables prefixed with `APP_PUBLIC_` will be replaced with their literal 
 
 ## Using Your Own Client-Side Code
 
-Once the file is created, you can import it and use it in any template, layout, or route with the `renderClientJS` function like this:
+Once the file is created and compiled, you can import it and use it in any template, layout, or route with the `renderScriptTag` function like this:
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
-import * as datadog from 'app/clientjs/datadog.client'; // Import ENTIRE module with '* as <name>'
-import { renderClientJS } from '@hyperspan/framework/client/js'; // Render <script> tag with client JS
+import { loadClientJS } from '@hyperspan/framework/client/js';
 
-export default createRoute(() => {
+// Use `loadClientJS` with top-level `await` => compiles ONCE on server start
+const datadogClientJS = await loadClientJS(import.meta.resolve('app/clientjs/datadog.client'));
+
+export default createRoute().get(() => {
   return html`
     <main>
       <h1>Some Page Route</h1>
       <p>Example content for a page route.</p>
 
-      ${renderClientJS(datadog, (module) => {
+      ${datadogClientJS.renderScriptTag((module) => {
         module.initDatadog();
       })}
     </main>
@@ -48,9 +50,16 @@ export default createRoute(() => {
 
 The code above will:
 
-1. Compile your client-side TypeScript on `import` into an external JS file
+1. Compile your client-side TypeScript into an external JS file
 2. Add a reference to the compiled external file to an `importmap` on the page
 3. Render a `<script type="module">` tag on the page that imports your module and runs the optional callback to initialize the module. Any exports from the module will be available to your callback function.
+
+## `loadClientJS` returns an object with:
+
+- `renderScriptTag` method with optional callback or string (shown above)
+- `publicPath` property with the full path to the compiled client JS. You can use this to add your own normal `<script src="${yourClientJS.publicPath}">` tag if you need to do this instead of using `renderScriptTag`.
+- `esmName` property with just the name of the file
+- `jsId` property with the asset hash of the file
 
 ## You Can Always Use a `<script>` Tag
 
@@ -60,7 +69,7 @@ For less complex use cases, you can always use a `script` tag directly in your t
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
-export default createRoute(() => {
+export default createRoute().get(() => {
   return html`
     <main>
       <h1>Some Page Route</h1>
@@ -80,7 +89,7 @@ If you want to write the script using TypeScript instead of inside a template st
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 
-export default createRoute(() => {
+export default createRoute().get(() => {
   return html`
     <main>
       <h1>Some Page Route</h1>
@@ -101,4 +110,4 @@ function showGreeting(name: string) {
 
 Note: The major caveat to stringifying functions is that you can't use any dependencies or references to any other symbols in the file outside of the function itself. It's like copying the function and pasting it somewhere else.
 
-This approach works suprisingly well for simple things, but if you need to use dependencies, you should use the `renderClientJS` function instead (see above).
+This approach works suprisingly well for simple things, but if you need to use dependencies, you should use the `loadClientJS` function instead (see above).

@@ -22,6 +22,6 @@ Now you can use this route type in all your API routes without having to import 
 import { createAPIRoute } from '~/src/api-route';
 
 export default createAPIRoute().get((c) => {
-  return Response.json({ foo: 'bar' });
+  return c.res.json({ foo: 'bar' });
 });
 ```

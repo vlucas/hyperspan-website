@@ -18,10 +18,13 @@ export default function DocsLayout(c: HS.Context, { title, content }: { title: s
           <li class="menu-title">Basics</li>
           <li><a href="/docs/routes">Routes</a></li>
           <li><a href="/docs/routes/composition">Route Composition</a></li>
+          <li><a href="/docs/actions">Actions</a></li>
           <li><a href="/docs/request-context">Request Context</a></li>
           <li><a href="/docs/middleware">Middleware</a></li>
           <li><a href="/docs/server">Server</a></li>
+          <li><a href="/docs/streaming">Streaming</a></li>
           <li><a href="/docs/styles">Styles &amp; CSS</a></li>
+          
 
           <li class="menu-title">Client-Side JS</li>
           <li><a href="/docs/clientjs/islands">Islands Architecture</a></li>
