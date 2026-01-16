@@ -98,7 +98,7 @@ export default createRoute()
 
 ## Handling Other HTTP Methods
 
-Routes support all standard HTTP request methods like `PUT`, `PATCH`, `DELETE`, etc.
+Routes support all standard HTTP request methods with `.put()`, `.patch()`, `.delete()`, etc. Just chain them together, exactly like the example above.
 
 ## Route-Specific Middleware
 
@@ -116,6 +116,28 @@ export default createRoute()
     return html`<div>Hello, ${c.route.params.name}!</div>`;
   })
   .middleware([csrf(), logger()]);
+```
+
+## Route Method-Specific Middleware
+
+Even within a route, sometimes you want certain middleware to apply only to a specific HTTP method, like a `POST` request. This is easy with the Hyperspan route object:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { logger } from '~/src/middleware/logger';
+import { csrf } from '~/src/middleware/csrf';
+
+export default createRoute()
+  .get((c) => {
+    return html`<div>Hello, ${c.route.params.name}!</div>`;
+  })
+  .post(
+    (c) => {
+      return html`<div>The POST method can only be reached by logged in users!</div>`;
+    },
+    { middleware: [userAuth()] } // POST-specific middleware
+  )
+  .middleware([csrf(), logger()]); // Middleware for any HTTP method on this route
 ```
 
 ## Global Middleware
