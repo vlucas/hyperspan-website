@@ -90,3 +90,58 @@ It is never all or nothing, and the semantics are simple because they are just J
 - If you want to stream, but only after some data is loaded, `await` that data before you return the template, and then pass that data into other functions that return a `Promise` to stream the rest.
 
 Simple, straightforward, and with full control. You don't get that in even the most popular JavaScript frameworks.
+
+## When Hyperspan Streams
+
+Hyperspan has intelligent content detection for when to stream a route and when not to. Streaming is enabled by default, and Hyperspan will stream content automatically when:
+
+- The route returns an [html template](/docs/html) with one or more unresolved `Promise` values in it, OR the route returns a `Generator` or `AsyncGenerator` object.
+- AND the `User-Agent` header is NOT a bot request, like Google or AI
+
+## How to Disable Streaming
+
+If you want to disable streaming no matter what the route contents or other conditions are, you have a few options:
+
+## Disable streaming for any/all routes
+
+To disable streaming entirely for the whole application, add the `disableStreaming` option to the [Hyperspan Config](/docs/config) file in the root of your project. That might look like this:
+
+```typescript
+import { createConfig } from '@hyperspan/framework';
+
+export default createConfig({
+  appDir: './app',
+  publicDir: './public',
+  // With this set, streaming will be disabled across your whole application
+  responseOptions: {
+    disableStreaming: (context: HS.Context) => true,
+  },
+});
+```
+
+You an also apply a more custom or nuanced approach to disabling streaming by using the [request context](/docs/request-context) passed into the `disableStreaming` option to conditionally disable streaming based on anything you need to, like route path or route name.
+
+## Disable streaming per route
+
+You can also set the `disableStreaming` config option in a route:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+
+// This route will NEVER stream with the 'disableStreaming' response option set to `true`
+export default createRoute({
+  responseOptions: {
+    disableStreaming: (context: HS.Context) => true,
+  },
+}).get((c) => {
+  return html`
+    <main>
+      <h1>Blog Posts</h1>
+
+      ${NewBlogPostsList()}
+    </main>
+  `;
+});
+```
+
+NOTE: Route-based configuration will always override server-wide configuration, so be careful and strategic when you use both together.

@@ -4,7 +4,7 @@ Modern JavaScript has come a _long way_ in the past decade or so. There is often
 
 ## Bring Your Own JavaScript (BYOJS)
 
-To use your own JavaScript code in the browser, compile it with the `loadClientJS` method in the `@hyperspan/framework/client/js` pacakge.
+To use your own JavaScript code in the browser, compile it with the `buildClientJS` method in the `@hyperspan/framework/client/js` pacakge.
 
 For example, if you want to track RUM data with Datadog, you can create a file called `app/clientjs/datadog.client.ts` and add the following code:
 
@@ -29,10 +29,10 @@ Once the file is created and compiled, you can import it and use it in any templ
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
-import { loadClientJS } from '@hyperspan/framework/client/js';
+import { buildClientJS } from '@hyperspan/framework/client/js';
 
-// Use `loadClientJS` with top-level `await` => compiles ONCE on server start
-const datadogClientJS = await loadClientJS(import.meta.resolve('app/clientjs/datadog.client'));
+// Use `buildClientJS` with top-level `await` => compiles ONCE on server start
+const datadogClientJS = await buildClientJS(import.meta.resolve('app/clientjs/datadog.client'));
 
 export default createRoute().get(() => {
   return html`
@@ -54,12 +54,12 @@ The code above will:
 2. Add a reference to the compiled external file to an `importmap` on the page
 3. Render a `<script type="module">` tag on the page that imports your module and runs the optional callback to initialize the module. Any exports from the module will be available to your callback function.
 
-## `loadClientJS` returns an object with:
+## `buildClientJS` returns an object with:
 
 - `renderScriptTag` method with optional callback or string (shown above)
 - `publicPath` property with the full path to the compiled client JS. You can use this to add your own normal `<script src="${yourClientJS.publicPath}">` tag if you need to do this instead of using `renderScriptTag`.
 - `esmName` property with just the name of the file
-- `jsId` property with the asset hash of the file
+- `assetHash` property with the asset hash of the file
 
 ## You Can Always Use a `<script>` Tag
 
@@ -110,4 +110,4 @@ function showGreeting(name: string) {
 
 Note: The major caveat to stringifying functions is that you can't use any dependencies or references to any other symbols in the file outside of the function itself. It's like copying the function and pasting it somewhere else.
 
-This approach works suprisingly well for simple things, but if you need to use dependencies, you should use the `loadClientJS` function instead (see above).
+This approach works suprisingly well for simple things, but if you need to use dependencies, you should use the `buildClientJS` function instead (see above).

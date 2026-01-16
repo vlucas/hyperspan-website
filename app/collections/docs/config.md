@@ -26,6 +26,7 @@ The `createConfig` function accepts a configuration object with the following op
 | `plugins`           | `Array<Plugin>`            | Yes      | Array of plugins for client-side islands (e.g., Preact, React)     |
 | `beforeRoutesAdded` | `(server: Server) => void` | No       | Hook called before file-based routes are added to the server       |
 | `afterRoutesAdded`  | `(server: Server) => void` | No       | Hook called after file-based routes are added to the server        |
+| `responseOptions`   | `ResponseOptions`          | No       | Options for controlling response behavior (e.g., streaming)        |
 
 ### Plugin Type
 
@@ -36,3 +37,15 @@ type Plugin = (config: Hyperspan.Config) => Promise<void> | void;
 ```
 
 Plugins are typically used to set up [client-side island rendering](/docs/clientjs/islands) (e.g., `preactPlugin()` from `@hyperspan/plugin-preact`).
+
+### ResponseOptions
+
+The `responseOptions` object allows you to control response behavior:
+
+```typescript
+type ResponseOptions = {
+  disableStreaming?: (context: Hyperspan.Context) => boolean;
+};
+```
+
+- `disableStreaming` - A function that receives the request context and returns `true` to disable streaming for that request. This allows you to conditionally disable streaming based on route path, route name, or any other context property. See the [streaming documentation](/docs/streaming) for more details.
