@@ -2,7 +2,7 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import MarketingLayout from '@/app/layouts/marketing-layout';
 
-export default createRoute(() => {
+export default createRoute().get((c) => {
   const content = html`
     <main class="prose pl-6">
       <h1>Actions Example</h1>
@@ -19,7 +19,7 @@ export default createRoute(() => {
     </main>
   `;
 
-  return MarketingLayout({
+  return MarketingLayout(c, {
     title: 'Actions Example',
     content,
   });

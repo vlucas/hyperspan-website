@@ -1,7 +1,10 @@
 import { html } from '@hyperspan/html';
-import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/assets';
+import { hyperspanScriptTags, hyperspanStyleTags } from '@hyperspan/framework/layout';
+import '@/app/styles/globals.css';
 
-export default function MainLayout({ title, content }: { title: string; content: any }) {
+import type { Hyperspan as HS } from '@hyperspan/framework';
+
+export default function MarketingLayout(c: HS.Context, { title, content }: { title: string; content: any }) {
   return html`
     <!doctype html>
     <html class="w-full h-full" lang="en" data-theme="sunset">
@@ -25,7 +28,7 @@ export default function MainLayout({ title, content }: { title: string; content:
         />
 
         <title>${title}</title>
-        ${hyperspanStyleTags()}
+        ${hyperspanStyleTags(c)}
         <script defer data-domain="hyperspan.dev" src="https://plausible.io/js/script.js"></script>
       </head>
       <body class="">

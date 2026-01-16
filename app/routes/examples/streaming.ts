@@ -4,7 +4,7 @@ import MarketingLayout from '@/app/layouts/marketing-layout';
 import { sleep } from '@/src/lib/sleep';
 import { highlightTS } from '@/src/lib/syntax-highlighter';
 
-export default createRoute(() => {
+export default createRoute().get((c) => {
   const content = html`
     <main class="prose pl-6">
       <h1>Streaming Content Example</h1>
@@ -29,9 +29,9 @@ export default createRoute(() => {
             <h2>Content Block 2</h2>
             <p>Waits 5000ms to render</p>
             ${placeholder(
-              html`<span>Custom Loading HTML...</span>`,
-              AsyncRenderBlock(5000, 'Rendered after 5000ms!')
-            )}
+    html`<span>Custom Loading HTML...</span>`,
+    AsyncRenderBlock(5000, 'Rendered after 5000ms!')
+  )}
           </div>
         </div>
 
@@ -82,8 +82,8 @@ const tmpl = html\`
     </main>
   `;
 
-  return MarketingLayout({
-    title: 'Hyperspan - Simple. Server. Streaming.',
+  return MarketingLayout(c, {
+    title: 'Streaming Content Example',
     content,
   });
 });
