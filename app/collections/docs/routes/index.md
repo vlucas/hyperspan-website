@@ -172,8 +172,10 @@ The `createRoute()` function returns a `Route` object with the following methods
 | `route.patch(handler, options?)`   | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a PATCH request handler         |
 | `route.delete(handler, options?)`  | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register a DELETE request handler        |
 | `route.options(handler, options?)` | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Register an OPTIONS request handler      |
+| `route.all(handler, options?)`     | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route` | Request handler for any HTTP method      |
 | `route.errorHandler(handler)`      | `(handler: RouteHandler) => Route`                                | Register an error handler for this route |
-| `route.middleware(middleware)`     | `(middleware: Array<MiddlewareFunction>) => Route`                | Add middleware to this route             |
+| `route.use(middleware)`            | `(middleware: MiddlewareFunction) => Route`                       | Add middleware to this route             |
+| `route.middleware([middleware])`   | `(middleware: Array<MiddlewareFunction>) => Route`                | Set middleware stack for this route      |
 
 The object is a fluent API so you can chain methods together to handle multiple HTTP methods for a single route path, like so:
 

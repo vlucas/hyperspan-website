@@ -28,10 +28,10 @@ import { renderPreactIsland } from '@hyperspan/plugin-preact';
 // Import your Preact component like normal once the island plugin is loaded
 import ExampleCounter from '@/src/components/ExampleCounter.tsx';
 
-export default createRoute(() => {
+export default createRoute().get(() => {
   return html\`
     <div>
-      <!-- Call the component with renderIsland() and pass any props you need! -->
+      <!-- Call the component with renderPreactIsland() and pass any props you need! -->
       \${renderPreactIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;

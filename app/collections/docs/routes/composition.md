@@ -9,10 +9,10 @@ Many apps will have different paths with different levels of access, like
 ```typescript
 // Path: src/api-route.ts
 import { createRoute } from '@hyperspan/framework';
-import { apiAuthMiddleware } from '~/src/auth/api-middleware.ts'; // Your custom middleware
+import { apiAuthMiddleware } from '~/src/auth/api-middleware'; // Your custom middleware
 
 export function createAPIRoute() {
-  return createRoute().middleware([apiAuth()]);
+  return createRoute().use(apiAuth());
 }
 ```
 
