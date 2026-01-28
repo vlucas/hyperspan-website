@@ -10,15 +10,9 @@ export default createRoute().get((c) => {
       <div class="hero bg-base-200 min-h-96 py-12">
         <div class="hero-content text-center">
           <div class="max-w-3xl">
-            <h1 class="my-6 text-5xl/14">
-              Less Complexity.<br />
-              More Power.
-            </h1>
-            <h2 class="my-10 text-2xl">Web Framework for High-Performance Sites and Apps.</h2>
+            <h1 class="my-6 text-4xl/14">Web Framework for Dynamic High-Performance Sites and Apps.</h1>
             <p class="mt-10 my-6">
-              Opinionated server-oriented framework built with TypeScript and <a href="https://bun.sh">Bun</a>.
-            </p>
-            <p class="my-6">File-based routes, streaming templates, dynamic islands, and more.</p>
+              Server-first framework built with TypeScript and <a href="https://bun.sh">Bun</a>. File-based routes, streaming templates, dynamic islands, server actions, and minimal JavaScript.</p>
             <a class="my-6 btn btn-outline" href="/docs">Read The Docs</a>
             <a class="my-6 btn btn-primary" href="/docs/install">Install Hyperspan</a>
           </div>
@@ -118,12 +112,49 @@ export default createRoute().get(() => {
 });`)}
           </div>
         </div>
+
+        <div class="my-32 card lg:card-side bg-base-200 shadow-sm">
+          <div class="md:w-2/3 p-4 bg-base-300">
+            ${highlightTS(`import { createAction } from '@hyperspan/framework/actions';
+import { html } from '@hyperspan/html';
+import { z } from 'zod/v4';
+
+export default createAction({
+  name: 'example-action',
+  schema: z.object({
+    name: z.string().min(1, 'Name is required'),
+  }),
+})
+  .form((c, { data }) => {
+    return html\`<form method="post">
+      <input type="text" name="name" value="\${data?.name}" />
+      <button type="submit">Submit</button>
+    </form>\`;
+  })
+  .post(async (c, { data }) => {
+    return html\`<p>Hello, \${data.name}!</p>\`;
+  });
+`)}
+          </div>
+          <div class="card-body text-lg">
+            <h2 class="card-title text-2xl mb-6">Server Actions.</h2>
+            <p>
+              Actions render forms that submit their data back to the server and update the view in-place automatically. Keep all your validation and data processing logic on the server, with minimal JavaScript shipped the client.
+            </p>
+            <div class="card-actions">
+              <a class="btn btn-outline" href="/examples/actions">See Actions Example</a>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   `;
 
   return MarketingLayout(c, {
-    title: 'Hyperspan - Simple. Server. Streaming.',
+    title: 'Hyperspan - Web Framework for Dynamic High-Performance Sites and Apps.',
+    meta: {
+      description: 'Server-first framework built with TypeScript and Bun. File-based routes, streaming templates, dynamic islands, server actions, and minimal JavaScript.',
+    },
     content,
   });
 });

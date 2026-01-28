@@ -5,7 +5,7 @@
     "": {
       "name": "hyperspan-website",
       "dependencies": {
-        "@hyperspan/framework": "^1.0.6",
+        "@hyperspan/framework": "^1.0.8",
         "@hyperspan/html": "^1.0.0",
         "@hyperspan/plugin-preact": "^1.0.0",
         "@tailwindcss/cli": "^4.1.18",
@@ -31,7 +31,7 @@
     },
   },
   "packages": {
-    "@hyperspan/framework": ["@hyperspan/framework@1.0.6", "", { "dependencies": { "@hyperspan/html": "^1.0.0", "debug": "^4.4.3", "isbot": "^5.1.32", "zod": "^4.1.12" } }, "sha512-Lf9lkjMrx+38ZGk+t+1yrgTAlJ2KHuBp+5iADiNI7Z1T4tl9oW6+njKgGmAS1Vzl9rU0gyK1Xu+K/i8uhuvLCQ=="],
+    "@hyperspan/framework": ["@hyperspan/framework@1.0.8", "", { "dependencies": { "@hyperspan/html": "^1.0.0", "debug": "^4.4.3", "isbot": "^5.1.32", "zod": "^4.1.12" } }, "sha512-hLsIJvZZCaTfcGOYjVgXIkgCfV26OvDr6PrIKtTvWrJgVjhL5EPCiMKdbTgN05Zkb7mkXDy0YrlZMuNJ0Dxnag=="],
 
     "@hyperspan/html": ["@hyperspan/html@1.0.0", "", {}, "sha512-cCnNnrebAOgVuT5U7VFK/H6eTnr5OGeT8guA6HBHtQijn4oKbT6kQwTyIYIqHg9/hxobVDAiUcsNpPsx060NNA=="],
 

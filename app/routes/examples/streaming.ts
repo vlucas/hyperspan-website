@@ -29,7 +29,7 @@ export default createRoute().get((c) => {
             <h2>Content Block 2</h2>
             <p>Waits 5000ms to render</p>
             ${placeholder(
-    html`<span>Custom Loading HTML...</span>`,
+    html`<div class="bg-base-200"><span class="loading loading-infinity loading-md"></span> Custom Loading...</div>`,
     AsyncRenderBlock(5000, 'Rendered after 5000ms!')
   )}
           </div>
@@ -60,7 +60,7 @@ const tmpl = html\`
       <h2>Content Block 2</h2>
       <p>Waits 5000ms to render</p>
       \${placeholder(
-        html\`<span>Custom Loading HTML...</span>\`,
+        html\`<div class="bg-base-200"><span class="loading loading-infinity loading-md"></span> Custom Loading...</div>\`,
         AsyncRenderBlock(5000, 'Rendered after 5000ms!')
       )}
     </div>
@@ -79,6 +79,9 @@ const tmpl = html\`
 
   return html\`<div>\${msg}</div>\`;
 }`)}
+
+      <p>There is no special &quot;flight&quot; syntax or anything else weird going on here. Just regular old streaming HTML with <code>slot</code> placeholders and <code>template</code> elements, plus a small JavaScript shim to replace the loading placeholders with the actual content when it streams in for wide browser compatibility. Hyperspan takes care of all of this for you. It just works.</p>
+      <p>If you want to learn more about streaming in Hyperspan, check out the <a href="/docs/streaming">Streaming Documentation</a>.</p>
     </main>
   `;
 

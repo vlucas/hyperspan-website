@@ -19,7 +19,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@hyperspan/framework": "^1.0.6",
+    "@hyperspan/framework": "^1.0.8",
     "@hyperspan/html": "^1.0.0",
     "@hyperspan/plugin-preact": "^1.0.0",
     "@tailwindcss/cli": "^4.1.18",

@@ -30,7 +30,7 @@ The middleware must return a `Response` object. If you want to continue processi
 
 ### Using Middleware on Routes
 
-You can add middleware to a specific route using the `.middleware()` method:
+You can set the middleware stack for a specific route using the `.middleware()` method:
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
@@ -38,11 +38,22 @@ import { html } from '@hyperspan/html';
 
 export default createRoute((c) => {
   return html`<div>Hello, ${c.route.params.name}!</div>`;
-}).middleware([
-  // Add your middleware functions here
-  logger(),
-  csrf(),
-]);
+})
+  // Set the whole middleware stack at once
+  .middleware([logger(), csrf()]);
+```
+
+Or you can add individual middleware functions with the `.use()` method:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute((c) => {
+  return html`<div>Hello, ${c.route.params.name}!</div>`;
+})
+  .use(logger()) // Add logger
+  .use(csrf()); // Add CSRF
 ```
 
 ### Example: Creating a Middleware Function
