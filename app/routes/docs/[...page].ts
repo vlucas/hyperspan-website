@@ -7,7 +7,7 @@ import { renderPreactIsland } from "@hyperspan/plugin-preact";
 import ClientCounter from "@/app/components/client-counter.tsx";
 
 export default createDocsRoute().get(async (c) => {
-  let page = c.route.params.page || 'index';
+  let page = c.req.url.pathname.replace('/docs/', '') || 'index';
 
   if (page.endsWith('/')) {
     return c.res.redirect(`/docs/${page.slice(0, -1)}`);
