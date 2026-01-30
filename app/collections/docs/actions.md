@@ -36,7 +36,10 @@ import { z } from 'zod/v4';
 export default createAction({
   name: 'example-action',
   schema: z.object({
-    name: z.string().min(1, 'Name is required'),
+    name: z
+      .string()
+      .min(3, 'Name must be at least 3 characters long')
+      .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces'),
   }),
 })
   .form((c, { data, error }) => {
@@ -112,7 +115,6 @@ export default createAction({
   .form((c, { data, error }) => {
     return html`
       <form>
-        <!-- show error message if present... -->
         ${error && html`<div class="alert alert-error">${error.message}</div>`}
         <input type="text" name="name" value="${data?.name}" />
         <button type="submit">Submit</button>
