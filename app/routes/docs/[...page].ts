@@ -2,7 +2,7 @@ import { html, render } from "@hyperspan/html";
 import { createDocsRoute } from "@/src/routes/create-docs-route";
 import DocsLayout from "@/app/layouts/docs-layout";
 import { marked } from "marked";
-import { highlightTS, highlightShell } from "@/src/lib/syntax-highlighter";
+import { highlightTS, highlightShell, highlightCode } from "@/src/lib/syntax-highlighter";
 import { renderPreactIsland } from "@hyperspan/plugin-preact";
 import ClientCounter from "@/app/components/client-counter.tsx";
 
@@ -41,8 +41,7 @@ export default createDocsRoute().get(async (c) => {
       } else if (language === "shell" || language === "bash" || language === "sh") {
         return render(highlightShell(code.text));
       } else {
-        // Default code block
-        return `<pre><code class="language-${language || ""}">${code.text}</code></pre>`;
+        return render(highlightCode(code.text, language));
       }
     };
 
