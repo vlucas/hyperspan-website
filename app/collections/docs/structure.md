@@ -8,14 +8,19 @@ The app directory structure is as follows:
 
 ```
 app/
-├── actions/     [coming soon!]
+├── actions/     [server actions]
 │   └── create-user.ts
-├── layouts/     [not managed by Hyperspan, but recommended]
+├── layouts/     [recommended folder for layouts]
 │   └── main-layout.ts
-├── styles/      [global styles & Tailwind setup]
+├── styles/      [global styles & Tailwind setup (if used)]
 │   └── global.css
 └── routes/      [all your routes go here]
     └── index.ts
     └── about.ts
     └── contact.ts
+    └── posts/
+        └── [id].ts
+        └── index.ts
+    └── docs/
+        └── [...page].ts
 ```

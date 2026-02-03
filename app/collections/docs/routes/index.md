@@ -102,20 +102,35 @@ Routes support all standard HTTP request methods with `.put()`, `.patch()`, `.de
 
 ## Route-Specific Middleware
 
-The `createRoute` function returns an object with a `middleware()` method to define middleware for one specific route. This is useful for things like caching that are highly contextual and should only be applied to specific routes.
+The `createRoute` function returns an object with `use()` and `middleware()` methods to define middleware for one specific route. This is useful for things like caching that are highly contextual and should only be applied to specific routes.
 
 The middleware is applied in the order it is defined, and is applied to the route before the route handler is called.
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { logger } from '~/src/middleware/logger';
-import { csrf } from '~/src/middleware/csrf';
+import { cachetime } from '~/src/middleware/cachetime';
 
 export default createRoute()
   .get((c) => {
     return html`<div>Hello, ${c.route.params.name}!</div>`;
   })
-  .middleware([csrf(), logger()]);
+  .use(cachetime('1w'))
+  .use(logger());
+```
+
+The `middleware()` method can be used to define the whole middleware stack in one call (this will overwrite any previously set middleware):
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { logger } from '~/src/middleware/logger';
+import { cachetime } from '~/src/middleware/cachetime';
+
+export default createRoute()
+  .get((c) => {
+    return html`<div>Hello, ${c.route.params.name}!</div>`;
+  })
+  .middleware([cachetime('1w'), logger()]);
 ```
 
 ## Route Method-Specific Middleware
@@ -125,7 +140,7 @@ Even within a route, sometimes you want certain middleware to apply only to a sp
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { logger } from '~/src/middleware/logger';
-import { csrf } from '~/src/middleware/csrf';
+import { cachetime } from '~/src/middleware/cachetime';
 
 export default createRoute()
   .get((c) => {
@@ -137,12 +152,12 @@ export default createRoute()
     },
     { middleware: [userAuth()] } // POST-specific middleware
   )
-  .middleware([csrf(), logger()]); // Middleware for any HTTP method on this route
+  .middleware([cachetime('1w'), logger()]); // Middleware for any HTTP method on this route
 ```
 
 ## Global Middleware
 
-You can add custom global middleware in `hyperspan.config.ts`. This is useful for things like logging and authentication.
+You can add custom global middleware in `hyperspan.config.ts`. This is useful for things like logging and authentication. Server middleware will run for _all routes_, and will run _before_ any route-specific middleware does.
 
 ```typescript
 import { createConfig } from '@hyperspan/framework';
@@ -226,3 +241,7 @@ Any HTTP methods that are not handled for a given route path will automatically 
 ### Not Found
 
 Any request to a route path that with no match will return a `404: File Not Found` response.
+
+## Advanced Routing
+
+Check out [route composition](/docs/routes/composition) for more advanced routing use cases.

@@ -30,6 +30,12 @@ export default function MarketingLayout(c: HS.Context, { title, content, meta }:
 
         <title>${title}</title>
         ${hyperspanStyleTags(c)}
+        <script type="speculationrules">
+          {
+            "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }],
+            "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }]
+          }
+        </script>
         <script defer data-domain="hyperspan.dev" src="https://plausible.io/js/script.js"></script>
       </head>
       <body class="">
