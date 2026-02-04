@@ -5,13 +5,13 @@
     "": {
       "name": "hyperspan-website",
       "dependencies": {
-        "@hyperspan/framework": "^1.0.8",
+        "@hyperspan/framework": "^1.0.11",
         "@hyperspan/html": "^1.0.0",
         "@hyperspan/plugin-preact": "^1.0.0",
         "@tailwindcss/cli": "^4.1.18",
         "daisyui": "^5.5.14",
         "highlight.js": "^11.11.1",
-        "hyperspan": "1.0.2",
+        "hyperspan": "^1.0.3",
         "marked": "^14.1.4",
         "preact": "^10.28.2",
         "timestring": "^7.0.0",
@@ -31,7 +31,7 @@
     },
   },
   "packages": {
-    "@hyperspan/framework": ["@hyperspan/framework@1.0.8", "", { "dependencies": { "@hyperspan/html": "^1.0.0", "debug": "^4.4.3", "isbot": "^5.1.32", "zod": "^4.1.12" } }, "sha512-hLsIJvZZCaTfcGOYjVgXIkgCfV26OvDr6PrIKtTvWrJgVjhL5EPCiMKdbTgN05Zkb7mkXDy0YrlZMuNJ0Dxnag=="],
+    "@hyperspan/framework": ["@hyperspan/framework@1.0.11", "", { "dependencies": { "@hyperspan/html": "^1.0.0", "debug": "^4.4.3", "isbot": "^5.1.32", "zod": "^4.1.12" } }, "sha512-vEfIY0VlHXTnSnDLBYPhwrIXSsYWDAMrL574R7MPmuj4+bb9/+DvaOLlmtr15RV26XrB2cIab/pKmoIZMbNtAw=="],
 
     "@hyperspan/html": ["@hyperspan/html@1.0.0", "", {}, "sha512-cCnNnrebAOgVuT5U7VFK/H6eTnr5OGeT8guA6HBHtQijn4oKbT6kQwTyIYIqHg9/hxobVDAiUcsNpPsx060NNA=="],
 
@@ -165,7 +165,7 @@
 
     "highlight.js": ["highlight.js@11.11.1", "", {}, "sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w=="],
 
-    "hyperspan": ["hyperspan@1.0.2", "", { "dependencies": { "@hyperspan/framework": "^1.0.1", "bun-plugin-tailwind": "^0.1.2", "commander": "^14.0.2", "degit": "^2.8.4" }, "bin": { "hyperspan": "src/index.ts", "hyperspan-dev": "src/dev.ts" } }, "sha512-Pktm1jLDbHDRZs4nROIZaqgtg02h/hWBIEnB8iGhUWfGbRTQbD+xLY8m8PhtMGKI7+16AjBajRn9H9YvJ8Zpvw=="],
+    "hyperspan": ["hyperspan@1.0.3", "", { "dependencies": { "@hyperspan/framework": "^1.0.1", "bun-plugin-tailwind": "^0.1.2", "commander": "^14.0.2", "degit": "^2.8.4" }, "bin": { "hyperspan": "src/index.ts", "hyperspan-dev": "src/dev.ts" } }, "sha512-h4iyXBA3VPFEgwMxWPs/8wnDaoGW3g32/6cKSmNuQUo7ypcOyM5LMrIzgFl7505vLG0zT2IcG/WqY0a4e1V7LQ=="],
 
     "is-extglob": ["is-extglob@2.1.1", "", {}, "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ=="],
 

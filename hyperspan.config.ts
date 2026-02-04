@@ -8,7 +8,7 @@ export default createConfig({
 
   beforeRoutesAdded(server) {
     // Redirect non-www to www
-    server._middleware.push((c, next) => {
+    server.use((c, next) => {
       const host = c.req.headers.get('host');
       const isWww = host && host.startsWith('www.');
       const isApp = host && host.startsWith('app.');
@@ -23,5 +23,4 @@ export default createConfig({
       return next();
     });
   },
-
 });
