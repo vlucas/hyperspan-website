@@ -71,7 +71,7 @@ export default function MarketingLayout(c: HS.Context, { title, content, meta }:
           <div class="h-full w-screen-lg m-auto my-8" id="root">${content}</div>
           <footer class="bg-base-200 p-8 mt-20">
             <p class="block my-20 text-sm">
-              Created by <a href="https://www.vancelucas.com">Vance Lucas</a> &copy;
+              Created by <a href="https://www.vancelucas.com">Vance Lucas</a> of <a href="https://www.infiniterectangles.com">Infinite Rectangles</a> &copy;
               ${new Date().getFullYear()}.
             </p>
           </footer>

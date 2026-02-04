@@ -2,7 +2,7 @@
   "name": "hyperspan-website",
   "version": "0.0.1",
   "scripts": {
-    "dev": "PORT=3005 hyperspan dev",
+    "dev": "PORT=3005 hyperspan-dev dev",
     "start": "hyperspan start",
     "test": "bun test"
   },
@@ -25,7 +25,7 @@
     "@tailwindcss/cli": "^4.1.18",
     "daisyui": "^5.5.14",
     "highlight.js": "^11.11.1",
-    "hyperspan": "^1.0.1",
+    "hyperspan": "1.0.2",
     "marked": "^14.1.4",
     "preact": "^10.28.2",
     "timestring": "^7.0.0"
