@@ -43,6 +43,13 @@ export default createRoute((c) => {
   .middleware([logger(), csrf()]);
 ```
 
+You can optionally specify an HTTP method the middleware applies to:
+
+```typescript
+// Add only to GET and POST requests
+route.middleware([logger(), csrf()], { methods: ['GET', 'POST'] });
+```
+
 Or you can add individual middleware functions with the `.use()` method:
 
 ```typescript
@@ -54,6 +61,13 @@ export default createRoute((c) => {
 })
   .use(logger()) // Add logger
   .use(csrf()); // Add CSRF
+```
+
+You can optionally specify an HTTP method the middleware applies to:
+
+```typescript
+// Add only on POST requests
+route.use(csrf(), { methods: ['POST'] });
 ```
 
 ### Example: Creating a Middleware Function
