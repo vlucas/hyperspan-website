@@ -62,7 +62,7 @@ export default async function BaseLayout(c: HS.Context, { title, content }: { ti
 function Navbar() {
   return html`
     <!-- Navigation -->
-    <header class="mb-6 bg-base-200 border-b border-base-300">
+    <header class="mb-8 bg-base-200 border-b border-base-300">
       <nav class="navbar">
         <div class="flex-1">
           <ul class="menu menu-horizontal px-1">
@@ -100,11 +100,11 @@ function Navbar() {
 function Footer() {
   return html`
     <!-- Footer -->
-    <footer class="w-full bg-base-200 border-t border-base-300 py-12">
+    <footer class="mt-8 w-full bg-base-200 border-t border-base-300 py-12">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start gap-8">
-            <div>
+            <div class="max-w-xl">
                 <h4 class="text-xl font-bold mb-4">Hyperspan</h4>
-                <p class="">The modern server-oriented TypeScript framework for building web sites and applications.</p>
+                <p class="">Web Framework for Dynamic High-Performance Sites and Apps.</p>
             </div>
             <div class="flex gap-12 text-md">
                 <div class="flex flex-col gap-3">
