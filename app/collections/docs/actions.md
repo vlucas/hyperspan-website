@@ -4,11 +4,11 @@ Actions are a built-in way to render forms that submit their data back to the se
 
 Actions allow you to:
 
-- Use very little JavaScript (no front-end framework required)
 - Keep all of the logic on the server (rendering, error handling, form validation and data processing, etc.)
 - Not be forced to build an API for simple interactions
 - Import and render a form anywhere you need to inside a template
 - Use middleware for things like security and auth, just like a normal route
+- Use _very little JavaScript_ on the client. Hyperspan uses [Idiomorph](https://github.com/bigskysoftware/idiomorph) from the creator of [HTMX](https://htmx.org) to apply HTML diffs from the server, and this library only loads in when you are using actions.
 - Use [dynamic islands](/docs/clientjs/islands) inside forms if you need to build more complex interactions or UI components
 
 ## Using Actions

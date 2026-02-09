@@ -3,6 +3,7 @@ import hljs from 'highlight.js/lib/core';
 import typescript from 'highlight.js/lib/languages/typescript';
 import shell from 'highlight.js/lib/languages/shell';
 import htmlLanguage from 'highlight.js/lib/languages/xml';
+import './syntax-highlighter-themes/tomorrow-night-bright.min.css';
 
 // Then register the languages you need
 hljs.registerLanguage('typescript', typescript);

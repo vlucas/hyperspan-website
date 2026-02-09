@@ -63,7 +63,7 @@ export default createRoute((c) => {
   .use(csrf()); // Add CSRF
 ```
 
-You can optionally specify an HTTP method the middleware applies to:
+You can optionally specify which HTTP methods the middleware applies to:
 
 ```typescript
 // Add only on POST requests

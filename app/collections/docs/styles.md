@@ -18,6 +18,12 @@ export default createRoute().get((c) => {
 });
 ```
 
+## Automatic Route-Split CSS
+
+**Each Hyperspan file-based route is processed independently**, so you can safely `import '~/my/styles.css'` in one route, and it will not be automatically added to any other route.
+
+This also means you can co-locate styles with their own features, and import them from their own files, like a `lib/syntax-highligher.ts` that imports `lib/syntax-highligher.css`. Only routes that use and import the syntax highlighing file will also bundle the syntax highlighting CSS.
+
 ## Supported CSS Features
 
 Hyperspan uses [Bun CSS](https://bun.com/docs/bundler/css) for the runtime, which means all CSS imports in Hyperspan have full support for:

@@ -6,7 +6,9 @@ import type { Hyperspan as HS } from '@hyperspan/framework';
 export default function DocsLayout(c: HS.Context, { title, content }: { title: string; content: any }) {
   const docLayout = html`
     <div class="flex gap-2 pl-6">
-      <div class="flex-1">${content}</div>
+      <div class="flex-1">
+        <div class="w-screen-lg m-auto my-8" id="root">${content}</div>
+      </div>
       <nav class="w-64">
         <ul class="menu bg-base-200 rounded-box">
           <li class="menu-title">Hyperspan</li>

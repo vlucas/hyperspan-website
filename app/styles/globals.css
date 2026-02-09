@@ -2,9 +2,9 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 @plugin "daisyui/theme" {
-  name: 'sunset';
+  name: 'hyperspan';
   default: false;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: 'dark';
   --color-base-100: oklch(22% 0.019 237.69);
   --color-base-200: oklch(20% 0.019 237.69);
@@ -48,6 +48,25 @@ body {
   font-style: normal;
   line-height: 1.5;
   overflow-y: scroll;
+}
+.font-semibold {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-style: normal;
+}
+.font-bold,
+b,
+strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+.font-italic,
+i,
+em {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+  font-style: italic;
 }
 
 h1,
