@@ -6,6 +6,29 @@ import { highlightTS, highlightShell, highlightCode } from "@/src/lib/syntax-hig
 import { renderPreactIsland } from "@hyperspan/plugin-preact";
 import ClientCounter from "@/app/components/client-counter.tsx";
 
+const KNOWN_AI_BOTS = [
+  "Amazonbot",
+  "Applebot",
+  "Bytespider",
+  "ClaudeBot",
+  "DuckAssistBot",
+  "Google-CloudVertexBot",
+  "GoogleOther",
+  "GPTBot",
+  "Meta-ExternalAgent",
+  "PetalBot",
+  "TikTokSpider",
+  "CCBot",
+];
+
+const knownBotMatchers = KNOWN_AI_BOTS.map((bot) => bot.toLowerCase());
+
+const isKnownAIBot = (userAgent?: string | null) => {
+  if (!userAgent) return false;
+  const normalized = userAgent.toLowerCase();
+  return knownBotMatchers.some((bot) => normalized.includes(bot));
+};
+
 export default createDocsRoute().get(async (c) => {
   let page = c.req.url.pathname.replace('/docs/', '') || 'index';
 
@@ -28,6 +51,11 @@ export default createDocsRoute().get(async (c) => {
 
     if (!markdown) {
       return c.res.notFound();
+    }
+
+    const userAgent = c.req.headers.get("user-agent");
+    if (isKnownAIBot(userAgent)) {
+      return new Response(file);
     }
 
     // Process markdown with custom renderer for code blocks

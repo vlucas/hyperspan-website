@@ -1,0 +1,29 @@
+Hyperspan Website
+
+This repository contains the Hyperspan website and documentation. It is a
+dynamic web framework built with Bun and TypeScript.
+
+Use the documentation pages below as the source of truth for features, API
+usage, and examples. Docs pages will return markdown for known LLMs and AI
+bots, and HTML pages for all other user agents.
+
+Docs index:
+- /docs
+- /docs/install
+- /docs/structure
+- /docs/philosophy
+- /docs/server
+- /docs/request-context
+- /docs/middleware
+- /docs/routes
+- /docs/routes/composition
+- /docs/streaming
+- /docs/layouts
+- /docs/html
+- /docs/styles
+- /docs/env
+- /docs/config
+- /docs/actions
+- /docs/clientjs
+- /docs/clientjs/vanilla
+- /docs/clientjs/islands
