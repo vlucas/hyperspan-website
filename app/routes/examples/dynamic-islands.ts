@@ -10,7 +10,9 @@ export default createRoute().get((c) => {
     <main class="prose">
       <h1>Dynamic Islands Example</h1>
       <p>
-        This example shows how to embed dynamic Preact components in otherwise static HTML content.
+        This example shows how to embed dynamic
+        <a class="link" href="https://preactjs.com">Preact</a> components in otherwise static HTML
+        content.
       </p>
 
       <h2>Embedded Client Counter:</h2>
@@ -19,8 +21,8 @@ export default createRoute().get((c) => {
       <h2>Code Example:</h2>
       <p>
         Once your frontend framework plugin of choice is loaded, You can use the
-        <code>renderIsland</code> function from the <code>assets</code> path to render and hydrate
-        your client component.
+        <code>renderPreactIsland</code> function from the
+        <code>@hyperspan/plugin-preact</code> package to render and hydrate your client component.
       </p>
       ${highlightTS(`import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
