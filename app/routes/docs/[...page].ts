@@ -5,6 +5,7 @@ import { marked } from 'marked';
 import { highlightTS, highlightShell, highlightCode } from '~/src/lib/syntax-highlighter';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
 import ClientCounter from '~/app/components/client-counter.tsx';
+import { memoryCacheTime } from '~/app/middleware';
 
 const KNOWN_AI_BOTS = [
   'Amazonbot',
@@ -117,4 +118,4 @@ export default createDocsRoute().get(async (c) => {
     console.error('Error loading markdown file:', error);
     return c.res.notFound();
   }
-});
+}).use(memoryCacheTime('1w'));

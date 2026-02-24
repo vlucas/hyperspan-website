@@ -3,6 +3,7 @@ import { createRoute } from '@hyperspan/framework';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
 import ClientCounter from '~/app/components/client-counter.tsx';
 import MarketingLayout from '~/app/layouts/marketing-layout';
+import { memoryCacheTime } from '~/app/middleware';
 
 export default createRoute().get((c) => {
   const content = html`
@@ -23,4 +24,4 @@ export default createRoute().get((c) => {
     title: 'Counter Client Component',
     content,
   });
-});
+}).use(memoryCacheTime('1w'));

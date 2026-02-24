@@ -4,6 +4,7 @@ import MarketingLayout from '~/app/layouts/marketing-layout';
 import { Icon } from '~/src/ui/icon';
 import '~/app/styles/layout.css';
 import { highlightTS } from '~/src/lib/syntax-highlighter';
+import { memoryCacheTime } from '~/app/middleware';
 
 export default createRoute().get((c) => {
   const title = 'Hyperspan - High-Performance TypeScript Framework';
@@ -494,4 +495,4 @@ export default createAction({
       description: 'Hyperspan Web Framework for Dynamic High-Performance Sites and Apps. Zero JavaScript to the client by default.',
     },
   });
-});
+}).use(memoryCacheTime('1w'));

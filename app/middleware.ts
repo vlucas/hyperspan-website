@@ -12,7 +12,7 @@ export function memoryCacheTime(timeStrOrSeconds: string | number) {
 
     // Only cache GET requests
     if (method === 'GET') {
-      await next();
+      const res = await next();
       const timeInSeconds =
         typeof timeStrOrSeconds === 'number' ? timeStrOrSeconds : timestring(timeStrOrSeconds);
       const cacheKey = `${method}:${c.req.url.pathname}`;
@@ -20,21 +20,23 @@ export function memoryCacheTime(timeStrOrSeconds: string | number) {
 
       // Return the cached response if it exists
       if (cachedRes) {
-        return new Response(cachedRes, {
-          status: 200,
+        return c.res.html(cachedRes, {
           headers: {
             'Cache-Control': `public, max-age=${timeInSeconds}`,
           },
         });
       }
 
-      const res = c.res.raw;
-
       // Set the cache if the response is 200
-      if (res.status === 200) {
+      if (res && res.status === 200) {
         const resBody = await res.clone().text();
         _memoryCache.set(cacheKey, resBody);
-        c.res.headers.set('Cache-Control', `public, max-age=${timeInSeconds}`);
+
+        return c.res.html(resBody, {
+          headers: {
+            'Cache-Control': `public, max-age=${timeInSeconds}`,
+          },
+        });
       }
 
       return res;

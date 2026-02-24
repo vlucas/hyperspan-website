@@ -1,6 +1,7 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import ContentLayout from '~/app/layouts/content-layout';
+import { memoryCacheTime } from '~/app/middleware';
 
 export default createRoute().get((c) => {
   const content = html`
@@ -65,4 +66,4 @@ export default createRoute().get((c) => {
   `;
 
   return ContentLayout(c, { title: 'Examples', content });
-});
+}).use(memoryCacheTime('1w'));
