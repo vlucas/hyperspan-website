@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import docsRoute from "@/app/routes/docs/[...page].ts";
+import docsRoute from "~/app/routes/docs/[...page].ts";
 
 describe("docs route", () => {
   it("returns markdown for known AI bots", async () => {

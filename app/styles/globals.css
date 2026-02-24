@@ -1,13 +1,23 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
+
+@theme {
+  --color-brand-orange: #e78c45;
+  --color-brand-purple: #c397d8;
+  --color-brand-blue: #7aa6da;
+  --color-brand-dark: #0a1628;
+  --color-brand-gray: #0f1f35;
+  --color-brand-border: #1a2f4a;
+}
+
 @plugin "daisyui/theme" {
   name: 'hyperspan';
   default: false;
   prefersdark: true;
   color-scheme: 'dark';
-  --color-base-100: oklch(22% 0.019 237.69);
-  --color-base-200: oklch(20% 0.019 237.69);
+  --color-base-100: #0c1a2e;
+  --color-base-200: #091628;
   --color-base-300: oklch(18% 0.019 237.69);
   --color-base-content: oklch(77.383% 0.043 245.096);
   --color-primary: oklch(74.703% 0.158 39.947);
@@ -69,26 +79,8 @@ em {
   font-style: italic;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 700;
-  font-style: normal;
-}
-
 pre {
   overflow-x: auto;
-}
-
-a {
-  text-decoration: underline;
-}
-a.btn {
-  text-decoration: none;
 }
 
 .navbar .brand {
@@ -104,8 +96,16 @@ slot {
   color: var(--color-neutral-content);
 }
 
-/* Tailwind overrides */
 .prose {
-  width: 80ch;
-  @apply lg:max-w-[80ch];
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    font-style: normal;
+    color: white;
+  }
 }

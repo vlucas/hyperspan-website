@@ -34,7 +34,7 @@ Then, you can use the layout in your `app/routes/index.ts` file like this:
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
-import MainLayout from '@/app/layouts/main-layout';
+import MainLayout from '~/app/layouts/main-layout';
 
 export default createRoute().get((c) => {
   const content = html`

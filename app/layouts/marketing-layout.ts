@@ -1,15 +1,17 @@
 import { html } from '@hyperspan/html';
-import BaseLayout from './base-layout';
-import '@/app/styles/globals.css';
+import BaseLayout, { type BaseLayoutProps } from './base-layout';
+import '~/app/styles/globals.css';
 
 import type { Hyperspan as HS } from '@hyperspan/framework';
 
-export default function MarketingLayout(c: HS.Context, { title, content, meta }: { title: string; content: any; meta?: { description?: string } }) {
-  title = title + ' - Hyperspan';
+export default function MarketingLayout(
+  c: HS.Context,
+  { title, content, meta }: BaseLayoutProps
+) {
+  title = title + ' - Hyperspan Framework';
   const marketingContent = html`
-    <div class="max-w-5xl m-auto">
-      ${content}
-    </div>
+    <!-- Main Content -->
+    <main class="relative z-10">${content}</main>
   `;
 
   return BaseLayout(c, { title, content: marketingContent });

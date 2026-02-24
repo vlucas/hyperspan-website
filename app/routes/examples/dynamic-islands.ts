@@ -1,9 +1,9 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import DocsLayout from '@/app/layouts/docs-layout';
-import { highlightTS } from '@/src/lib/syntax-highlighter';
+import ContentLayout from '~/app/layouts/content-layout';
+import { highlightTS } from '~/src/lib/syntax-highlighter';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ClientCounter from '@/app/components/client-counter.tsx';
+import ClientCounter from '~/app/components/client-counter.tsx';
 
 export default createRoute().get((c) => {
   const content = html`
@@ -28,7 +28,7 @@ export default createRoute().get((c) => {
 import { createRoute } from '@hyperspan/framework';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
 // Import your Preact component like normal once the island plugin is loaded
-import ExampleCounter from '@/src/components/ExampleCounter.tsx';
+import ExampleCounter from '~/src/components/ExampleCounter.tsx';
 
 export default createRoute().get(() => {
   return html\`
@@ -45,7 +45,7 @@ export default createRoute().get(() => {
     </main>
   `;
 
-  return DocsLayout(c, {
+  return ContentLayout(c, {
     title: 'Dynamic Islands Example',
     content,
   });

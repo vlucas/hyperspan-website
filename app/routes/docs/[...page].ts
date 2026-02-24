@@ -1,24 +1,24 @@
-import { html, render } from "@hyperspan/html";
-import { createDocsRoute } from "@/src/routes/create-docs-route";
-import DocsLayout from "@/app/layouts/docs-layout";
-import { marked } from "marked";
-import { highlightTS, highlightShell, highlightCode } from "@/src/lib/syntax-highlighter";
-import { renderPreactIsland } from "@hyperspan/plugin-preact";
-import ClientCounter from "@/app/components/client-counter.tsx";
+import { html, render } from '@hyperspan/html';
+import { createDocsRoute } from '~/src/routes/create-docs-route';
+import DocsLayout from '~/app/layouts/docs-layout';
+import { marked } from 'marked';
+import { highlightTS, highlightShell, highlightCode } from '~/src/lib/syntax-highlighter';
+import { renderPreactIsland } from '@hyperspan/plugin-preact';
+import ClientCounter from '~/app/components/client-counter.tsx';
 
 const KNOWN_AI_BOTS = [
-  "Amazonbot",
-  "Applebot",
-  "Bytespider",
-  "ClaudeBot",
-  "DuckAssistBot",
-  "Google-CloudVertexBot",
-  "GoogleOther",
-  "GPTBot",
-  "Meta-ExternalAgent",
-  "PetalBot",
-  "TikTokSpider",
-  "CCBot",
+  'Amazonbot',
+  'Applebot',
+  'Bytespider',
+  'ClaudeBot',
+  'DuckAssistBot',
+  'Google-CloudVertexBot',
+  'GoogleOther',
+  'GPTBot',
+  'Meta-ExternalAgent',
+  'PetalBot',
+  'TikTokSpider',
+  'CCBot',
 ];
 
 const knownBotMatchers = KNOWN_AI_BOTS.map((bot) => bot.toLowerCase());
@@ -53,7 +53,7 @@ export default createDocsRoute().get(async (c) => {
       return c.res.notFound();
     }
 
-    const userAgent = c.req.headers.get("user-agent");
+    const userAgent = c.req.headers.get('user-agent');
     if (isKnownAIBot(userAgent)) {
       return new Response(file);
     }
@@ -64,9 +64,9 @@ export default createDocsRoute().get(async (c) => {
     // Override code block rendering to use syntax highlighter
     renderer.code = (code) => {
       const language = code.lang;
-      if (language === "typescript" || language === "ts") {
+      if (language === 'typescript' || language === 'ts') {
         return render(highlightTS(code.text));
-      } else if (language === "shell" || language === "bash" || language === "sh") {
+      } else if (language === 'shell' || language === 'bash' || language === 'sh') {
         return render(highlightShell(code.text));
       } else {
         return render(highlightCode(code.text, language));
@@ -92,12 +92,12 @@ export default createDocsRoute().get(async (c) => {
           const props = propsStr ? eval(`(${propsStr})`) : {};
           const options = optionsStr ? eval(`(${optionsStr})`) : {};
 
-          if (componentName === "ClientCounter") {
-            return renderPreactIsland(ClientCounter, props, options)
+          if (componentName === 'ClientCounter') {
+            return renderPreactIsland(ClientCounter, props, options);
           }
           return match; // Return original if component not found
         } catch (e) {
-          console.error("Error processing island:", e);
+          console.error('Error processing island:', e);
           return match;
         }
       }
@@ -105,20 +105,16 @@ export default createDocsRoute().get(async (c) => {
 
     // Extract title from first h1
     const titleMatch = markdown.match(/^#\s+(.+)$/m);
-    const title = titleMatch ? titleMatch[1] : "Documentation";
+    const title = titleMatch ? titleMatch[1] : 'Documentation';
 
-    const content = html`
-      <main class="prose">
-        ${html.raw(processedContent)}
-      </main>
-    `;
+    const content = html` <main class="prose">${html.raw(processedContent)}</main> `;
 
     return DocsLayout(c, {
       title,
       content,
     });
   } catch (error) {
-    console.error("Error loading markdown file:", error);
+    console.error('Error loading markdown file:', error);
     return c.res.notFound();
   }
 });

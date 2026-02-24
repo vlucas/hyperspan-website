@@ -1,17 +1,22 @@
-import { createAction } from "@hyperspan/framework/actions";
-import { html } from "@hyperspan/html";
-import { z } from "zod/v4";
+import { createAction } from '@hyperspan/framework/actions';
+import { html } from '@hyperspan/html';
+import { z } from 'zod/v4';
 
 export default createAction({
   name: 'example-action',
   schema: z.object({
-    name: z.string()
+    name: z
+      .string()
       .min(3, 'Name must be at least 3 characters long')
       .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces'),
   }),
 })
   .form((c, { data, error }) => {
-    const errorMessage = error ? (error?.fieldErrors ? error?.fieldErrors?.name?.[0] : error.message) : '';
+    const errorMessage = error
+      ? error?.fieldErrors
+        ? error?.fieldErrors?.name?.[0]
+        : error.message
+      : '';
     const errorHTML = error ? html`<div class="alert alert-error mb-2">${errorMessage}</div>` : '';
     return html`
       <p>Please enter your name below:</p>
@@ -21,7 +26,12 @@ export default createAction({
       </ul>
       <form method="post">
         ${errorHTML}
-        <input class="input input-bordered max-w-sm" type="text" name="name" value="${data?.name}" />
+        <input
+          class="input input-bordered max-w-sm"
+          type="text"
+          name="name"
+          value="${data?.name}"
+        />
         <button class="btn btn-primary" type="submit">Submit</button>
       </form>
     `;

@@ -16,7 +16,6 @@
     "allowJs": true,
     "types": ["bun-types"],
     "paths": {
-      "@/*": ["./*"],
       "~/*": ["./*"]
     },
     "jsx": "react",

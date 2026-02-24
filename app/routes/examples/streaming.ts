@@ -1,8 +1,8 @@
 import { html, placeholder } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
-import MarketingLayout from '@/app/layouts/marketing-layout';
-import { sleep } from '@/src/lib/sleep';
-import { highlightTS } from '@/src/lib/syntax-highlighter';
+import ContentLayout from '~/app/layouts/content-layout';
+import { sleep } from '~/src/lib/sleep';
+import { highlightTS } from '~/src/lib/syntax-highlighter';
 
 export default createRoute().get((c) => {
   const content = html`
@@ -29,7 +29,9 @@ export default createRoute().get((c) => {
             <h2>Content Block 2</h2>
             <p>Waits 5000ms to render</p>
             ${placeholder(
-    html`<div class="bg-base-200"><span class="loading loading-infinity loading-md"></span> Custom Loading...</div>`,
+    html`<div class="bg-base-200">
+                <span class="loading loading-infinity loading-md"></span> Custom Loading...
+              </div>`,
     AsyncRenderBlock(5000, 'Rendered after 5000ms!')
   )}
           </div>
@@ -80,12 +82,21 @@ const tmpl = html\`
   return html\`<div>\${msg}</div>\`;
 }`)}
 
-      <p>There is no special &quot;flight&quot; syntax or anything else weird going on here. Just regular old streaming HTML with <code>slot</code> placeholders and <code>template</code> elements, plus a small JavaScript shim to replace the loading placeholders with the actual content when it streams in for wide browser compatibility. Hyperspan takes care of all of this for you. It just works.</p>
-      <p>If you want to learn more about streaming in Hyperspan, check out the <a href="/docs/streaming">Streaming Documentation</a>.</p>
+      <p>
+        There is no special &quot;flight&quot; syntax or anything else weird going on here. Just
+        regular old streaming HTML with <code>slot</code> placeholders and
+        <code>template</code> elements, plus a small JavaScript shim to replace the loading
+        placeholders with the actual content when it streams in for wide browser compatibility.
+        Hyperspan takes care of all of this for you. It just works.
+      </p>
+      <p>
+        If you want to learn more about streaming in Hyperspan, check out the
+        <a href="/docs/streaming">Streaming Documentation</a>.
+      </p>
     </main>
   `;
 
-  return MarketingLayout(c, {
+  return ContentLayout(c, {
     title: 'Streaming Content Example',
     content,
   });

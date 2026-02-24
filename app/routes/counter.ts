@@ -1,8 +1,8 @@
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ClientCounter from '@/app/components/client-counter.tsx';
-import MarketingLayout from '@/app/layouts/marketing-layout';
+import ClientCounter from '~/app/components/client-counter.tsx';
+import MarketingLayout from '~/app/layouts/marketing-layout';
 
 export default createRoute().get((c) => {
   const content = html`

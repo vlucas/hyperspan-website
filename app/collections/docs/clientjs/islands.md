@@ -42,7 +42,7 @@ import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
 // Import your Preact component like normal once the island plugin is loaded
-import ExampleCounter from '@/src/components/example-counter.tsx';
+import ExampleCounter from '~/src/components/example-counter.tsx';
 
 export default createRoute(() => {
   return html`
