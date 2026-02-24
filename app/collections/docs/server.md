@@ -2,7 +2,7 @@
 
 The Hyperspan Server is a collection of routes with optional global middleware.
 
-You won't usually create the server yourself. This will happen for you when you run `hyperspan start` or `hyperspan dev` to start the server.
+You won't usually create the server yourself. This will happen for you when you run `hyperspan start` or `hyperspan-dev dev` to start the server.
 
 You have full access to the Server via the [Hyperspan Config](/docs/config) object.
 
