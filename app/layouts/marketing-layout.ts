@@ -6,13 +6,13 @@ import type { Hyperspan as HS } from '@hyperspan/framework';
 
 export default function MarketingLayout(
   c: HS.Context,
-  { title, content, meta }: BaseLayoutProps
+  props: BaseLayoutProps
 ) {
-  title = title + ' - Hyperspan Framework';
+  const title = props.title + ' - Hyperspan Framework';
   const marketingContent = html`
     <!-- Main Content -->
-    <main class="relative z-10">${content}</main>
+    <main class="relative z-10">${props.content}</main>
   `;
 
-  return BaseLayout(c, { title, content: marketingContent });
+  return BaseLayout(c, { ...props, title, content: marketingContent });
 }

@@ -20,7 +20,7 @@ export default async function BaseLayout(c: HS.Context, { title, content, meta }
     [
       '<https://fonts.googleapis.com>; rel=preconnect; crossorigin',
       '<https://fonts.gstatic.com>; rel=preconnect; crossorigin',
-      fontIconsUrl + '; rel=preload; as=style',
+      `<${fontIconsUrl}>; rel=preload; as=style`,
     ].join(', ')
   );
 
@@ -140,9 +140,9 @@ function Footer() {
             </div>
           </div>
           <div>
-            <h4 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">
+            <h3 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">
               Documentation
-            </h4>
+            </h3>
             <ul class="space-y-4 text-sm">
               <li><a href="/docs" class="link">Get Started</a></li>
               <li>
@@ -154,9 +154,9 @@ function Footer() {
             </ul>
           </div>
           <div>
-            <h4 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">
+            <h3 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">
               Examples
-            </h4>
+            </h3>
             <ul class="space-y-4 text-sm">
               <li>
                 <a href="/examples/streaming" class="link"

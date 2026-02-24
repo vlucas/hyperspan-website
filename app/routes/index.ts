@@ -54,7 +54,7 @@ export default createRoute().get((c) => {
           </div>
           <div class="w-px h-10 bg-brand-border"></div>
           <div class="flex flex-col items-center gap-2">
-            <span class="text-brand-purple font-bold text-2xl">100</span>
+            <span class="text-brand-purple font-bold text-2xl">90+</span>
             <span>Lighthouse Core</span>
           </div>
         </div>
@@ -258,6 +258,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
             <a
             href="/docs/streaming"
             class="w-full sm:w-auto px-8 py-4 rounded bg-white/5 border border-white/10 text-white font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+            title="Learn more about streaming content in Hyperspan"
             >
               Learn More
             </a>
@@ -303,6 +304,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
             <a
             href="/docs/clientjs/islands"
             class="w-full sm:w-auto px-8 py-4 rounded bg-white/5 border border-white/10 text-white font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+            title="Learn more about dynamic islands in Hyperspan"
             >
               Learn More
             </a>
@@ -435,6 +437,7 @@ export default createAction({
             <a
             href="/docs/actions"
             class="w-full sm:w-auto px-8 py-4 rounded bg-white/5 border border-white/10 text-white font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+            title="Learn more about server actions in Hyperspan"
             >
               Learn More
             </a>
@@ -487,5 +490,8 @@ export default createAction({
   return MarketingLayout(c, {
     title,
     content,
+    meta: {
+      description: 'Hyperspan Web Framework for Dynamic High-Performance Sites and Apps. Zero JavaScript to the client by default.',
+    },
   });
 });
