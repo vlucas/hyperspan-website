@@ -21,8 +21,8 @@ export default createRoute().get((c) => {
         </h1>
 
         <p class="text-zinc-300 text-lg md:text-xl max-w-3xl mb-12 font-mono">
-          Server-first framework built with TypeScript and Bun. <br class="hidden md:block" />
-          Zero JavaScript to the client by default.
+          Server-oriented framework built with TypeScript and Bun. <br class="hidden md:block" />
+          Zero JavaScript sent to the client by default.
         </p>
 
         <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -55,7 +55,7 @@ export default createRoute().get((c) => {
           </div>
           <div class="w-px h-10 bg-brand-border"></div>
           <div class="flex flex-col items-center gap-2">
-            <span class="text-brand-purple font-bold text-2xl">90+</span>
+            <span class="text-brand-purple font-bold text-2xl">100</span>
             <span>Lighthouse Core</span>
           </div>
         </div>
@@ -463,7 +463,7 @@ export default createAction({
         ></div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Ready to build faster?</h2>
         <p class="text-zinc-400 text-lg mb-12 font-mono">
-          Start your next project with Hyperspan in seconds.
+          Start your next project with Hyperspan.
         </p>
 
         <div class="flex flex-col md:flex-row items-center justify-center gap-6">

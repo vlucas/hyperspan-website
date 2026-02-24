@@ -179,7 +179,7 @@ function Footer() {
         <div
           class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-brand-border text-sm text-zinc-400 font-mono"
         >
-          <p>© ${new Date().getFullYear()} Hyperspan Open Source Project. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Hyperspan. All rights reserved.</p>
           <p>
             Created by <a class="link" href="https://www.vancelucas.com">Vance Lucas</a> of
             <a class="link" href="https://www.infiniterectangles.com">Infinite Rectangles</a>
