@@ -5,8 +5,15 @@ import '~/app/styles/globals.css';
 
 import type { Hyperspan as HS } from '@hyperspan/framework';
 
+export const DEFAULT_META: Required<BaseLayoutProps['meta']> = {
+  description: 'Hyperspan Web Framework for Dynamic High-Performance Sites and Apps. Zero JavaScript to the client by default.',
+};
+
 export type BaseLayoutProps = { title: string; content: any, meta?: { description?: string } };
-export default async function BaseLayout(c: HS.Context, { title, content, meta }: BaseLayoutProps) {
+export default async function BaseLayout(c: HS.Context, props: BaseLayoutProps) {
+  const { title, content } = props;
+  const meta = { ...DEFAULT_META, ...props.meta };
+
   const fontIconsUrl =
     usedIcons.length > 0
       ? `https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=${usedIcons.join(
@@ -30,7 +37,7 @@ export default async function BaseLayout(c: HS.Context, { title, content, meta }
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        ${meta?.description && html`<meta name="description" content="${meta.description}" />`}
+        <meta name="description" content="${meta?.description}" />
         <link
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬇️</text></svg>"
@@ -49,6 +56,21 @@ export default async function BaseLayout(c: HS.Context, { title, content, meta }
         </script>
         ${hyperspanStyleTags(c)}
         <script defer data-domain="hyperspan.dev" src="https://plausible.io/js/script.js"></script>
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:url" content="https://www.hyperspan.dev/">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="${title}">
+        <meta property="og:description" content="${meta?.description}">
+        <meta property="og:image" content="https://www.hyperspan.dev/img/og-image-large.png">
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta property="twitter:domain" content="hyperspan.dev">
+        <meta property="twitter:url" content="https://www.hyperspan.dev/">
+        <meta name="twitter:title" content="${title}">
+        <meta name="twitter:description" content="${meta?.description}">
+        <meta name="twitter:image" content="https://www.hyperspan.dev/img/og-image-large.png">
+        <!-- End of Open Graph Meta Tags -->
       </head>
       <body class="w-full h-full antialiased">
         <div class="min-h-screen font-sans selection:bg-brand-orange selection:text-brand-dark">
