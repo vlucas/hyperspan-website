@@ -146,14 +146,14 @@ function Footer() {
             </p>
             <div class="flex gap-4">
               <a
-                href="#"
+                href="https://github.com/vlucas/hyperspan"
                 id="footer-social-github"
                 class="text-zinc-400 hover:text-white transition-colors"
               >
                 ${Icon('code', 'text-2xl')}
               </a>
               <a
-                href="#"
+                href="https://x.com/hyperspandev"
                 id="footer-social-twitter"
                 class="text-zinc-400 hover:text-white transition-colors"
               >
