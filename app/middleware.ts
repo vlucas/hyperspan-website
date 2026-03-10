@@ -6,12 +6,13 @@ const _memoryCache = new Map<string, string>();
 /**
  * Cache the response for a given time length ('30s', '1d', '1w', '1m', etc) or given number of seconds
  */
-export function memoryCacheTime(timeStrOrSeconds: string | number) {
-  return async (c: HS.Context, next: HS.NextFunction) => {
+export function memoryCacheTime(timeStrOrSeconds: string | number): HS.MiddlewareFunction {
+  return async (c, next) => {
     const method = c.req.method;
+    const canCache = method === 'GET' && !c.vars.isKnownAIBot;
 
-    // Only cache GET requests
-    if (method === 'GET') {
+    // Only cache requests that we can
+    if (canCache) {
       const res = await next();
       const timeInSeconds =
         typeof timeStrOrSeconds === 'number' ? timeStrOrSeconds : timestring(timeStrOrSeconds);
@@ -41,6 +42,42 @@ export function memoryCacheTime(timeStrOrSeconds: string | number) {
 
       return res;
     }
+
+    return next();
+  };
+}
+
+/**
+ * Middleware to check if the user agent is a known AI bot
+ */
+export function isKnownAIBot(): HS.MiddlewareFunction {
+  return (c, next) => {
+    const KNOWN_AI_BOTS = [
+      'Amazonbot',
+      'Applebot',
+      'Bytespider',
+      'ClaudeBot',
+      'DuckAssistBot',
+      'Google-CloudVertexBot',
+      'GoogleOther',
+      'GPTBot',
+      'Meta-ExternalAgent',
+      'PetalBot',
+      'TikTokSpider',
+      'CCBot',
+    ];
+
+    const knownBotMatchers = KNOWN_AI_BOTS.map((bot) => bot.toLowerCase());
+
+    const isKnownAIBot = (userAgent?: string | null) => {
+      if (!userAgent) return false;
+      const normalized = userAgent.toLowerCase();
+      return knownBotMatchers.some((bot) => normalized.includes(bot));
+    };
+
+    const userAgent = c.req.headers.get('user-agent');
+
+    c.vars.isKnownAIBot = isKnownAIBot(userAgent);
 
     return next();
   };

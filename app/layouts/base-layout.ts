@@ -160,6 +160,9 @@ function Footer() {
                 ${Icon('share', 'text-2xl')}
               </a>
             </div>
+            <p class="text-zinc-400 mt-6 font-mono text-sm">
+              LLM-friendly docs: <a href="/llms.txt" class="link">llms.txt</a>
+            </p>
           </div>
           <div>
             <h3 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">

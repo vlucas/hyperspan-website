@@ -5,30 +5,7 @@ import { marked } from 'marked';
 import { highlightTS, highlightShell, highlightCode } from '~/src/lib/syntax-highlighter';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
 import ClientCounter from '~/app/components/client-counter.tsx';
-import { memoryCacheTime } from '~/app/middleware';
-
-const KNOWN_AI_BOTS = [
-  'Amazonbot',
-  'Applebot',
-  'Bytespider',
-  'ClaudeBot',
-  'DuckAssistBot',
-  'Google-CloudVertexBot',
-  'GoogleOther',
-  'GPTBot',
-  'Meta-ExternalAgent',
-  'PetalBot',
-  'TikTokSpider',
-  'CCBot',
-];
-
-const knownBotMatchers = KNOWN_AI_BOTS.map((bot) => bot.toLowerCase());
-
-const isKnownAIBot = (userAgent?: string | null) => {
-  if (!userAgent) return false;
-  const normalized = userAgent.toLowerCase();
-  return knownBotMatchers.some((bot) => normalized.includes(bot));
-};
+import { memoryCacheTime, isKnownAIBot } from '~/app/middleware';
 
 export default createDocsRoute().get(async (c) => {
   let page = c.req.url.pathname.replace('/docs/', '') || 'index';
@@ -54,8 +31,8 @@ export default createDocsRoute().get(async (c) => {
       return c.res.notFound();
     }
 
-    const userAgent = c.req.headers.get('user-agent');
-    if (isKnownAIBot(userAgent)) {
+    // If the user agent is a known AI bot, return the markdown file content directly
+    if (c.vars.isKnownAIBot) {
       return new Response(file);
     }
 
@@ -118,4 +95,6 @@ export default createDocsRoute().get(async (c) => {
     console.error('Error loading markdown file:', error);
     return c.res.notFound();
   }
-}).use(memoryCacheTime('1w'));
+})
+  .use(isKnownAIBot())
+  .use(memoryCacheTime('1w'));

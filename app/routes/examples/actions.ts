@@ -57,7 +57,7 @@ export default createAction({
     \`;
 })
   .post(async (c, { data }) => {
-    return html(\`
+    return html\`
       <div class="alert alert-success"><p>Hello, \${data?.name}!</p></div>
     \`;
   }); `)}
