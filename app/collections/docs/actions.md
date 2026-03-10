@@ -92,6 +92,74 @@ createAction({ name: 'example-action', schema: zodSchema });
 
 When a schema is provided, the `data` object will be type-safe in forms and handlers, and validation of `data` against the `schema` will happen automatically on form submit.
 
+## Confirm Before Submit
+
+A common pattern is to use a confirm prompt before the form submission, especially for smaller actions that might be a single button like deleting, revoking, or archiving records.
+
+To show the user a confirm prompt before the form submission, just add a `data-confirm` attribute to your form tag, like this:
+
+```
+<form data-confrim="Are you sure you want to delete this post?">
+```
+
+A full example:
+
+```typescript
+import { createAction } from '@hyperspan/framework/actions';
+import { findPostByIdAndUser } from '~/src/db/queries/posts';
+
+// File: `src/actions/exmple-delete-post-action.ts
+export default createAction({
+  name: 'example-delete-post-action',
+})
+  .form((c, { data, error }) => {
+    return html`
+      <form method="post" data-confirm="Delete this post? Action cannot be undone!">
+        ${error && html`<div class="alert alert-error">${error.message}</div>`}
+        <input type="hidden" name="id" value="${data?.id}" />
+        <button class="btn btn-danger" type="submit">Delete</button>
+      </form>
+    `;
+  })
+  .post(async (c, { data }) => {
+    // Always check current user vs. the data in question
+    const post = await findPostByIdAndUser(data.id, c.vars.currentUser?.id);
+
+    if (!post) {
+      // Any thrown error will be re-displayed in the form above
+      throw new Error('Only the author of a post can delete it');
+    }
+
+    await deletePostById(data.id);
+    return c.res.redirect('/admin/posts');
+  })
+  // User must be authenticated admin to use this action (same middleware as routes)
+  .use(adminMiddleware());
+```
+
+When you render the action, pass in the post id:
+
+```typescript
+return html`
+  <table class="table">
+    <tr>
+      <th>Post</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+    ${posts.map(
+      (post) => html`
+        <tr>
+          <td>${post.title}</td>
+          <td><a href="/admin/posts/${post.id}">Edit</a></td>
+          <td>${deletePostAction.render(c, { data: { id: post.id } })}</td>
+        </tr>
+      `
+    )}
+  </table>
+`;
+```
+
 ## Error Handling
 
 When a schema is provided, Hyperspan will automatically validate the input `FormData` against the provided Zod schema.
@@ -122,9 +190,7 @@ export default createAction({
     `;
   })
   .post(async (c, { data }) => {
-    return c.res.html(`
-      <p>Hello, ${data.name}!</p>
-    `);
+    return html`<p>Hello, ${data.name}!</p>`;
   });
 ```
 
