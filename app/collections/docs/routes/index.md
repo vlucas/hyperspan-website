@@ -26,6 +26,7 @@ Route and query params can be accessed from the [request context](/docs/request-
 ```typescript
 // File: app/routes/posts/[id].ts
 import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
 import { fetchPostById } from '~/src/entities/posts'; // whatever your data layer is
 
 export default createRoute().get(async (c) => {
@@ -45,30 +46,55 @@ The `createRoute` function has a [request context](/docs/request-context), like 
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
 
 export default createRoute().get((c) => {
   return html`<div>Hello, ${c.route.params.name}!</div>`;
 });
 ```
 
-## Custom Route Handlers
+## Custom Routes With Config
 
-If you need more control over routing or need to do something that doesn't fit within file-based routing, you can create custom route handlers in `hyperspan.config.ts`. The `beforeRoutesAdded` and `afterRoutesAdded` configuration options accept a function that [server instance](/docs/server) that you can use to add custom routes to.
+If you need routes that are not tied to a file under `app/routes`, register them on the [server](/docs/server) from `hyperspan.config.ts` using `createConfig()`.
+
+Pass a callback to **`beforeRoutesAdded`** to add routes **before** file-based routes are registered, or **`afterRoutesAdded`** to add them **after**. Use `beforeRoutesAdded` when a custom path should take precedence over a would-be file route, or when a handler must run early (for example health checks or webhooks).
 
 ```typescript
+// hyperspan.config.ts
 import { createConfig } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
 
 export default createConfig({
   appDir: './app',
   publicDir: './public',
-  beforeRoutesAdded: (server) => {
-    server.get('/custom-route-before-file-routes', (c) => c.res.html('<div>Hello, custom!</div>'));
+
+  beforeRoutesAdded(server) {
+    // JSON — same request context as file routes (`c.req`, `c.res`, etc.)
+    server.get('/healthz', (c) => c.res.json({ ok: true }));
+
+    // HTML - use @hyperspan/html, just like routes
+    server.get('/custom/welcome', (c) => {
+      return html`<main>
+        <h1>Welcome</h1>
+        <p>Registered from config.</p>
+      </main>`;
+    });
+
+    // Another HTTP method on a custom path
+    server.post('/custom/echo', async (c) => {
+      const body = await c.req.json();
+      return c.res.json({ youSent: body });
+    });
   },
-  afterRoutesAdded: (server) => {
-    server.get('/custom-route-after-file-routes', (c) => c.res.html('<div>Goodbye, custom!</div>'));
+
+  afterRoutesAdded(server) {
+    // Runs after `app/routes` are mounted — use for catch-alls or fallbacks
+    server.get('/legacy-redirect', (c) => c.res.redirect('/docs', { status: 302 }));
   },
 });
 ```
+
+The `server` object supports the same style of routing helpers as elsewhere in Hyperspan (`get`, `post`, `put`, `patch`, `delete`, etc.). For JSON-only APIs you can often use [file-based API routes](/docs/routes/api) instead; config-based routes are for integration endpoints, redirects, or paths that do not map cleanly to the filesystem.
 
 ## Handling POST Requests
 
@@ -175,6 +201,54 @@ export default createConfig({
 
 If you are unfamiliar with middleware, you can read more about it in the [middleware documentation](/docs/middleware).
 
+## Custom Error Handling
+
+Use **`.errorHandler()`** to return a friendly HTTP `Response` when this route’s **middleware** or **handler** throws (anything that bubbles out of the route as an error). The callback receives **`(c, error)`** and can return an `html` template, just like a normal handler:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { html } from '@hyperspan/html';
+
+export default createRoute()
+  .errorHandler((c, err) => {
+    return html`
+      <main class="prose p-8">
+        <h1>Something went wrong</h1>
+        <p>We could not complete this request.</p>
+        <p><code>${err.message}</code></p>
+        <p><a href="/">Back home</a></p>
+      </main>
+    `;
+  })
+  .get(() => {
+    throw new Error('Example: replace with real logic');
+  });
+```
+
+If you want to attach a custom error handler to many routes, use [route composition](/docs/routes/composition) to reduce code duplication.
+
+## Automatic Request Handling
+
+For some request types, Hyperspan will return a response for you.
+
+### `OPTIONS` Pre-Flight Requests
+
+To be in-line with the pre-flight request specification, Hyperspan will find a matching route, and return an response with the allowed HTTP methods that can be called on that route for any matching `OPTIONS` requests.
+
+For example, if you define a route at `/example` with `GET` and `POST` handlers, an `OPTIONS /example` request will respond with `Access-Control-Allow-Methods: GET, POST`.
+
+### Method Not Allowed
+
+Any HTTP methods that are not handled for a given route path will automatically return a `405: Method Not Allowed` response.
+
+### Not Found
+
+Any request to a route path that with no match will return a `404: File Not Found` response.
+
+## Advanced Routing
+
+Check out [route composition](/docs/routes/composition) for more advanced routing use cases.
+
 ## Route API
 
 The `createRoute()` function returns a `Route` object with the following methods:
@@ -188,7 +262,7 @@ The `createRoute()` function returns a `Route` object with the following methods
 | `route.delete(handler, options?)`       | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route`            | Register a DELETE request handler        |
 | `route.options(handler, options?)`      | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route`            | Register an OPTIONS request handler      |
 | `route.all(handler, options?)`          | `(handler: RouteHandler, options?: RouteHandlerOptions) => Route`            | Request handler for any HTTP method      |
-| `route.errorHandler(handler)`           | `(handler: RouteHandler) => Route`                                           | Register an error handler for this route |
+| `route.errorHandler(handler)`           | `(handler: (c, error) => ...) => Route`                                      | Register an error handler for this route |
 | `route.use(middleware, opts?)`          | `(middleware: MiddlewareFunction, opts?: MiddlewareOptions) => Route`        | Add middleware to this route             |
 | `route.middleware([middleware], opts?)` | `(middleware: Array<MiddlewareFunction>, opts?: MiddlewareOptions) => Route` | Set middleware stack for this route      |
 
@@ -223,25 +297,3 @@ The handler can return:
 - HTML template (from `@hyperspan/html`)
 - A `Response` object
 - Any value that can be converted to a response
-
-## Automatic Request Handling
-
-For some request types, Hyperspan will return a response for you.
-
-### `OPTIONS` Pre-Flight Requests
-
-To be in-line with the pre-flight request specification, Hyperspan will find a matching route, and return an response with the allowed HTTP methods that can be called on that route for any matching `OPTIONS` requests.
-
-For example, if you define a route at `/example` with `GET` and `POST` handlers, an `OPTIONS /example` request will respond with `Access-Control-Allow-Methods: GET, POST`.
-
-### Method Not Allowed
-
-Any HTTP methods that are not handled for a given route path will automatically return a `405: Method Not Allowed` response.
-
-### Not Found
-
-Any request to a route path that with no match will return a `404: File Not Found` response.
-
-## Advanced Routing
-
-Check out [route composition](/docs/routes/composition) for more advanced routing use cases.

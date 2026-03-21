@@ -93,3 +93,96 @@ export function logger() {
 ```
 
 This middleware logs the request method and path before processing, then logs the response status and duration after the route handler completes.
+
+## Built-in Validation Middleware
+
+Hyperspan includes **Zod-based** validation helpers. Import them from `@hyperspan/framework/middleware` and define schemas with **Zod v4** (same major version the framework uses):
+
+```shell
+bun add zod
+```
+
+```typescript
+import { z } from 'zod/v4';
+import { validateQuery, validateBody } from '@hyperspan/framework/middleware';
+```
+
+### `validateQuery(schema)`
+
+Validates **query string** parameters against a Zod schema. The raw query is converted to a plain object, parsed, and on success the result is assigned to **`c.vars.query`**.
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { validateQuery } from '@hyperspan/framework/middleware';
+import { z } from 'zod/v4';
+
+const querySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+});
+
+export default createRoute()
+  .use(validateQuery(querySchema))
+  .get((c) => {
+    const { page, limit } = c.vars.query;
+    return c.res.json({ page, limit });
+  });
+```
+
+### `validateBody(schema, type?)`
+
+Validates the **request body** against a Zod schema. On success, the parsed body is available on **`c.vars.body`**.
+
+If you omit the second argument, the body format is inferred from **`Content-Type`**:
+
+| `Content-Type`                      | Treated as                                     |
+| ----------------------------------- | ---------------------------------------------- |
+| `application/json`                  | JSON                                           |
+| `multipart/form-data`               | `FormData` (converted to a plain object)       |
+| `application/x-www-form-urlencoded` | URL-encoded form (converted to a plain object) |
+
+If the header is missing or unrecognized, validation defaults to **JSON**.
+
+Pass an explicit type when you want to force a parser regardless of headers:
+
+```typescript
+type TValidationType = 'json' | 'form' | 'urlencoded';
+
+validateBody(schema); // infer from Content-Type
+validateBody(schema, 'json');
+validateBody(schema, 'form');
+validateBody(schema, 'urlencoded');
+```
+
+Example: JSON `POST` body:
+
+```typescript
+import { createRoute } from '@hyperspan/framework';
+import { validateBody } from '@hyperspan/framework/middleware';
+import { z } from 'zod/v4';
+
+const bodySchema = z.object({
+  title: z.string().min(1),
+  published: z.coerce.boolean().optional(),
+});
+
+export default createRoute()
+  .use(validateBody(bodySchema))
+  .post(async (c) => {
+    const { title, published } = c.vars.body;
+    return c.res.json({ title, published: published ?? false });
+  });
+```
+
+### Validation errors (`ZodValidationError`)
+
+If validation fails, the middleware throws an **`HTTPResponseException`** with status **`400`**. The error may wrap **`ZodValidationError`** (exported from `@hyperspan/framework/middleware`), which exposes:
+
+- **`fieldErrors`** — per-field messages from Zod’s flattened error shape
+- **`formErrors`** — top-level form errors
+
+Use your app's global error handling or route-level error handlers to format these for clients (JSON API vs HTML).
+
+### Other exports
+
+The same module also exports **`executeMiddleware`**, a low-level helper that runs a mixed array of middleware and route handlers in order. Most apps should prefer **`createRoute()`** and `.use()` / `.middleware()` instead.

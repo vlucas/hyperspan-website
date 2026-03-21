@@ -1,6 +1,7 @@
 import { Hyperspan as HS } from '@hyperspan/framework';
 import timestring from 'timestring';
 
+const IS_DEV = process.env.NODE_ENV === 'development';
 const _memoryCache = new Map<string, string>();
 
 /**
@@ -9,11 +10,10 @@ const _memoryCache = new Map<string, string>();
 export function memoryCacheTime(timeStrOrSeconds: string | number): HS.MiddlewareFunction {
   return async (c, next) => {
     const method = c.req.method;
-    const canCache = method === 'GET' && !c.vars.isKnownAIBot;
+    const canCache = method === 'GET' && !c.vars.isKnownAIBot && !IS_DEV;
 
     // Only cache requests that we can
     if (canCache) {
-      const res = await next();
       const timeInSeconds =
         typeof timeStrOrSeconds === 'number' ? timeStrOrSeconds : timestring(timeStrOrSeconds);
       const cacheKey = `${method}:${c.req.url.pathname}`;
@@ -28,6 +28,8 @@ export function memoryCacheTime(timeStrOrSeconds: string | number): HS.Middlewar
         });
       }
 
+      const res = await next();
+
       // Set the cache if the response is 200
       if (res && res.status === 200) {
         const resBody = await res.clone().text();
@@ -41,6 +43,8 @@ export function memoryCacheTime(timeStrOrSeconds: string | number): HS.Middlewar
       }
 
       return res;
+    } else {
+      c.res.headers.set('Cache-Control', 'no-cache');
     }
 
     return next();
