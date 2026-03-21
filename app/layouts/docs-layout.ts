@@ -38,6 +38,9 @@ function DocsNavMenu(activePath: string) {
       <h2 class="menu-title">Client-Side JS</h2>
       <ul>
         <li class="${renderActiveClass('clientjs/islands')}"><a href="/docs/clientjs/islands" class="link">Islands Architecture</a></li>
+        <li class="${renderActiveClass('clientjs/react')}"><a href="/docs/clientjs/react" class="link">React / Preact Islands</a></li>
+        <li class="${renderActiveClass('clientjs/vue')}"><a href="/docs/clientjs/vue" class="link">Vue Islands</a></li>
+        <li class="${renderActiveClass('clientjs/svelte')}"><a href="/docs/clientjs/svelte" class="link">Svelte Islands</a></li>
         <li class="${renderActiveClass('clientjs/vanilla')}"><a href="/docs/clientjs/vanilla" class="link">Vanilla JS</a></li>
       </ul>
     </li>

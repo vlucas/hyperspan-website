@@ -248,11 +248,11 @@ async function AsyncBlock(waitMs: number, msg: string) {
             </li>
             <li class="flex items-start gap-3">
               ${Icon('check', 'mt-1 text-brand-purple')}
-              <span>No special &quot;flight&quot; syntax - just streaming HTML</span>
+              <span><strong>AI agent ready</strong> - return <code>Generator</code> or <code>AsyncGenerator</code> from any route handler to stream responses</span>
             </li>
             <li class="flex items-start gap-3">
               ${Icon('check', 'mt-1 text-brand-blue')}
-              <span>Automatic opt-outs for bots, crawlers, and AI</span>
+              <span>No special &quot;flight&quot; syntax - just streaming HTML or text</span>
             </li>
           </ul>
           <div class="flex gap-4">
@@ -285,12 +285,18 @@ async function AsyncBlock(waitMs: number, msg: string) {
             Zero Penalty.
           </h2>
           <p class="text-zinc-400 text-lg leading-relaxed">
-            Rich client-side interactivity without full-page hydration.
+            Rich client-side interactivity without full-page hydration. Ship islands with
+            React/Preact, Vue, or Svelte—only where you need them.
           </p>
           <ul class="space-y-4 font-mono">
             <li class="flex items-start gap-3">
               ${Icon('check', 'mt-1 text-brand-purple')}
-              <span>Preact/React Islands for rich client-side interactivity</span>
+              <span>
+                Dynamic Islands for
+                <a href="/docs/clientjs/react" class="text-brand-orange hover:underline font-sans">React/Preact</a>,
+                <a href="/docs/clientjs/vue" class="text-brand-orange hover:underline font-sans">Vue</a>, and
+                <a href="/docs/clientjs/svelte" class="text-brand-orange hover:underline font-sans">Svelte</a>.
+              </span>
             </li>
             <li class="flex items-start gap-3">
               ${Icon('check', 'mt-1 text-brand-blue')}

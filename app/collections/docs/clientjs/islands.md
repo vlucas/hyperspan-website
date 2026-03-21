@@ -2,100 +2,94 @@
 
 Hyperspan is a server-oriented framework, which means that **all JavaScript code that is sent to the client is explicitly opt-in**. Hyperspan uses [Islands Architecture](https://jasonformat.com/islands-architecture/) to make specific areas of the page interactive, while leaving the rest of the page static and server-rendered.
 
-If you need an area on your page to have client interactivity, you can use the `@hyperspan/plugin-preact` package to render and hydrate a [Preact](https://preactjs.com) (or React) component on the client.
+If you need an area on your page to have client interactivity, use one (or more) island plugins to render and hydrate framework components on the client.
 
-> To keep things fast and lightweight, Hyperspan uses [\`preact/compat\`](https://preactjs.com) and provides aliases for React, so you can embed your existing React components as-is without any changes.
+## Available Island Plugins
 
-## Install an Island Plugin
+Choose whichever framework fits your app:
 
-To use islands, you need to install a plugin that will handle the rendering and hydration of the component.
+- [React / Preact Islands](/docs/clientjs/react) with `@hyperspan/plugin-preact`
+- [Vue Islands](/docs/clientjs/vue) with `@hyperspan/plugin-vue`
+- [Svelte Islands](/docs/clientjs/svelte) with `@hyperspan/plugin-svelte`
 
-To use Preact islands, you can install the `@hyperspan/plugin-preact` package:
+You can use one plugin, or all three in the same project.
+
+## Install and Register Plugins
+
+Install the plugin(s) you want:
 
 ```shell
-bun add @hyperspan/plugin-preact
+bun add @hyperspan/plugin-preact @hyperspan/plugin-vue @hyperspan/plugin-svelte
 ```
 
-Then add the plugin to your `hyperspan.config.ts` file:
+Then add them to your `hyperspan.config.ts` file:
 
 ```typescript
 import { createConfig } from '@hyperspan/framework';
 import { preactPlugin } from '@hyperspan/plugin-preact';
+import { vuePlugin } from '@hyperspan/plugin-vue';
+import { sveltePlugin } from '@hyperspan/plugin-svelte';
 
 export default createConfig({
   appDir: './app',
   publicDir: './public',
-  plugins: [preactPlugin()],
+  plugins: [preactPlugin(), vuePlugin(), sveltePlugin()],
 });
 ```
 
-After installing the plugin, any `import` of a `.tsx` file will be handled by the plugin and will be prepared to be rendered as a dynamic island.
+After installing a plugin, imports for that framework's component files are prepared for island rendering.
 
-> The `renderPreactIsland` function will not work unless you add the plugin here, so don't forget this step!
+## Island Render Functions
 
-## Using Dynamic Islands
+Each plugin provides its own island render function:
 
-Now that you have added the plugin you want, you can import your component like normal and use the `renderIsland` function from the `assets` path to create a dynamic island for your Preact components.
+- `renderPreactIsland` from `@hyperspan/plugin-preact`
+- `renderVueIsland` from `@hyperspan/plugin-vue`
+- `renderSvelteIsland` from `@hyperspan/plugin-svelte`
+
+`renderPreactIsland` is synchronous. `renderVueIsland` and `renderSvelteIsland` are async, so use an async route when rendering Vue/Svelte islands.
 
 ```typescript
 import { html } from '@hyperspan/html';
 import { createRoute } from '@hyperspan/framework';
 import { renderPreactIsland } from '@hyperspan/plugin-preact';
-// Import your Preact component like normal once the island plugin is loaded
-import ExampleCounter from '~/src/components/example-counter.tsx';
+import { renderVueIsland } from '@hyperspan/plugin-vue';
+import { renderSvelteIsland } from '@hyperspan/plugin-svelte';
+import ReactCounter from '~/app/components/client-counter.tsx';
+import VueCounter from '~/app/components/client-counter-vue.vue';
+import SvelteCounter from '~/app/components/client-counter-svelte.svelte';
 
-export default createRoute(() => {
+export default createRoute().get(async () => {
   return html`
     <div>
-      <!-- Call the component with renderPreactIsland() and pass any props you need! -->
-      ${renderPreactIsland(ExampleCounter, { count: 5 })}
+      ${renderPreactIsland(ReactCounter, { count: 5 })}
+      ${await renderVueIsland(VueCounter, { count: 10 })}
+      ${await renderSvelteIsland(SvelteCounter, { count: 15 })}
     </div>
   `;
 });
 ```
 
-This will render a `<script type="module">` tag with the component contents in it and a `<div>` tag that the component will mount and render into.
+## SSR and Lazy Hydration
 
-> For better performance and user experience, `renderPreactIsland` will server-side render (SSR) the Preact component by default.
+All island render functions support the same third `options` argument:
 
-## renderPreactIsland() Arguments
+| Option    | Type      | Default  | Description                                  |
+| --------- | --------- | -------- | -------------------------------------------- |
+| `ssr`     | `boolean` | `true`   | Disable with `false` to skip initial SSR HTML |
+| `loading` | `string`  | `inline` | Use `'lazy'` to delay hydration until near viewport |
 
-The `renderPreactIsland` function takes 1-3 arguments:
+Examples:
 
-| Argument    | Description                             | Required |
-| ----------- | --------------------------------------- | -------- |
-| `component` | The client component to render          | Yes      |
-| `props`     | Props to pass to the component (object) | No       |
-| `options`   | An options object with:                 | No       |
-|             | - `ssr`: boolean (default: `true`)      |          |
-|             | - `loading`: `'lazy'                    |          |
+- `renderPreactIsland(Component, props, { ssr: false })`
+- `await renderVueIsland(Component, props, { ssr: true, loading: 'lazy' })`
+- `await renderSvelteIsland(Component, props, { ssr: true, loading: 'lazy' })`
 
-## Server-Side Rendering (SSR) with Islands
+## Framework-Specific Guides
 
-By default, `renderPreactIsland` will server-side render (SSR) the Preact component. This means that the initial HTML from the component will be rendered on the server and sent to the client. This results in better web vitals scores, because it eliminates [layout shift](https://web.dev/articles/cls).
+Use these pages for framework-specific setup and examples:
 
-If you do NOT want your component to be server-side rendered, you can pass `{ ssr: false }` as the third argument to `renderPreactIsland`. That call might look like this: `renderPreactIsland(ExampleCounter, { count: 5 }, { ssr: false })`. The component will still mount and hydrate on the client, but the initial HTML sent from the server will be empty.
+- [React / Preact Islands](/docs/clientjs/react)
+- [Vue Islands](/docs/clientjs/vue)
+- [Svelte Islands](/docs/clientjs/svelte)
 
-## Lazy Loading/Hydrating Islands
-
-You can wait to hydrate your client island until the element scrolls into view by passing `{ loading: 'lazy' }` as the third argument to `renderPreactIsland`.
-
-Example code for dynamic island with lazy loading/hydration and SSR:
-
-`renderPreactIsland(ExampleCounter, { count: 42 }, { ssr: true, loading: 'lazy' })`.
-
-This will render the initial `<script>` tag inside a `<template>` tag so the script will not evaluate or run for the current user until the element scrolls into view (within 200px of the viewport).
-
-This can provide some significant performance benefits, but it is not on by default since it can lead to some unexpected behaviors, like timers not running and data not being fetched until the component is nearly in view.
-
-## Example Client Counter Component
-
-This example is lazy loaded/hydrated. Check the Elements tab in your browser's developer tools to watch how it loads in.
-
-<!-- ISLAND: ClientCounter { count: 5 } { ssr: true, loading: 'lazy' } -->
-
-## Using Other Frontend Frameworks
-
-If you want to use a different frontend framework like Vue, Svelete, etc., feel free to do so! There is no magic here — Hyperspan is just using `Bun.build()` to get the JavaScript output of your component file, adding some SSR code to it, putting the output in a `<script>` tag, and then adding a bit of extra code to render and hydrate it as a component into a corresponding `<div>` tag.
-
-Although Hyperspan only provides a plugin for Preact/React components out of the box (for now!), you can use the same approach to create islands for other frameworks as well. Just look at the implementation of [\`@hyperspan/plugin-preact\`](https://github.com/vlucas/hyperspan/tree/main/packages/plugin-preact) to get an idea of how to do it.

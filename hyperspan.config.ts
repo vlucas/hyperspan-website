@@ -1,10 +1,12 @@
 import { createConfig } from '@hyperspan/framework';
 import { preactPlugin } from '@hyperspan/plugin-preact';
+import { vuePlugin } from '@hyperspan/plugin-vue';
+import { sveltePlugin } from '@hyperspan/plugin-svelte';
 
 export default createConfig({
   appDir: './app',
   publicDir: './public',
-  plugins: [preactPlugin()],
+  plugins: [preactPlugin(), vuePlugin(), sveltePlugin()],
 
   beforeRoutesAdded(server) {
     // Redirect non-www to www

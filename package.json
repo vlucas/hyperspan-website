@@ -22,12 +22,16 @@
     "@hyperspan/framework": "^1.0.15",
     "@hyperspan/html": "^1.0.1",
     "@hyperspan/plugin-preact": "^1.0.2",
+    "@hyperspan/plugin-svelte": "^1.0.0",
+    "@hyperspan/plugin-vue": "^1.0.1",
     "@tailwindcss/cli": "^4.2.1",
     "daisyui": "^5.5.19",
     "highlight.js": "^11.11.1",
     "hyperspan": "^1.0.8",
     "marked": "^14.1.4",
     "preact": "^10.28.4",
-    "timestring": "^7.0.0"
+    "svelte": "^5.54.0",
+    "timestring": "^7.0.0",
+    "vue": "^3.5.30"
   }
 }

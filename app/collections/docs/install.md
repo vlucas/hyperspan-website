@@ -15,4 +15,4 @@ cd MyApp
 bun run dev
 ```
 
-From there, you can add [custom routes](/docs/routes), [server actions](/docs/actions) [layouts](/docs/layouts), [vanilla JS](/docs/clientjs/vanilla), and [Preact/React components](/docs/clientjs/islands) to your app. The sky is the limit!
+From there, you can add [custom routes](/docs/routes), [server actions](/docs/actions), [layouts](/docs/layouts), [vanilla JS](/docs/clientjs/vanilla), and client islands with [React/Preact](/docs/clientjs/react), [Vue](/docs/clientjs/vue), or [Svelte](/docs/clientjs/svelte). The sky is the limit!
