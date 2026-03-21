@@ -16,11 +16,21 @@ import { createRoute } from '@hyperspan/framework';
 import { apiAuthMiddleware } from '~/src/auth/api-middleware'; // Your custom middleware
 
 export function createAPIRoute() {
-  return createRoute().use(apiAuthMiddleware());
+  return createRoute()
+    .use(apiAuthMiddleware())
+    .errorHandler((c, error) => {
+      return c.res.json(
+        {
+          error: 'internal_error',
+          message: error.message || 'Something went wrong.',
+        },
+        { status: 500 }
+      );
+    });
 }
 ```
 
-Now you can use this route type in all your API routes without having to import and attach the correct auth middleware to every API route you define:
+Now you can use this route type in all your API routes without having to import and attach the correct auth middleware and error handling to every API route you define:
 
 ```typescript
 import { createAPIRoute } from '~/src/api-route';

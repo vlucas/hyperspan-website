@@ -17,7 +17,7 @@ Actions are treated similar to routes, but can be embedded in other templates an
 
 All actions have the following requirements:
 
-- They should be placed in the `src/actions` directory.
+- They should be placed in the `app/actions` directory.
 - They should be given a unique `name`.
 - They should render an HTML template with a `<form>` tag.
 - They should maintain all state in form fields (Actions use a traditional form POST operation and extract data from a `FormData` object.)
@@ -26,13 +26,13 @@ NOTE: If you use a frontend framework like React to build more complex forms, ju
 
 ## Example Action Usage
 
-First, create your action in `src/actions`:
+First, create your action in `app/actions`:
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
 import { z } from 'zod/v4';
 
-// File: `src/actions/exmple-action.ts
+// File: `app/actions/exmple-action.ts
 export default createAction({
   name: 'example-action',
   schema: z.object({
@@ -62,7 +62,7 @@ Then import and `render` your action wherever you like in your application:
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
-import ExampleAction from '~/src/actions/example-action';
+import ExampleAction from '~/app/actions/example-action';
 
 export default createRoute().get((c) => {
   return html`
@@ -108,7 +108,7 @@ A full example:
 import { createAction } from '@hyperspan/framework/actions';
 import { findPostByIdAndUser } from '~/src/db/queries/posts';
 
-// File: `src/actions/exmple-delete-post-action.ts
+// File: `app/actions/exmple-delete-post-action.ts
 export default createAction({
   name: 'example-delete-post-action',
 })
@@ -170,7 +170,7 @@ If the input data does not pass schema validation, Hyperspan will re-render the 
 import { createAction } from '@hyperspan/framework/actions';
 import { z } from 'zod/v4';
 
-// File: `src/actions/exmple-action.ts
+// File: `app/actions/exmple-action.ts
 export default createAction({
   name: 'example-action',
   schema: z.object({
@@ -206,7 +206,7 @@ Sometimes all you want to do with an action is insert a new record, then redirec
 import { createAction } from '@hyperspan/framework/actions';
 import { z } from 'zod/v4';
 
-// File: `src/actions/notes/create-note-action.ts
+// File: `app/actions/notes/create-note-action.ts
 export default createAction({
   name: 'create-note-action',
   schema: z.object({
@@ -264,7 +264,7 @@ A code example:
 import { createAction } from '@hyperspan/framework/actions';
 import { z } from 'zod/v4';
 
-// File: `src/actions/nested-data-exmple-action.ts
+// File: `app/actions/nested-data-exmple-action.ts
 export default createAction({
   name: 'nested-data-example',
   schema: z.object({
