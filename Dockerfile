@@ -7,5 +7,6 @@ RUN bun install
 COPY . .
 
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
 
 CMD [ "bun", "start" ]
