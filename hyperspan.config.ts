@@ -15,8 +15,9 @@ export default createConfig({
       const isWww = host && host.startsWith('www.');
       const isApp = host && host.startsWith('app.');
       const isLocal = host && host.includes('localhost');
+      const isHealthcheck = host && host.includes('healthcheck.railway.app');
 
-      if (!isLocal && !isWww && !isApp) {
+      if (!isLocal && !isWww && !isApp && !isHealthcheck) {
         const url = new URL(c.req.url);
         const newUrl = `https://www.${host}${url.pathname}${url.search}`;
         return c.res.redirect(newUrl, { status: 301 });
