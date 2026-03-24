@@ -16,17 +16,21 @@ import { createRoute } from '@hyperspan/framework';
 import { apiAuthMiddleware } from '~/src/auth/api-middleware'; // Your custom middleware
 
 export function createAPIRoute() {
-  return createRoute()
-    .use(apiAuthMiddleware())
-    .errorHandler((c, error) => {
-      return c.res.json(
-        {
-          error: 'internal_error',
-          message: error.message || 'Something went wrong.',
-        },
-        { status: 500 }
-      );
-    });
+  return (
+    createRoute()
+      // Auth middleware
+      .use(apiAuthMiddleware())
+      // Custom error handler -> Ensure API always returns JSON
+      .errorHandler((c, error) => {
+        return c.res.json(
+          {
+            error: 'internal_error',
+            message: error.message || 'Something went wrong.',
+          },
+          { status: 500 }
+        );
+      })
+  );
 }
 ```
 

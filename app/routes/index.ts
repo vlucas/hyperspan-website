@@ -64,7 +64,7 @@ export default createRoute().get((c) => {
 
     <!-- TypeScript Section -->
     <section class="max-w-7xl mx-auto px-6 mb-32">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid lg:grid-cols-2 gap-16 items-center [&>*]:min-w-0">
         <div class="space-y-8">
           <h2 class="text-4xl font-bold tracking-tight">
             <span class="text-brand-orange">All TypeScript</span>. <br />
@@ -188,7 +188,7 @@ export default createRoute().get(async (c) => {
 
     <!-- Streaming Section -->
     <section class="max-w-7xl mx-auto px-6 mb-32">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid lg:grid-cols-2 gap-16 items-center [&>*]:min-w-0">
         <div class="relative">
           <div
             class="absolute -inset-1 bg-gradient-to-r from-brand-orange to-brand-purple rounded-xl blur-2xl opacity-20"
@@ -278,7 +278,7 @@ async function AsyncBlock(waitMs: number, msg: string) {
 
     <!-- Islands Section -->
     <section class="max-w-7xl mx-auto px-6 mb-32">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid lg:grid-cols-2 gap-16 items-center [&>*]:min-w-0">
         <div class="space-y-8">
           <h2 class="text-4xl font-bold tracking-tight">
             <span class="text-brand-orange">Full Interactivity</span>. <br />
@@ -366,7 +366,7 @@ export default createRoute().get(() => {
 
     <!-- Server Actions Section -->
     <section class="max-w-7xl mx-auto px-6 mb-32">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid lg:grid-cols-2 gap-16 items-center [&>*]:min-w-0">
         <div class="relative">
           <div
             class="absolute -inset-1 bg-gradient-to-r from-brand-orange to-brand-purple rounded-xl blur-2xl opacity-20"
@@ -472,13 +472,13 @@ export default createAction({
           Start your next project with Hyperspan.
         </p>
 
-        <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-6 min-w-0 w-full">
           <div
-            class="bg-brand-dark border border-brand-border px-6 py-4 rounded-xl font-mono text-brand-orange text-lg flex items-center gap-4"
+            class="bg-brand-dark border border-brand-border px-6 py-4 rounded-xl font-mono text-brand-orange text-lg flex items-center gap-4 max-w-full min-w-0 overflow-x-auto"
           >
-            <span class="text-zinc-600">$</span>
-            <span>bunx hyperspan create MyApp</span>
-            <button id="copy-btn" class="text-zinc-500 hover:text-white transition-colors">
+            <span class="text-zinc-600 shrink-0">$</span>
+            <span class="whitespace-nowrap">bunx hyperspan create MyApp</span>
+            <button id="copy-btn" class="shrink-0 text-zinc-500 hover:text-white transition-colors">
               ${Icon('content_copy')}
             </button>
           </div>
