@@ -99,7 +99,7 @@ Then any route built from `createAPIRoute()` will return consistent JSON on vali
 ```typescript
 import { createAPIRoute } from '~/src/api-route';
 import { validateBody } from '@hyperspan/framework/middleware';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const schema = z.object({ name: z.string().min(1) });
 

@@ -96,14 +96,14 @@ This middleware logs the request method and path before processing, then logs th
 
 ## Built-in Validation Middleware
 
-Hyperspan includes **Zod-based** validation helpers. Import them from `@hyperspan/framework/middleware` and define schemas with **Zod v4** (same major version the framework uses):
+Hyperspan includes **Zod-based** validation helpers. Import them from `@hyperspan/framework/middleware` and define schemas with **Zod** (same major version the framework uses):
 
 ```shell
 bun add zod
 ```
 
 ```typescript
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { validateQuery, validateBody } from '@hyperspan/framework/middleware';
 ```
 
@@ -114,7 +114,7 @@ Validates **query string** parameters against a Zod schema. The raw query is con
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { validateQuery } from '@hyperspan/framework/middleware';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const querySchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -159,7 +159,7 @@ Example: JSON `POST` body:
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { validateBody } from '@hyperspan/framework/middleware';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const bodySchema = z.object({
   title: z.string().min(1),

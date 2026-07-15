@@ -110,6 +110,12 @@ function Navbar() {
             >Documentation</a
           >
           <a
+            href="/blog"
+            id="nav-link-blog"
+            class="text-sm link"
+            >Blog</a
+          >
+          <a
             href="/examples"
             id="nav-link-examples"
             class="text-sm link"
@@ -138,7 +144,7 @@ function Footer() {
     <!-- Footer -->
     <footer class="border-t border-brand-border py-20 bg-brand-dark relative z-10">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div class="grid md:grid-cols-5 gap-12 mb-16">
           <div class="col-span-2">
             <span class="font-mono font-bold text-lg">&lt;Hyperspan /&gt;</span>
             <p class="text-zinc-400 max-w-sm mb-6">
@@ -175,6 +181,19 @@ function Footer() {
               </li>
               <li>
                 <a href="/docs/install" class="link">Installation</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold mb-6 uppercase tracking-wider text-xs text-zinc-300 font-mono">
+              Blog
+            </h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="/blog" class="link">Blog</a>
+              </li>
+              <li>
+                <a href="/blog/introducing-hyperspan" class="link">Introducing Hyperspan</a>
               </li>
             </ul>
           </div>

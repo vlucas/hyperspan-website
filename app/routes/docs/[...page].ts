@@ -1,10 +1,7 @@
-import { html, render } from '@hyperspan/html';
+import { html } from '@hyperspan/html';
 import { createDocsRoute } from '~/src/routes/create-docs-route';
 import DocsLayout from '~/app/layouts/docs-layout';
-import { marked } from 'marked';
-import { highlightTS, highlightShell, highlightCode } from '~/src/lib/syntax-highlighter';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ClientCounter from '~/app/components/client-counter.tsx';
+import { renderMarkdownToHtml } from '~/src/lib/render-markdown';
 import { memoryCacheTime, isKnownAIBot } from '~/app/middleware';
 
 export default createDocsRoute().get(async (c) => {
@@ -36,56 +33,13 @@ export default createDocsRoute().get(async (c) => {
       return new Response(file);
     }
 
-    // Process markdown with custom renderer for code blocks
-    const renderer = new marked.Renderer();
-
-    // Override code block rendering to use syntax highlighter
-    renderer.code = (code) => {
-      const language = code.lang;
-      if (language === 'typescript' || language === 'ts') {
-        return render(highlightTS(code.text));
-      } else if (language === 'shell' || language === 'bash' || language === 'sh') {
-        return render(highlightShell(code.text));
-      } else {
-        return render(highlightCode(code.text, language));
-      }
-    };
-
-    // Configure marked options
-    marked.setOptions({
-      renderer,
-      breaks: true,
-      gfm: true,
-    });
-
-    // Parse markdown to HTML
-    const htmlContent = await marked.parse(markdown);
-
-    // Process special island comments
-    // Replace <!-- ISLAND: ComponentName { props } { options } --> with actual island
-    const processedContent = htmlContent.replace(
-      /<!--\s*ISLAND:\s*(\w+)\s*({[^}]*})?\s*({[^}]*})?\s*-->/g,
-      (match: string, componentName: string, propsStr?: string, optionsStr?: string) => {
-        try {
-          const props = propsStr ? eval(`(${propsStr})`) : {};
-          const options = optionsStr ? eval(`(${optionsStr})`) : {};
-
-          if (componentName === 'ClientCounter') {
-            return renderPreactIsland(ClientCounter, props, options);
-          }
-          return match; // Return original if component not found
-        } catch (e) {
-          console.error('Error processing island:', e);
-          return match;
-        }
-      }
-    );
+    const htmlContent = renderMarkdownToHtml(markdown);
 
     // Extract title from first h1
     const titleMatch = markdown.match(/^#\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1] : 'Documentation';
 
-    const content = html` <main class="prose">${html.raw(processedContent)}</main> `;
+    const content = html` <main class="prose">${html.raw(htmlContent)}</main> `;
 
     return DocsLayout(c, {
       title,

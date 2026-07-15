@@ -1,6 +1,6 @@
 import { createAction } from '@hyperspan/framework/actions';
 import { html } from '@hyperspan/html';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export default createAction({
   name: 'example-action',

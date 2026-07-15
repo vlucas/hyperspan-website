@@ -30,7 +30,7 @@ First, create your action in `app/actions`:
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 // File: `app/actions/exmple-action.ts
 export default createAction({
@@ -84,7 +84,7 @@ Hyperspan will render the `form` method of the action in-line just like any othe
 
 ## Action Schemas
 
-Actions can provide an optional [Zod v4](https://zod.dev/v4) schema object in the `schema` property of `createAction`. Providing one is highly recommended.
+Actions can provide an optional [Zod](https://zod.dev) schema object in the `schema` property of `createAction`. Providing one is highly recommended.
 
 ```typescript
 createAction({ name: 'example-action', schema: zodSchema });
@@ -168,7 +168,7 @@ If the input data does not pass schema validation, Hyperspan will re-render the 
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 // File: `app/actions/exmple-action.ts
 export default createAction({
@@ -211,7 +211,7 @@ user to that URL. This is the age old [POST/Redirect/GET](https://en.wikipedia.o
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 // File: `app/actions/notes/create-note-action.ts
 export default createAction({
@@ -241,8 +241,8 @@ export default createAction({
 
 By default, Hyperspan chooses how to apply a redirect on the client:
 
-- **Soft navigation** — same-origin or different path branch as the current page: fetch the new HTML and morph it in place with Idiomorph (no full page reload).
-- **Hard navigation** — different path or cross-origin: a normal `window.location` redirect.
+- **Soft navigation** — same-origin or same path branch as the current page: fetch the new HTML and morph it in place with Idiomorph (no full page reload).
+- **Hard navigation** — different path branch or cross-origin: a normal `window.location` redirect.
 
 You can override this (and hook other client behavior) with action lifecycle events.
 
@@ -263,8 +263,6 @@ document.addEventListener('hs:action:after-fetch', (e) => {
   e.detail.action?.querySelector('my-spinner')?.remove();
 });
 ```
-
-(`e.target` is also the `<hs-action>` when the event originates there.)
 
 | Event                       | When                                          | Cancelable              |
 | --------------------------- | --------------------------------------------- | ----------------------- |
@@ -428,7 +426,7 @@ A code example:
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 // File: `app/actions/nested-data-exmple-action.ts
 export default createAction({

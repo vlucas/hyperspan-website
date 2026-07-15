@@ -13,7 +13,7 @@ export default createRoute().get((c) => {
         be used to perform data mutations.
       </p>
       <p>
-        Hyperspan Actions feature data validation with <a href="https://zod.dev">Zod v4.x</a> and
+        Hyperspan Actions feature data validation with <a href="https://zod.dev">Zod</a> and
         can automatically update the UI with pending states, errors, and server-rendered responses
         in place. Hyperspan Actions <strong>require very little JavaScript to work</strong>, and can
         be used in any template or route. Read more about Actions in the
@@ -30,7 +30,7 @@ export default createRoute().get((c) => {
       </p>
       ${highlightTS(`import { createAction } from "@hyperspan/framework/actions";
 import { html } from "@hyperspan/html";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export default createAction({
   name: 'example-action',

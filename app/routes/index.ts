@@ -389,7 +389,7 @@ export default createRoute().get(() => {
             <div class="p-6 font-mono text-[14px] leading-relaxed">
               ${highlightTS(`import { createAction } from '@hyperspan/framework/actions';
 import { html } from '@hyperspan/html';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export default createAction({
   name: 'example-action',
