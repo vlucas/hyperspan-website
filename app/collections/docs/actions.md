@@ -194,13 +194,20 @@ export default createAction({
   });
 ```
 
-The `ZodValidationError` class uses [zod.prettifyError()](https://zod.dev/error-formatting?id=zprettifyerror) to format all errors into a nice string message (accessible with `e.message`). It also has all the fields in [zod.flatterError()](https://zod.dev/error-formatting?id=zflattenerror) available on it so that you can show error messages specific to certain fields more easily (accessible with `e.fieldErrors.<fieldName>`, i.e. `e.fieldErrors.name` in this example).
+The `ZodValidationError` class uses [zod.prettifyError()](https://zod.dev/error-formatting?id=zprettifyerror) to format
+all errors into a nice string message (accessible with `e.message`). It also has all the fields in
+[zod.flatterError()](https://zod.dev/error-formatting?id=zflattenerror) available on it so that you can show error
+messages specific to certain fields more easily (accessible with `e.fieldErrors.<fieldName>`, i.e. `e.fieldErrors.name`
+in this example).
 
-If your `post` handler throws an error, the error will be caught and the `form` will be re-displayed with that error set in the `error` property. You can display it or handle it however you want, similar to the code above.
+If your `post` handler throws an error, the error will be caught and the `form` will be re-displayed with that error set
+in the `error` property. You can display it or handle it however you want, similar to the code above.
 
 ## Responding With a Redirect
 
-Sometimes all you want to do with an action is insert a new record, then redirect to it. If your `post` handler returns a redirect (a `Response` object with a `Location` header), Hyperspan will pick this up on the client and redirect the user to that URL. This is the age old [POST/Redirect/GET](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern.
+Sometimes all you want to do with an action is insert a new record, then redirect to it. If your `post` handler returns
+a redirect (a `Response` object with a `Location` header), Hyperspan will pick this up on the client and redirect the
+user to that URL. This is the age old [POST/Redirect/GET](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern.
 
 ```typescript
 import { createAction } from '@hyperspan/framework/actions';
@@ -234,14 +241,16 @@ export default createAction({
 
 By default, Hyperspan chooses how to apply a redirect on the client:
 
-- **Soft navigation** — same-origin and same path as the current page: fetch the new HTML and morph it in place with Idiomorph (no full page reload).
+- **Soft navigation** — same-origin or different path branch as the current page: fetch the new HTML and morph it in place with Idiomorph (no full page reload).
 - **Hard navigation** — different path or cross-origin: a normal `window.location` redirect.
 
 You can override this (and hook other client behavior) with action lifecycle events.
 
 ## Client Events
 
-Actions dispatch DOM events from the `<hs-action>` element. They bubble and are composed, so you can listen on `document`. Every event detail includes `action` — the current `<hs-action>` `HTMLElement` — so you can append nodes, toggle classes, or change styles:
+Actions dispatch DOM events from the `<hs-action>` element. They bubble and are composed, so you can listen on
+`document`. Each event exposes a mutable `detail` object (standard `CustomEvent`). Every detail includes `action` — the
+current `<hs-action>` `HTMLElement` — so you can append nodes, toggle classes, or change styles:
 
 ```javascript
 document.addEventListener('hs:action:before-fetch', (e) => {
@@ -257,19 +266,21 @@ document.addEventListener('hs:action:after-fetch', (e) => {
 
 (`e.target` is also the `<hs-action>` when the event originates there.)
 
-| Event | When | Cancelable |
-| --- | --- | --- |
-| `hs:action:before-fetch` | Before the action request starts | Yes — skips the request |
-| `hs:action:after-fetch` | After the request finishes (success or error) | No |
-| `hs:action:before-swap` | Before HTML is morphed into the page | Yes — skips the morph |
-| `hs:action:after-swap` | After the morph completes | No |
-| `hs:action:before-navigate` | Before a redirect is applied | Yes — skips navigation |
+| Event                       | When                                          | Cancelable              |
+| --------------------------- | --------------------------------------------- | ----------------------- |
+| `hs:action:before-fetch`    | Before the action request starts              | Yes — skips the request |
+| `hs:action:after-fetch`     | After the request finishes (success or error) | No                      |
+| `hs:action:before-swap`     | Before HTML is morphed into the page          | Yes — skips the morph   |
+| `hs:action:after-swap`      | After the morph completes                     | No                      |
+| `hs:action:before-navigate` | Before a redirect is applied                  | Yes — skips navigation  |
 
 Call `e.preventDefault()` on a cancelable event to abort that step.
 
 ### Loading State (`<hs-action-loading>`)
 
-While a request is in flight, Hyperspan appends an `<hs-action-loading>` element inside the `<hs-action>` and removes it when the request ends (`hs:action:after-fetch`). It uses `display: contents` by default (no box, no layout impact). Use it as a CSS hook for loading UI:
+While a request is in flight, Hyperspan appends an `<hs-action-loading>` element inside the `<hs-action>` and removes it
+when the request ends (`hs:action:after-fetch`). It uses `display: contents` by default (no box, no layout impact). Use
+it as a CSS hook for custom loading UI:
 
 ```css
 /* Dim the form while submitting */
@@ -281,6 +292,7 @@ hs-action:has(hs-action-loading) {
 /* Or show your own spinner */
 hs-action-loading {
   display: block;
+  content: 'Loading...';
   /* …spinner styles… */
 }
 ```
@@ -312,7 +324,8 @@ document.addEventListener('hs:action:after-fetch', () => {
 
 ### Closing UI Before Content Updates
 
-Use `hs:action:before-swap` (and/or `hs:action:before-navigate`) to tear down UI that should not survive a content replace — for example open modals or drawers:
+Use `hs:action:before-swap` (and/or `hs:action:before-navigate`) to tear down UI that should not survive a content
+replace — for example open modals or drawers:
 
 ```javascript
 document.addEventListener('hs:action:before-swap', () => {
@@ -326,26 +339,26 @@ document.addEventListener('hs:action:before-navigate', () => {
 
 ### Controlling Soft vs Hard Reloads
 
-`hs:action:before-navigate` receives a mutable `detail.hard` flag:
+`hs:action:before-navigate` receives a mutable `detail.hardNavigate` flag:
 
 - `false` — soft: fetch the URL and morph the HTML in place
 - `true` — hard: full page navigation via `window.location.assign`
 
-Defaults match the soft/hard rules above. Set `detail.hard` to override:
+Defaults match the soft/hard rules above. Set `detail.hardNavigate` to override:
 
 ```javascript
 // Always do a full page reload on action redirects
 document.addEventListener('hs:action:before-navigate', (e) => {
-  e.detail.hard = true;
+  e.detail.hardNavigate = true;
 });
 
 // Prefer soft morph even when the path changes (same-origin only)
 document.addEventListener('hs:action:before-navigate', (e) => {
-  e.detail.hard = false;
+  e.detail.hardNavigate = false;
 });
 ```
 
-Cross-origin URLs always use a hard navigation, even if you set `hard` to `false`.
+Cross-origin URLs always use a hard navigation, even if you set `hardNavigate` to `false`.
 
 ### Event Detail Shape
 
@@ -379,7 +392,7 @@ Cross-origin URLs always use a hard navigation, even if you set `hard` to `false
   form: HTMLFormElement;
   action: HTMLElement | null; // the current <hs-action> element
   url: string;
-  hard: boolean; // mutable
+  hardNavigate: boolean; // mutable
 }
 ```
 
