@@ -4,7 +4,7 @@ This repository contains the Hyperspan website and documentation. It is a
 dynamic web framework built with Bun and TypeScript.
 
 Use the documentation pages below as the source of truth for features, API
-usage, and examples. Docs pages return markdown for known LLMs and AI bots,
+usage, and examples. Docs and blog pages return markdown for known LLMs and AI bots,
 and HTML pages for all other user agents.
 
 Base URL for documentation: https://www.hyperspan.dev
@@ -39,6 +39,10 @@ Structure and templates
 - https://www.hyperspan.dev/docs/layouts
 - https://www.hyperspan.dev/docs/html
 - https://www.hyperspan.dev/docs/env
+
+Blog (index and each post return markdown for known AI/LLM user agents)
+- https://www.hyperspan.dev/blog
+- https://www.hyperspan.dev/blog/introducing-hyperspan
 
 Interactive examples (HTML pages on this site; not markdown for bots)
 - https://www.hyperspan.dev/examples

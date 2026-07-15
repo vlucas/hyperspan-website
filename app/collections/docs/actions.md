@@ -230,6 +230,159 @@ export default createAction({
   });
 ```
 
+### Soft vs Hard Navigation
+
+By default, Hyperspan chooses how to apply a redirect on the client:
+
+- **Soft navigation** — same-origin and same path as the current page: fetch the new HTML and morph it in place with Idiomorph (no full page reload).
+- **Hard navigation** — different path or cross-origin: a normal `window.location` redirect.
+
+You can override this (and hook other client behavior) with action lifecycle events.
+
+## Client Events
+
+Actions dispatch DOM events from the `<hs-action>` element. They bubble and are composed, so you can listen on `document`. Every event detail includes `action` — the current `<hs-action>` `HTMLElement` — so you can append nodes, toggle classes, or change styles:
+
+```javascript
+document.addEventListener('hs:action:before-fetch', (e) => {
+  e.detail.action?.classList.add('is-loading');
+  e.detail.action?.append(document.createElement('my-spinner'));
+});
+
+document.addEventListener('hs:action:after-fetch', (e) => {
+  e.detail.action?.classList.remove('is-loading');
+  e.detail.action?.querySelector('my-spinner')?.remove();
+});
+```
+
+(`e.target` is also the `<hs-action>` when the event originates there.)
+
+| Event | When | Cancelable |
+| --- | --- | --- |
+| `hs:action:before-fetch` | Before the action request starts | Yes — skips the request |
+| `hs:action:after-fetch` | After the request finishes (success or error) | No |
+| `hs:action:before-swap` | Before HTML is morphed into the page | Yes — skips the morph |
+| `hs:action:after-swap` | After the morph completes | No |
+| `hs:action:before-navigate` | Before a redirect is applied | Yes — skips navigation |
+
+Call `e.preventDefault()` on a cancelable event to abort that step.
+
+### Loading State (`<hs-action-loading>`)
+
+While a request is in flight, Hyperspan appends an `<hs-action-loading>` element inside the `<hs-action>` and removes it when the request ends (`hs:action:after-fetch`). It uses `display: contents` by default (no box, no layout impact). Use it as a CSS hook for loading UI:
+
+```css
+/* Dim the form while submitting */
+hs-action:has(hs-action-loading) {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Or show your own spinner */
+hs-action-loading {
+  display: block;
+  /* …spinner styles… */
+}
+```
+
+To skip inserting `<hs-action-loading>`, set `detail.loadingElement = false` on `hs:action:before-fetch`:
+
+```javascript
+document.addEventListener('hs:action:before-fetch', (e) => {
+  e.detail.loadingElement = false;
+});
+```
+
+### Custom Loading Logic
+
+Listen for fetch events to disable controls, show overlays, etc.:
+
+```javascript
+document.addEventListener('hs:action:before-fetch', (e) => {
+  e.detail.form.querySelectorAll('button').forEach((btn) => {
+    btn.disabled = true;
+  });
+  document.getElementById('app-overlay')?.classList.add('is-visible');
+});
+
+document.addEventListener('hs:action:after-fetch', () => {
+  document.getElementById('app-overlay')?.classList.remove('is-visible');
+});
+```
+
+### Closing UI Before Content Updates
+
+Use `hs:action:before-swap` (and/or `hs:action:before-navigate`) to tear down UI that should not survive a content replace — for example open modals or drawers:
+
+```javascript
+document.addEventListener('hs:action:before-swap', () => {
+  document.querySelectorAll('dialog[open]').forEach((dialog) => dialog.close());
+});
+
+document.addEventListener('hs:action:before-navigate', () => {
+  document.querySelectorAll('dialog[open]').forEach((dialog) => dialog.close());
+});
+```
+
+### Controlling Soft vs Hard Reloads
+
+`hs:action:before-navigate` receives a mutable `detail.hard` flag:
+
+- `false` — soft: fetch the URL and morph the HTML in place
+- `true` — hard: full page navigation via `window.location.assign`
+
+Defaults match the soft/hard rules above. Set `detail.hard` to override:
+
+```javascript
+// Always do a full page reload on action redirects
+document.addEventListener('hs:action:before-navigate', (e) => {
+  e.detail.hard = true;
+});
+
+// Prefer soft morph even when the path changes (same-origin only)
+document.addEventListener('hs:action:before-navigate', (e) => {
+  e.detail.hard = false;
+});
+```
+
+Cross-origin URLs always use a hard navigation, even if you set `hard` to `false`.
+
+### Event Detail Shape
+
+**Fetch events** (`before-fetch` / `after-fetch`):
+
+```typescript
+{
+  form: HTMLFormElement;
+  action: HTMLElement | null; // the current <hs-action> element
+  url: string;
+  method: string;
+  loadingElement: boolean; // mutable on before-fetch; default true
+}
+```
+
+**Swap events** (`before-swap` / `after-swap`):
+
+```typescript
+{
+  form: HTMLFormElement;
+  action: HTMLElement | null; // the current <hs-action> element
+  html: string;
+  fullDocument: boolean;
+}
+```
+
+**Navigate event** (`before-navigate`):
+
+```typescript
+{
+  form: HTMLFormElement;
+  action: HTMLElement | null; // the current <hs-action> element
+  url: string;
+  hard: boolean; // mutable
+}
+```
+
 ## Nested Fields
 
 Sometimes you need to build more complex forms with specific data structures. Hyperspan supports nested form fields with a bracket syntax.
