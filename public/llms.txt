@@ -46,9 +46,8 @@ Structure and templates
 - https://www.hyperspan.dev/docs/html
 - https://www.hyperspan.dev/docs/env
 
-Blog (index and each post return markdown for known AI/LLM user agents)
+Blog (index returns markdown for known AI/LLM user agents; posts are linked from there)
 - https://www.hyperspan.dev/blog
-- https://www.hyperspan.dev/blog/introducing-hyperspan
 
 Interactive examples (HTML pages on this site; not markdown for bots)
 - https://www.hyperspan.dev/examples

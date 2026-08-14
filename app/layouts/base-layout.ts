@@ -195,9 +195,6 @@ function Footer() {
               <li>
                 <a href="/blog" class="link">Blog</a>
               </li>
-              <li>
-                <a href="/blog/introducing-hyperspan" class="link">Introducing Hyperspan</a>
-              </li>
             </ul>
           </div>
           <div>
