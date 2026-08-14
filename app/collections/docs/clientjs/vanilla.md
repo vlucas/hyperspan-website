@@ -4,35 +4,38 @@ Modern JavaScript has come a _long way_ in the past decade or so. There is often
 
 ## Bring Your Own JavaScript (BYOJS)
 
-To use your own JavaScript code in the browser, compile it with the `buildClientJS` method in the `@hyperspan/framework/client/js` pacakge.
+To use your own JavaScript code in the browser, register it with the `buildClientJS` method in `@hyperspan/framework/client/js`.
 
-For example, if you want to track RUM data with Datadog, you can create a file called `app/clientjs/datadog.client.ts` and add the following code:
+Call `buildClientJS()` once at **module scope** (top-level await). It registers the path for Vite to bundle — do not call it inside a route handler on every request.
+
+Use an app-relative path (e.g. `app/client/datadog.client.ts`) so the asset hash stays stable across Node, Cloudflare Workers, and other runtimes.
+
+For example, if you want to track RUM data with Datadog, create `app/client/datadog.client.ts`:
 
 ```typescript
 import { datadogRum } from '@datadog/browser-rum';
 
 export function initDatadog() {
   datadogRum.init({
-    applicationId: process.env.APP_PUBLIC_DATADOG_APPLICATION_ID,
-    clientToken: process.env.APP_PUBLIC_DATADOG_CLIENT_TOKEN,
+    applicationId: import.meta.env.APP_PUBLIC_DATADOG_APPLICATION_ID,
+    clientToken: import.meta.env.APP_PUBLIC_DATADOG_CLIENT_TOKEN,
     site: 'datadoghq.com',
   });
 }
 ```
 
-Note: Variables prefixed with `APP_PUBLIC_` will be replaced with their literal string values. See the [Environment Variables](/docs/env) docs for details.
+Variables prefixed with `APP_PUBLIC_` are inlined as strings. See the [Environment Variables](/docs/env) docs for details.
 
 ## Using Your Own Client-Side Code
 
-Once the file is created and compiled, you can import it and use it in any template, layout, or route with the `renderScriptTag` function like this:
+Once the file is registered, import it and use it in any template, layout, or route with the `renderScriptTag` function like this:
 
 ```typescript
 import { createRoute } from '@hyperspan/framework';
 import { html } from '@hyperspan/html';
 import { buildClientJS } from '@hyperspan/framework/client/js';
 
-// Use `buildClientJS` with top-level `await` => compiles ONCE on server start
-const datadogClientJS = await buildClientJS(import.meta.resolve('app/clientjs/datadog.client'));
+const datadogClientJS = await buildClientJS('app/client/datadog.client.ts');
 
 export default createRoute().get(() => {
   return html`
@@ -50,8 +53,8 @@ export default createRoute().get(() => {
 
 The code above will:
 
-1. Compile your client-side TypeScript into an external JS file
-2. Add a reference to the compiled external file to an `importmap` on the page
+1. Register your client-side TypeScript for Vite to bundle
+2. Add a reference to the compiled file to an `importmap` on the page
 3. Render a `<script type="module">` tag on the page that imports your module and runs the optional callback to initialize the module. Any exports from the module will be available to your callback function.
 
 ## `buildClientJS` returns an object with:
@@ -60,6 +63,8 @@ The code above will:
 - `publicPath` property with the full path to the compiled client JS. You can use this to add your own normal `<script src="${yourClientJS.publicPath}">` tag if you need to do this instead of using `renderScriptTag`.
 - `esmName` property with just the name of the file
 - `assetHash` property with the asset hash of the file
+
+`renderScriptTag()` with no argument emits a module script that imports the bundle via the import map. Pass a function or string to inline bootstrap code that receives the module exports.
 
 ## You Can Always Use a `<script>` Tag
 
@@ -110,4 +115,4 @@ function showGreeting(name: string) {
 
 Note: The major caveat to stringifying functions is that you can't use any dependencies or references to any other symbols in the file outside of the function itself. It's like copying the function and pasting it somewhere else.
 
-This approach works suprisingly well for simple things, but if you need to use dependencies, you should use the `buildClientJS` function instead (see above).
+This approach works surprisingly well for simple things, but if you need to use dependencies, you should use the `buildClientJS` function instead (see above).

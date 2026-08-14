@@ -7,6 +7,7 @@ Each route is passed a single parameter - the `Hyperspan.Context` object. The Co
 | Property/Method                            | Type                                  | Description                            |
 | ------------------------------------------ | ------------------------------------- | -------------------------------------- |
 | `c.vars`                                   | `Record<string, any>`                 | Variables set by middleware            |
+| `c.url(diff?, options?)`                 | `string`                              | Build a relative URL from the current request |
 | `c.route`                                  | `RouteConfig`                         | Route information                      |
 | `c.route.name`                             | `string \| undefined`                 | Route name                             |
 | `c.route.path`                             | `string`                              | Route path pattern                     |
@@ -40,6 +41,33 @@ Each route is passed a single parameter - the `Hyperspan.Context` object. The Co
 | `c.res.error(error, options?)`             | `Response`                            | Return error response                  |
 | `c.res.notFound(options?)`                 | `Response`                            | Return 404 Not Found response          |
 | `c.res.merge(response)`                    | `Response`                            | Merge another response into this one   |
+
+## Building URLs
+
+Use `c.url(diff?, options?)` to build link URLs from the current request URL. It returns a relative string (`pathname + search + hash`) suitable for `href` attributes and redirects.
+
+Omitted diff keys keep the current value. Pass `null` to remove a part: `pathname: null` → `/`, `searchParams: null` → clear query, `hash: null` → clear fragment. Inside `searchParams`, `null` deletes that param; other values set or overwrite as strings.
+
+```typescript
+// Current URL: /posts?sort=asc#top
+
+c.url({ searchParams: { page: 2 } })
+// → "/posts?sort=asc&page=2#top"
+
+c.url({ searchParams: { sort: null, page: 3 } })
+// → "/posts?page=3#top"
+
+c.url({ pathname: '/archive', hash: null, searchParams: null })
+// → "/archive"
+
+c.url({ searchParams: { page: 2 } }, { clean: true })
+// → "/posts?page=2"
+// (starts from pathname only, ignoring current query and hash)
+```
+
+Pass `{ clean: true }` when you want to drop the current query string and hash before applying the diff — useful for pagination links that should not inherit unrelated params.
+
+`c.url()` does not mutate `c.req.url` or `c.req.query`.
 
 ## Cookies API
 

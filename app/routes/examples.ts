@@ -54,8 +54,8 @@ export default createRoute().get((c) => {
             Dynamic Islands
           </h2>
           <p class="text-zinc-400 text-sm leading-relaxed">
-            Embed dynamic Preact components in static HTML. Islands architecture with
-            <code class="text-xs bg-base-300 px-1 rounded">renderPreactIsland</code>.
+            Embed Preact, Vue, and Svelte islands in static HTML with
+            <code class="text-xs bg-base-300 px-1 rounded">renderIsland</code>.
           </p>
           <span class="inline-block mt-4 text-brand-orange text-sm font-medium group-hover:underline">
             View example →

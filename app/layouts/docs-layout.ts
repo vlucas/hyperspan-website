@@ -54,6 +54,16 @@ function DocsNavMenu(activePath: string) {
     </li>
 
     <li>
+      <h2 class="menu-title">Deployment</h2>
+      <ul>
+        <li class="${renderActiveClass('deploy')}"><a href="/docs/deploy" class="link">Overview</a></li>
+        <li class="${renderActiveClass('deploy/node')}"><a href="/docs/deploy/node" class="link">Node</a></li>
+        <li class="${renderActiveClass('deploy/bun')}"><a href="/docs/deploy/bun" class="link">Bun</a></li>
+        <li class="${renderActiveClass('deploy/cloudflare')}"><a href="/docs/deploy/cloudflare" class="link">Cloudflare</a></li>
+      </ul>
+    </li>
+
+    <li>
       <h2 class="menu-title">Structure</h2>
       <ul>
         <li class="${renderActiveClass('layouts')}"><a href="/docs/layouts" class="link">Layouts</a></li>

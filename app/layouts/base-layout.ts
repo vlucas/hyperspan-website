@@ -182,6 +182,9 @@ function Footer() {
               <li>
                 <a href="/docs/install" class="link">Installation</a>
               </li>
+              <li>
+                <a href="/docs/deploy" class="link">Deployment</a>
+              </li>
             </ul>
           </div>
           <div>

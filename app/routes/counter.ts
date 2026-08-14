@@ -1,7 +1,6 @@
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ClientCounter from '~/app/components/client-counter.tsx';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ClientCounter from '~/app/components/client-counter.tsx' with { island: 'preact' };
 import MarketingLayout from '~/app/layouts/marketing-layout';
 import { memoryCacheTime } from '~/app/middleware';
 
@@ -15,7 +14,7 @@ export default createRoute().get((c) => {
           <h2 class="card-title">Client Components</h2>
           <p>You can embed React/Preact components into otherwise server-rendered static HTML!</p>
         </div>
-        <figure class="p-10">${renderPreactIsland(ClientCounter, { count: 5 })}</figure>
+        <figure class="p-10">${renderIsland(ClientCounter, { count: 5 })}</figure>
       </div>
     </main>
   `;

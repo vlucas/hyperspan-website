@@ -19,7 +19,7 @@ You can use one plugin, or all three in the same project.
 Install the plugin(s) you want:
 
 ```shell
-bun add @hyperspan/plugin-preact @hyperspan/plugin-vue @hyperspan/plugin-svelte
+npm install @hyperspan/plugin-preact @hyperspan/plugin-vue @hyperspan/plugin-svelte
 ```
 
 Then add them to your `hyperspan.config.ts` file:
@@ -37,53 +37,45 @@ export default createConfig({
 });
 ```
 
-After installing a plugin, imports for that framework's component files are prepared for island rendering.
+The matching plugin must be installed and listed in `plugins` for that framework's island imports to work.
 
-## Island Render Functions
+## Import Islands with Import Attributes
 
-Each plugin provides its own island render function:
-
-- `renderPreactIsland` from `@hyperspan/plugin-preact`
-- `renderVueIsland` from `@hyperspan/plugin-vue`
-- `renderSvelteIsland` from `@hyperspan/plugin-svelte`
-
-`renderPreactIsland` is synchronous. `renderVueIsland` and `renderSvelteIsland` are async, so use an async route when rendering Vue/Svelte islands.
+Mark a component as an island at import time with an import attribute. Then render it with `renderIsland` from `@hyperspan/framework`:
 
 ```typescript
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import { renderVueIsland } from '@hyperspan/plugin-vue';
-import { renderSvelteIsland } from '@hyperspan/plugin-svelte';
-import ReactCounter from '~/app/components/client-counter.tsx';
-import VueCounter from '~/app/components/client-counter-vue.vue';
-import SvelteCounter from '~/app/components/client-counter-svelte.svelte';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ReactCounter from '~/app/components/client-counter.tsx' with { island: 'preact' };
+import VueCounter from '~/app/components/client-counter-vue.vue' with { island: 'vue' };
+import SvelteCounter from '~/app/components/client-counter-svelte.svelte' with { island: 'svelte' };
 
 export default createRoute().get(async () => {
   return html`
     <div>
-      ${renderPreactIsland(ReactCounter, { count: 5 })}
-      ${await renderVueIsland(VueCounter, { count: 10 })}
-      ${await renderSvelteIsland(SvelteCounter, { count: 15 })}
+      ${renderIsland(ReactCounter, { count: 5 })}
+      ${await renderIsland(VueCounter, { count: 10 })}
+      ${await renderIsland(SvelteCounter, { count: 15 })}
     </div>
   `;
 });
 ```
 
+Use `with { island: 'preact' }`, `with { island: 'vue' }`, or `with { island: 'svelte' }` to match the plugin listed in `hyperspan.config.ts`. Preact islands can be rendered synchronously. Vue and Svelte islands are async, so `await` them in an async route handler.
+
 ## SSR and Lazy Hydration
 
-All island render functions support the same third `options` argument:
+`renderIsland` accepts a third `options` argument:
 
-| Option    | Type      | Default  | Description                                  |
-| --------- | --------- | -------- | -------------------------------------------- |
+| Option    | Type      | Default  | Description                                   |
+| --------- | --------- | -------- | --------------------------------------------- |
 | `ssr`     | `boolean` | `true`   | Disable with `false` to skip initial SSR HTML |
 | `loading` | `string`  | `inline` | Use `'lazy'` to delay hydration until near viewport |
 
 Examples:
 
-- `renderPreactIsland(Component, props, { ssr: false })`
-- `await renderVueIsland(Component, props, { ssr: true, loading: 'lazy' })`
-- `await renderSvelteIsland(Component, props, { ssr: true, loading: 'lazy' })`
+- `renderIsland(Component, props, { ssr: false })`
+- `await renderIsland(Component, props, { ssr: true, loading: 'lazy' })`
 
 ## Framework-Specific Guides
 
@@ -92,4 +84,3 @@ Use these pages for framework-specific setup and examples:
 - [React / Preact Islands](/docs/clientjs/react)
 - [Vue Islands](/docs/clientjs/vue)
 - [Svelte Islands](/docs/clientjs/svelte)
-

@@ -21,7 +21,7 @@ export default createRoute().get((c) => {
         </h1>
 
         <p class="text-zinc-300 text-lg md:text-xl max-w-3xl mb-12 font-mono">
-          Server-oriented framework built with TypeScript and Bun. <br class="hidden md:block" />
+          Server-oriented framework built with TypeScript and Vite. <br class="hidden md:block" />
           Zero JavaScript sent to the client by default.
         </p>
 
@@ -72,8 +72,8 @@ export default createRoute().get((c) => {
           </h2>
           <p class="text-zinc-400 text-lg leading-relaxed">
             No special syntax to learn. No custom file extensions or weird semantics. All
-            TypeScript, all the way down. Hyperspan leverages Bun for incredible speed without the
-            need for a complex compiler.
+            TypeScript, all the way down. Vite powers local development for full hot reloading and
+            production builds with islands, route-split CSS, and streaming HTML.
           </p>
           <ul class="space-y-4 font-mono">
             <li class="flex items-start gap-3">
@@ -91,6 +91,10 @@ export default createRoute().get((c) => {
             <li class="flex items-start gap-3">
               ${Icon('check', 'mt-1 text-brand-orange')}
               <span>Dynamic Islands for rich client-side interactivity</span>
+            </li>
+            <li class="flex items-start gap-3">
+              ${Icon('check', 'mt-1 text-brand-purple')}
+              <span>Deploy to Node, Bun, or Cloudflare with adapters</span>
             </li>
           </ul>
         </div>
@@ -345,14 +349,13 @@ async function AsyncBlock(waitMs: number, msg: string) {
             </div>
             <div class="p-6 font-mono text-[14px] leading-relaxed">
               ${highlightTS(`import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ExampleCounter from '~/src/components/example-counter.tsx';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ExampleCounter from '~/src/components/example-counter.tsx' with { island: 'preact' };
 
 export default createRoute().get(() => {
   return html\`
     <div>
-      \${renderPreactIsland(ExampleCounter, { count: 5 })}
+      \${renderIsland(ExampleCounter, { count: 5 })}
     </div>
   \`;
 });`)}
@@ -477,7 +480,7 @@ export default createAction({
             class="bg-brand-dark border border-brand-border px-6 py-4 rounded-xl font-mono text-brand-orange text-lg flex items-center gap-4 max-w-full min-w-0 overflow-x-auto"
           >
             <span class="text-zinc-600 shrink-0">$</span>
-            <span class="whitespace-nowrap">bunx hyperspan create MyApp</span>
+            <span class="whitespace-nowrap">npx hyperspan create MyApp</span>
             <button id="copy-btn" class="shrink-0 text-zinc-500 hover:text-white transition-colors">
               ${Icon('content_copy')}
             </button>

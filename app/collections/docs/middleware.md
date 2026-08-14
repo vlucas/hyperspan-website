@@ -99,7 +99,7 @@ This middleware logs the request method and path before processing, then logs th
 Hyperspan includes **Zod-based** validation helpers. Import them from `@hyperspan/framework/middleware` and define schemas with **Zod** (same major version the framework uses):
 
 ```shell
-bun add zod
+npm install zod
 ```
 
 ```typescript

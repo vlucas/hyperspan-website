@@ -27,7 +27,7 @@ npm install @hyperspan/html
 bun add @hyperspan/html
 ```
 
-> **Note:** The Hyperspan _framework_ requires Bun to use, but the HTML templates package is separate, and can be used in any JavaScript runtime that supports Template Literals and Async Generators.
+> **Note:** The HTML templates package is separate from the Hyperspan framework and can be used in any JavaScript runtime that supports Template Literals and Async Generators.
 
 ## Example Template
 

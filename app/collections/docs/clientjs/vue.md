@@ -5,7 +5,7 @@ Use `@hyperspan/plugin-vue` to render and hydrate Vue components as client islan
 ## Install
 
 ```shell
-bun add @hyperspan/plugin-vue vue
+npm install @hyperspan/plugin-vue vue
 ```
 
 ## Configure
@@ -25,16 +25,15 @@ export default createConfig({
 
 ## Render a Vue Island
 
-`renderVueIsland` is async, so use an async route handler:
+Import the `.vue` file with `{ island: 'vue' }` and `await renderIsland` in an async route handler:
 
 ```typescript
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderVueIsland } from '@hyperspan/plugin-vue';
-import ClientCounterVue from '~/app/components/client-counter-vue.vue';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ClientCounterVue from '~/app/components/client-counter-vue.vue' with { island: 'vue' };
 
 export default createRoute().get(async () => {
-  return html` <div>${await renderVueIsland(ClientCounterVue, { count: 10 })}</div> `;
+  return html` <div>${await renderIsland(ClientCounterVue, { count: 10 })}</div> `;
 });
 ```
 
@@ -71,7 +70,7 @@ const count = ref(props.count ?? 0);
 
 ## Options
 
-`await renderVueIsland(Component, props, options)`
+`await renderIsland(Component, props, options)`
 
 `options` accepts:
 
@@ -80,5 +79,5 @@ const count = ref(props.count ?? 0);
 
 Examples:
 
-- `await renderVueIsland(ClientCounterVue, { count: 10 }, { ssr: false })`
-- `await renderVueIsland(ClientCounterVue, { count: 10 }, { ssr: true, loading: 'lazy' })`
+- `await renderIsland(ClientCounterVue, { count: 10 }, { ssr: false })`
+- `await renderIsland(ClientCounterVue, { count: 10 }, { ssr: true, loading: 'lazy' })`

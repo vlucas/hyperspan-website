@@ -5,7 +5,7 @@ Use `@hyperspan/plugin-svelte` to render and hydrate Svelte components as client
 ## Install
 
 ```shell
-bun add @hyperspan/plugin-svelte svelte
+npm install @hyperspan/plugin-svelte svelte
 ```
 
 ## Configure
@@ -25,16 +25,15 @@ export default createConfig({
 
 ## Render a Svelte Island
 
-`renderSvelteIsland` is async, so use an async route handler:
+Import the `.svelte` file with `{ island: 'svelte' }` and `await renderIsland` in an async route handler:
 
 ```typescript
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderSvelteIsland } from '@hyperspan/plugin-svelte';
-import ClientCounterSvelte from '~/app/components/client-counter-svelte.svelte';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ClientCounterSvelte from '~/app/components/client-counter-svelte.svelte' with { island: 'svelte' };
 
 export default createRoute().get(async () => {
-  return html` <div>${await renderSvelteIsland(ClientCounterSvelte, { count: 15 })}</div> `;
+  return html` <div>${await renderIsland(ClientCounterSvelte, { count: 15 })}</div> `;
 });
 ```
 
@@ -61,7 +60,7 @@ Create `app/components/client-counter-svelte.svelte`:
 
 ## Options
 
-`await renderSvelteIsland(Component, props, options)`
+`await renderIsland(Component, props, options)`
 
 `options` accepts:
 
@@ -70,5 +69,5 @@ Create `app/components/client-counter-svelte.svelte`:
 
 Examples:
 
-- `await renderSvelteIsland(ClientCounterSvelte, { count: 15 }, { ssr: false })`
-- `await renderSvelteIsland(ClientCounterSvelte, { count: 15 }, { ssr: true, loading: 'lazy' })`
+- `await renderIsland(ClientCounterSvelte, { count: 15 }, { ssr: false })`
+- `await renderIsland(ClientCounterSvelte, { count: 15 }, { ssr: true, loading: 'lazy' })`

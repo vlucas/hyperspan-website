@@ -7,7 +7,7 @@ Use `@hyperspan/plugin-preact` to render and hydrate React or Preact components 
 ## Install
 
 ```shell
-bun add @hyperspan/plugin-preact
+npm install @hyperspan/plugin-preact
 ```
 
 ## Configure
@@ -43,16 +43,15 @@ Without these settings, `.tsx` components may fail to compile correctly for clie
 
 ## Render a React/Preact Island
 
-Use `renderPreactIsland` to render and hydrate your component in a route:
+Import the component with `{ island: 'preact' }` and render it with `renderIsland`:
 
 ```typescript
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import ClientCounter from '~/app/components/client-counter.tsx';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ClientCounter from '~/app/components/client-counter.tsx' with { island: 'preact' };
 
 export default createRoute().get(() => {
-  return html` <div>${renderPreactIsland(ClientCounter, { count: 5 })}</div> `;
+  return html` <div>${renderIsland(ClientCounter, { count: 5 })}</div> `;
 });
 ```
 
@@ -86,9 +85,11 @@ export default function ClientCounter({ count: initialCount = 0 }: { count?: num
 }
 ```
 
+Preact islands also support named exports in the same file. Import the named export with the same `with { island: 'preact' }` attribute.
+
 ## Options
 
-`renderPreactIsland(Component, props, options)`
+`renderIsland(Component, props, options)`
 
 `options` accepts:
 
@@ -97,5 +98,5 @@ export default function ClientCounter({ count: initialCount = 0 }: { count?: num
 
 Examples:
 
-- `renderPreactIsland(ClientCounter, { count: 5 }, { ssr: false })`
-- `renderPreactIsland(ClientCounter, { count: 5 }, { ssr: true, loading: 'lazy' })`
+- `renderIsland(ClientCounter, { count: 5 }, { ssr: false })`
+- `renderIsland(ClientCounter, { count: 5 }, { ssr: true, loading: 'lazy' })`

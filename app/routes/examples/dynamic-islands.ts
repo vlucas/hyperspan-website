@@ -1,13 +1,10 @@
 import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
+import { createRoute, renderIsland } from '@hyperspan/framework';
 import ContentLayout from '~/app/layouts/content-layout';
 import { highlightTS } from '~/src/lib/syntax-highlighter';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import { renderVueIsland } from '@hyperspan/plugin-vue';
-import { renderSvelteIsland } from '@hyperspan/plugin-svelte';
-import ReactCounter from '~/app/components/client-counter.tsx';
-import VueCounter from '~/app/components/client-counter-vue.vue';
-import SvelteCounter from '~/app/components/client-counter-svelte.svelte';
+import ReactCounter from '~/app/components/client-counter.tsx' with { island: 'preact' };
+import VueCounter from '~/app/components/client-counter-vue.vue' with { island: 'vue' };
+import SvelteCounter from '~/app/components/client-counter-svelte.svelte' with { island: 'svelte' };
 
 export default createRoute().get(async (c) => {
   const content = html`
@@ -22,31 +19,28 @@ export default createRoute().get(async (c) => {
 
       <h2>Embedded Client Counters:</h2>
       <div class="grid gap-6">
-        ${renderPreactIsland(ReactCounter, { count: 5 })}
-        ${await renderVueIsland(VueCounter, { count: 10 })}
-        ${await renderSvelteIsland(SvelteCounter, { count: 15 })}
+        ${renderIsland(ReactCounter, { count: 5 })}
+        ${await renderIsland(VueCounter, { count: 10 })}
+        ${await renderIsland(SvelteCounter, { count: 15 })}
       </div>
 
       <h2>Code Example:</h2>
       <p>
-        Once your island plugins are loaded, use each plugin's render function to render and hydrate
-        your component.
+        Import each component with an island attribute, then render it with
+        <code>renderIsland</code> from <code>@hyperspan/framework</code>.
       </p>
       ${highlightTS(`import { html } from '@hyperspan/html';
-import { createRoute } from '@hyperspan/framework';
-import { renderPreactIsland } from '@hyperspan/plugin-preact';
-import { renderVueIsland } from '@hyperspan/plugin-vue';
-import { renderSvelteIsland } from '@hyperspan/plugin-svelte';
-import ReactCounter from '~/app/components/client-counter.tsx';
-import VueCounter from '~/app/components/client-counter-vue.vue';
-import SvelteCounter from '~/app/components/client-counter-svelte.svelte';
+import { createRoute, renderIsland } from '@hyperspan/framework';
+import ReactCounter from '~/app/components/client-counter.tsx' with { island: 'preact' };
+import VueCounter from '~/app/components/client-counter-vue.vue' with { island: 'vue' };
+import SvelteCounter from '~/app/components/client-counter-svelte.svelte' with { island: 'svelte' };
 
 export default createRoute().get(async () => {
   return html\`
     <div>
-      \${renderPreactIsland(ReactCounter, { count: 5 })}
-      \${await renderVueIsland(VueCounter, { count: 10 })}
-      \${await renderSvelteIsland(SvelteCounter, { count: 15 })}
+      \${renderIsland(ReactCounter, { count: 5 })}
+      \${await renderIsland(VueCounter, { count: 10 })}
+      \${await renderIsland(SvelteCounter, { count: 15 })}
     </div>
   \`;
 });`)}

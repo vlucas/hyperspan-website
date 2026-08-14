@@ -4,7 +4,7 @@ Hyperspan is a server-oriented framework, which means that **all JavaScript code
 
 There are a few different ways to use client-side JavaScript in Hyperspan:
 
-- [Islands](/docs/clientjs/islands) - Framework-agnostic islands architecture in Hyperspan.
+- [Islands](/docs/clientjs/islands) - Import a component with `{ island: 'preact' | 'vue' | 'svelte' }` and render it with `renderIsland`.
 - [React / Preact Islands](/docs/clientjs/react) - Use `@hyperspan/plugin-preact` to render React or Preact islands.
 - [Vue Islands](/docs/clientjs/vue) - Use `@hyperspan/plugin-vue` to render Vue islands.
 - [Svelte Islands](/docs/clientjs/svelte) - Use `@hyperspan/plugin-svelte` to render Svelte islands.
