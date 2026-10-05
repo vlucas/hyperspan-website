@@ -10,4 +10,4 @@ Hyperspan runs anywhere you need it through [deployment adapters](/docs/deploy).
 
 Some key features that Hyperspan adds to the mix are fast, lightweight streaming [HTML Templates](/docs/html), [file-based & flexible routes](/docs/routes), dynamic [Server Actions](/docs/actions) that use minimal JavaScript, and an [Islands Architecture](/docs/clientjs/islands) that ensures you only ship JavaScript to the client when you really need to (Hyperspan does not ship any JavaScript to the client by default).
 
-Hyperspan is stable and production ready. Check out the [Installation](/docs/install) page to get started!
+Hyperspan **2.0.0** is stable and production ready. Check out the [Installation](/docs/install) page to get started, or [Migrating to v2](/docs/migration-v2) if you are upgrading from v1.

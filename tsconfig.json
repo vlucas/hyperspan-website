@@ -14,12 +14,15 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "types": ["bun-types"],
+    "types": ["node", "vite/client"],
+    "baseUrl": ".",
     "paths": {
       "~/*": ["./*"]
     },
     "jsx": "react",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment"
-  }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx", "./env.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

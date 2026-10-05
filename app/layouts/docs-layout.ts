@@ -16,6 +16,7 @@ function DocsNavMenu(activePath: string) {
         <li class="${renderActiveClass('')}"><a href="/docs" class="link">Get Started</a></li>
         <li class="${renderActiveClass('philosophy')}"><a href="/docs/philosophy" class="link">Philosophy</a></li>
         <li class="${renderActiveClass('install')}"><a href="/docs/install" class="link">Installation</a></li>
+        <li class="${renderActiveClass('migration-v2')}"><a href="/docs/migration-v2" class="link">Migrating to v2</a></li>
         <li class="${renderActiveClass('config')}"><a href="/docs/config" class="link">Config</a></li>
       </ul>
     </li>

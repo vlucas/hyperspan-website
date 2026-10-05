@@ -3,6 +3,7 @@ import { createRoute } from '@hyperspan/framework';
 import BlogLayout from '~/app/layouts/blog-layout';
 import { parseBlogPostFile } from '~/src/lib/blog-posts';
 import { renderMarkdownToHtml } from '~/src/lib/render-markdown';
+import { readCollectionMarkdown } from '~/src/lib/read-collection-file';
 import { memoryCacheTime, isKnownAIBot } from '~/app/middleware';
 
 function formatLongDateUtc(d: Date): string {
@@ -28,21 +29,16 @@ export default createRoute().get(async (c) => {
   }
 
   try {
-    let file = Bun.file(`app/collections/blog/${page}.md`);
-    const fileExists = await file.exists();
-
-    if (!fileExists) {
-      file = Bun.file(`app/collections/blog/${page}/index.md`);
-    }
-
-    const markdown = await file.text();
+    const markdown = await readCollectionMarkdown('blog', page);
 
     if (!markdown) {
       return c.res.notFound();
     }
 
     if (c.vars.isKnownAIBot) {
-      return new Response(file);
+      return new Response(markdown, {
+        headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+      });
     }
 
     const post = parseBlogPostFile(page, markdown);

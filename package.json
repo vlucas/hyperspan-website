@@ -1,35 +1,44 @@
 {
   "name": "hyperspan-website",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "dev": "PORT=3005 hyperspan-dev dev",
+    "dev": "PORT=3005 hyperspan dev",
+    "build": "hyperspan build",
     "start": "hyperspan start",
-    "test": "bun test"
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.19",
-    "@types/bun": "^1.3.11",
-    "@types/node": "^22.19.15",
+    "@types/node": "^24.10.0",
     "@types/react": "^19.2.14",
     "@types/timestring": "^7.0.0",
-    "bun-types": "latest",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@hyperspan/framework": "^1.0.16",
-    "@hyperspan/html": "^1.0.2",
-    "@hyperspan/plugin-preact": "^1.0.3",
-    "@hyperspan/plugin-svelte": "^1.0.1",
-    "@hyperspan/plugin-vue": "^1.0.2",
-    "@tailwindcss/cli": "^4.2.2",
+    "@hyperspan/adapter-node": "file:../hyperspan/packages/adapter-node",
+    "@hyperspan/framework": "file:../hyperspan/packages/framework",
+    "@hyperspan/html": "file:../hyperspan/packages/html",
+    "@hyperspan/plugin-preact": "file:../hyperspan/packages/plugin-preact",
+    "@hyperspan/plugin-svelte": "file:../hyperspan/packages/plugin-svelte",
+    "@hyperspan/plugin-vue": "file:../hyperspan/packages/plugin-vue",
+    "@hyperspan/vite-plugin": "file:../hyperspan/packages/vite-plugin",
+    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/typography": "^0.5.19",
     "daisyui": "^5.5.19",
     "highlight.js": "^11.11.1",
-    "hyperspan": "^1.0.9",
+    "hyperspan": "file:../hyperspan/packages/cli",
+    "marked": "^17.0.1",
     "preact": "^10.29.0",
     "svelte": "^5.54.0",
+    "tailwindcss": "^4.2.2",
     "timestring": "^7.0.0",
-    "vue": "^3.5.30"
+    "vue": "^3.5.30",
+    "zod": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

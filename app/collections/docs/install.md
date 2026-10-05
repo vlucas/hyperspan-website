@@ -25,6 +25,8 @@ The starter includes `vite.config.ts`, `hyperspan.config.ts`, and these scripts:
 
 From there, you can add [custom routes](/docs/routes), [server actions](/docs/actions), [layouts](/docs/layouts), [vanilla JS](/docs/clientjs/vanilla), and client islands with [React/Preact](/docs/clientjs/react), [Vue](/docs/clientjs/vue), or [Svelte](/docs/clientjs/svelte).
 
+Upgrading from v1? See [Migrating to v2](/docs/migration-v2).
+
 When you are ready to ship, see [Deployment](/docs/deploy) for Node, Bun, and Cloudflare.
 
 ## Development

@@ -6,6 +6,8 @@ description: Why I built a server-oriented TypeScript framework on Bun, and what
 
 # Introducing Hyperspan
 
+> **Note:** This post introduced the original Bun-era Hyperspan (v1). For current docs, see [Hyperspan 2.0](/blog/hyperspan-v2), [Installation](/docs/install), and [Migrating to v2](/docs/migration-v2).
+
 Today I’m introducing **Hyperspan**: a web framework for **dynamic, high-performance** sites and apps, built with **TypeScript** and **Bun**. It’s server-oriented by default: **zero JavaScript sent to the client** unless you explicitly add interactivity. No magic, no special file extensions: just TypeScript, HTML templates, and the web platform.
 
 ## Why Hyperspan?

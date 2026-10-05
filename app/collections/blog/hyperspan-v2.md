@@ -1,12 +1,12 @@
 ---
 title: Hyperspan v2.0, powered by Vite
 date: 2026-08-13
-description: Hyperspan 2.0 uses Vite for development and production builds, so the same app can run on Node, Bun, and Cloudflare Workers.
+description: Hyperspan 2.0.0 uses Vite for development and production builds, so the same app can run on Node, Bun, and Cloudflare Workers.
 ---
 
 # Hyperspan v2.0, powered by Vite
 
-Today I’m shipping **Hyperspan 2.0**. The headline is simple: Hyperspan is powered by **Vite**, and that unlocks running your app **wherever you need it** — including **Cloudflare Workers**.
+Today I’m shipping **Hyperspan 2.0.0**. The headline is simple: Hyperspan is powered by **Vite**, and that unlocks running your app **wherever you need it** — including **Cloudflare Workers**.
 
 The framework you already know is the same: server-oriented TypeScript, streaming HTML, file-based routes, server actions, and islands that ship JavaScript only where you ask for it. Vite takes over development and production builds so that stack can travel.
 
@@ -75,12 +75,12 @@ Your routes, actions, islands, and CSS go with you. Bindings show up in `beforeS
 
 See the **[Cloudflare deploy guide](/docs/deploy/cloudflare)** for the full setup, and **[Deployment](/docs/deploy)** for Node and Bun.
 
-## Try 2.0
+## Try 2.0.0
 
 ```shell
 npx hyperspan create MyApp
 ```
 
-Then read the **[installation guide](/docs/install)** and pick a runtime. Hyperspan still ships **zero JavaScript to the client by default**. Vite just means you can run that same app on Node, on Bun, or at the edge on Cloudflare.
+Then read the **[installation guide](/docs/install)** and pick a runtime. Upgrading from v1? See **[Migrating to v2](/docs/migration-v2)**. Hyperspan still ships **zero JavaScript to the client by default**. Vite just means you can run that same app on Node, on Bun, or at the edge on Cloudflare.
 
 *Hyperspan: Web Framework for Dynamic High-Performance Sites and Apps.*
