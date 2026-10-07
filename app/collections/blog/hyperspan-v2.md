@@ -53,15 +53,17 @@ This is the runtime I wanted Hyperspan to reach. Workers are a natural home for 
 
 Point Wrangler at the generated entry:
 
-```toml
-name = "my-hyperspan-app"
-main = "./dist/server.ts"
-compatibility_date = "2026-08-13"
-compatibility_flags = ["nodejs_compat"]
-
-[assets]
-directory = "./dist"
-binding = "ASSETS"
+```jsonc
+{
+  "name": "my-hyperspan-app",
+  "main": "./dist/server.ts",
+  "compatibility_date": "2026-08-13",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
+}
 ```
 
 Then:

@@ -34,30 +34,37 @@ export default createConfig({
 
 Island plugins stay in `plugins`. The deploy adapter stays in `deployAdapter`.
 
-## wrangler.toml
+## wrangler.jsonc
 
 Point Wrangler at the generated server entry and serve built assets:
 
-```toml
-name = "my-hyperspan-app"
-main = "./dist/server.ts"
-compatibility_date = "2026-08-11"
-compatibility_flags = ["nodejs_compat"]
-
-[build]
-command = "npm run build"
-
-[assets]
-directory = "./dist"
-binding = "ASSETS"
+```jsonc
+{
+  "name": "my-hyperspan-app",
+  "main": "./dist/server.ts",
+  "compatibility_date": "2026-08-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
+}
 ```
 
 Add KV, D1, or other bindings as needed:
 
-```toml
-[[kv_namespaces]]
-binding = "MY_KV"
-id = "your-kv-namespace-id"
+```jsonc
+{
+  "kv_namespaces": [
+    {
+      "binding": "MY_KV",
+      "id": "your-kv-namespace-id"
+    }
+  ]
+}
 ```
 
 `hyperspan build` runs the adapter's `afterBuild` hook, which syncs Wrangler CSS aliases so layout CSS imports resolve at Worker runtime. Styles are compiled into `dist/assets/` and injected with `hyperspanStyleTags()`.
@@ -68,7 +75,7 @@ id = "your-kv-namespace-id"
 npm run dev
 ```
 
-`hyperspan dev` uses Vite. `cloudflareAdapter()` loads Wrangler bindings through `getPlatformProxy` (prefers `wrangler.dev.jsonc` / `wrangler.dev.toml` when present).
+`hyperspan dev` uses Vite. `cloudflareAdapter()` loads Wrangler bindings through `getPlatformProxy` (prefers `wrangler.dev.jsonc` when present).
 
 To exercise the production Worker bundle locally:
 
