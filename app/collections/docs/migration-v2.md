@@ -4,8 +4,9 @@ Hyperspan **2.0.0** uses a **Vite build pipeline** and **portable `fetch(Request
 
 ## Runtime
 
-- **Node 24+** is the default runtime.
-- Install dependencies with `npm install` (or pnpm/yarn). Bun works as an optional runtime via [`@hyperspan/adapter-bun`](/docs/deploy/bun).
+- Hyperspan **no longer requires Bun**. **Node 24+** is the default runtime, and [deployment adapters](/docs/deploy) cover Bun, Cloudflare Workers, and other platforms.
+- You can still use **Bun** (or npm, pnpm, or yarn) to install packages and run `dev` / `build` / `start` locally — nothing stops you from keeping Bun in your workflow.
+- Prefer Bun in production for a lighter, faster stack? Add [`@hyperspan/adapter-bun`](/docs/deploy/bun) to use Bun’s built-in HTTP server and router.
 - CLI shebangs use Node (`#!/usr/bin/env node`).
 
 ## Build pipeline
@@ -84,7 +85,7 @@ Register arbitrary client modules with `buildClientJS()` at **module scope** (to
 | ------------------------------- | ------------------------------ |
 | `@hyperspan/adapter-node`       | Node.js HTTP server (default)  |
 | `@hyperspan/adapter-cloudflare` | Cloudflare Workers             |
-| `@hyperspan/adapter-bun`        | Optional Bun runtime           |
+| `@hyperspan/adapter-bun`        | Bun’s built-in HTTP server and router |
 
 See [Deployment](/docs/deploy) for Node, Bun, and Cloudflare details.
 

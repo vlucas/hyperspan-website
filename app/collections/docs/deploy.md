@@ -19,7 +19,7 @@ export default createConfig({
 | Platform | Package | Config | Guide |
 | -------- | ------- | ------ | ----- |
 | [Node](/docs/deploy/node) (default) | `@hyperspan/adapter-node` | omit, or `nodeAdapter()` | HTTP server via `hyperspan start` |
-| [Bun](/docs/deploy/bun) | `@hyperspan/adapter-bun` | `bunAdapter()` | `Bun.serve` for a native-speed HTTP layer |
+| [Bun](/docs/deploy/bun) | `@hyperspan/adapter-bun` | `bunAdapter()` | Bun’s built-in HTTP server and router — lighter and faster |
 | [Cloudflare](/docs/deploy/cloudflare) | `@hyperspan/adapter-cloudflare` | `cloudflareAdapter()` | Workers `fetch()` + assets |
 
 Development always uses Vite (`hyperspan dev`), regardless of which adapter you deploy with.

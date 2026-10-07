@@ -1,6 +1,6 @@
 # Deploy to Bun
 
-The Bun adapter runs your production Hyperspan app with Bun's native `Bun.serve` HTTP server for a speed advantage. Development still uses Vite (`hyperspan dev`).
+Use the Bun adapter when you want production to run on Bun’s built-in HTTP server and router (`Bun.serve`) — a lighter, faster path than a Node HTTP stack. Development still uses Vite (`hyperspan dev`).
 
 Install [Bun](https://bun.sh) for production, and `@hyperspan/adapter-bun` in your project.
 

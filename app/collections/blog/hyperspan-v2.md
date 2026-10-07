@@ -30,7 +30,7 @@ Under the hood, a Hyperspan app is a portable `fetch(Request) → Response` hand
 
 **Node is the default.** Omit `deployAdapter` and `hyperspan start` serves your build with `@hyperspan/adapter-node`.
 
-Want Bun’s native HTTP server in production? Pass `bunAdapter()`. Want the edge? Pass `cloudflareAdapter()`.
+Want Bun’s built-in HTTP server and router for a lighter, faster production stack? Pass `bunAdapter()`. Want the edge? Pass `cloudflareAdapter()`.
 
 ```typescript
 import { createConfig } from '@hyperspan/framework';

@@ -1,6 +1,6 @@
 # Installation
 
-Hyperspan requires [Node.js 24+](https://nodejs.org/). npm, pnpm, yarn, and bun all work as package managers.
+Hyperspan no longer requires Bun. [Node.js 24+](https://nodejs.org/) is the default runtime, and adapters also support Bun, Cloudflare Workers, and other platforms. Use npm, pnpm, yarn, or Bun to install packages and run project scripts — Bun still works fine for day-to-day local development.
 
 Use the `hyperspan` package to create a new app from the starter template:
 
